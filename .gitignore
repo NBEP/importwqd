@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data-raw/02_add_sites.R
+data-raw/03_add_thresholds.R
+data-raw/04_add_results.R
+data-raw/05_add_extra_data.R
+data-raw/00_dev.R

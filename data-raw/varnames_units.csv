@@ -1,0 +1,74 @@
+WQX,Other,measurements
+#/100mL,#/dL|#/100ml,
+ac,,acre
+cfs,ft3/sec,
+cfu/100mL,cfu/100ml|CFU/100ml|#col/100mL,
+cm/sec,,cm_per_sec
+days,,day
+decibar,,dbar
+Deg,,degree
+deg C,C|c,C
+deg F,F,F
+deg K,,K
+ft,feet,
+ft/sec,,ft_per_sec
+gal,,us_gal
+gal/day,GPD,us_gal / day
+gal/hr,,gal_per_hr
+gal/min,GPM,gal_per_min
+gal/sec,,gal_per_sec
+ha,,hectare
+hours,,hr
+Imp gal,,imp_gal
+in,,inch
+in2,,inch2
+in3,,inch3
+Joules,,J
+kcal,,Cal
+km/hr,,kph
+km/sec,,km_per_sec
+knots,,knot
+L/hr,,l_per_hr
+L/min,l/min,l_per_min
+L/sec,l/sec,l_per_sec
+lb,,lbs
+lb/day,lbs/day,lbs / day
+lbs/kgal,lb/kgal,
+m/sec,,m_per_sec
+m3/hr,,m3_per_hr
+m3/min,,m3_per_min
+m3/sec,,m3_per_sec
+metric ton,,metric_ton
+mg/L,mg/l,mg / l
+Mgd,mgd|MGD,
+mi,Mile,mi
+mi2,Sq Mi,mi2
+millibar,,mbar
+minutes,,min
+mL/L,ml/l,ml / l
+mL/min,,ml_per_min
+mL/sec,,ml_per_sec
+mm/sec,,mm_per_sec
+months,,mon
+MPN/100mL,MPN/100ml,
+ms,,msec
+mSv,pCi,
+Mw,,MWh
+ng/L,ng/l,ng / l
+None,nu|s.u.|S.U.,
+NTU,ATU|BU|FAU|FBU|FNMU|FNRU|FTU|NTMU|NTRU,
+Pascal,,Pa
+PCU,CU|HU,
+per Megam,Megam-1,
+qt,,us_quart
+seconds,,sec
+tons,,short_tons
+tons/sec,,short_tons / sec
+ug/kg,ng/g,ug / kg
+ug/L,ug/l|mg/m3|ng/cm3,ug / l
+umol/L,umol/l,umol / l
+uS,umho,
+uS/cm,uS/cm|umho/cm|uS/cm at 25 degrees C|umhos/cm,
+Watts,,W
+weeks,,wk
+years,,yr

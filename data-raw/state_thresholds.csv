@@ -1,0 +1,41 @@
+State,Group,Depth_Category,Parameter,Unit,Min_Max_Mean,Threshold_Min,Threshold_Max,Excellent,Good,Fair
+CT,Saltwater,,Ammonia,ug/L,mean,,35,,,
+CT,Saltwater,,Dissolved oxygen (DO),mg/L,minimum,3,,4.8,4.8,3
+CT,Freshwater,,Dissolved oxygen (DO),mg/L,minimum,5,,,,
+CT,Saltwater,,Enterococci,cfu/100mL,mean,,35,,,
+CT,Freshwater,,Escherichia coli,cfu/100mL,mean,,126,,,
+CT,Saltwater,,Fecal Coliform,cfu/100mL,mean,,88,14,88,88
+CT,Saltwater,,pH,None,mean,6.8,8.5,,,
+CT,Freshwater,,pH,None,mean,6.5,8,,,
+CT,Freshwater,,Sodium,mg/L,max,,20,,,
+CT,Saltwater,,"Temperature, water",deg F,max,,83,,,
+CT,Freshwater,,"Temperature, water",deg F,max,,85,,,
+CT,Freshwater,,Total coliform,cfu/100mL,mean,,100,,,
+MA,Coldwater,,Dissolved oxygen (DO),mg/L,min,6,,6,6,3
+MA,Saltwater,,Dissolved oxygen (DO),mg/L,min,5,,6,5,4
+MA,Warmwater,,Dissolved oxygen (DO),mg/L,min,5,,5,5,3
+MA,Freshwater,,Enterococcus,cfu/100mL,mean,,35,,,
+MA,Freshwater,,Escherichia coli,cfu/100mL,mean,,126,,,
+MA,Saltwater,,Fecal Coliform,cfu/100mL,mean,,88,14,88,1000
+MA,Freshwater,,Fecal Coliform,cfu/100mL,mean,,20,20,20,1000
+MA,Saltwater,,pH,None,mean,6.5,8.5,,,
+MA,Freshwater,,pH,None,mean,6.5,8.3,,,
+MA,Coldwater,,"Temperature, water",deg F,max,,68,68,68,85
+MA,Saltwater,,"Temperature, water",deg F,max,,85,,,
+MA,Warmwater,,"Temperature, water",deg F,max,,83,83,83,85
+MA,Freshwater,,Total Coliform,cfu/100mL,mean,,100,,,
+RI,Coldwater,,Dissolved oxygen (DO),mg/L,minimum,5,,8,6.5,5
+RI,Saltwater,Surface,Dissolved oxygen (DO),mg/L,minimum,4.8,,,,
+RI,Warmwater,,Dissolved oxygen (DO),mg/L,minimum,5,,,,
+RI,Coldwater,,Dissolved oxygen saturation,%,mean,75,,,,
+RI,Warmwater,,Dissolved oxygen saturation,%,mean,60,,,,
+RI,Saltwater,,Enterococci,cfu/100mL,mean,,35,,,
+RI,Freshwater,,Enterococci,cfu/100mL,mean,,54,33,54,54
+RI,Saltwater,,Fecal coliform,cfu/100mL,mean,,50,14,50,50
+RI,Freshwater,,Fecal Coliform,cfu/100mL,mean,,200,,,
+RI,Saltwater,,pH,None,mean,6.5,8.5,,,
+RI,Freshwater,,pH,None,mean,6.5,9,,,
+RI,Coldwater,,"Temperature, water",deg F,max,,68,,,
+RI,Saltwater,,"Temperature, water",deg F,max,,83,,,
+RI,Warmwater,,"Temperature, water",deg F,max,,83,,,
+RI,Freshwater,,"Total Phosphorus, mixed forms",mg/L,mean,,0.025,,,
