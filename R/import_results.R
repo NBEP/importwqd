@@ -101,7 +101,7 @@ qaqc_results <- function(df, date_format = NULL) {
   field_check <- intersect(field_optional, colnames(df))
   field_check <- field_check[!field_check %in% field_skip]
   for (field in field_check) {
-    check_val_missing(df, field = field, is_stop = FALSE)
+    check_val_missing(df, field, is_stop = FALSE)
   }
 
   # Check if all sites valid

@@ -13,33 +13,29 @@ qaqc_thresholds <- function(.data) {
   message("Checking thresholds...")
 
   # Define variables
-  field_need <- c("Parameter", "Unit")
-  field_optional <- c(
-    "State", "Group", "Site_ID", "Depth_Category", "Calculation",
-    "Threshold_Min", "Threshold_Max", "Excellent", "Good", "Fair"
+  field_all <- c(
+    "State", "Group", "Site_ID", "Depth_Category", "Parameter", "Unit",
+    "Calculation", "Threshold_Min", "Threshold_Max", "Excellent", "Good", "Fair"
   )
-  field_all <- c(field_need, field_optional)
 
   # Check - missing columns
-  check_col_missing(.data, field_need)
+  check_col_missing(.data, c("Parameter", "Unit"))
 
   chk <- c("Threshold_Min", "Threshold_Max") %in% colnames(.data)
   chk <- any(chk) | all(c("Excellent", "Good", "Fair") %in% colnames(.data))
   if (!chk) {
     stop(
-      "Data must include columns Threshold_Min OR Threshold_Max OR",
-      "Excellent, Good, AND Fair",
+      "Data must include at least one threshold column",
       call. = FALSE
     )
   }
 
   # Check - missing data (error)
-  for (field in field_need) {
-    check_val_missing(.data, field)
-  }
+  check_val_missing(.data, "Parameter")
+  check_val_missing(.data, "Unit")
 
   # Update columns
-  missing_col <- setdiff(field_optional, colnames(.data))
+  missing_col <- setdiff(field_all, colnames(.data))
   .data[missing_col] <- NA
 
   dat <- .data %>%
@@ -56,7 +52,7 @@ qaqc_thresholds <- function(.data) {
   if (any(!chk)) {
     stop(
       "Site and group thresholds must be on seperate rows. Check rows: ",
-      paste(which(chk), collapse = ", "),
+      paste(which(!chk), collapse = ", "),
       call. = FALSE
     )
   }
@@ -65,7 +61,7 @@ qaqc_thresholds <- function(.data) {
   if (any(!chk)) {
     stop(
       "Site and state thresholds must be on seperate rows. Check rows: ",
-      paste(which(chk), collapse = ", "),
+      paste(which(!chk), collapse = ", "),
       call. = FALSE
     )
   }
@@ -73,22 +69,24 @@ qaqc_thresholds <- function(.data) {
   check_val_duplicate(dat, c("State", "Group", "Site_ID", "Parameter"))
 
   chk <- is.na(dat$Excellent) | is.na(dat$Good) | is.na(dat$Fair)
-  chk <- any(chk) & is.na(dat$Threshold_Min) & !is.na(dat$Threshold_Max)
+  chk <- any(chk) & is.na(dat$Threshold_Min) & is.na(dat$Threshold_Max)
   if (any(chk)) {
     stop(
-      "Each row must include values for Threshold_Min OR Threshold_Max OR ",
-      "Excellent, Good, AND Fair. Check rows: ",
+      "Each row must include at least one threshold value. Check rows: ",
       paste(which(chk), collapse = ", "),
       call. = FALSE
     )
   }
 
   chk <- is.na(dat$Excellent) | is.na(dat$Good) | is.na(dat$Fair) |
-    (dat$Excellent > dat$Good & dat$Good > dat$Fair) |
-    (dat$Excellent < dat$Good & dat$Good < dat$Fair)
+    (dat$Excellent > dat$Fair & dat$Excellent >= dat$Good &
+       dat$Good >= dat$Fair) |
+    (dat$Excellent < dat$Fair & dat$Excellent <= dat$Good &
+       dat$Good <= dat$Fair)
+
   if (any(!chk)) {
     stop(
-      "Nonlinear values detected for Excellent, Good, and Fair. Check rows: ",
+      "Illogical values for Excellent, Good, and Fair. Check rows: ",
       paste(which(!chk), collapse = ", ")
     )
   }
@@ -109,8 +107,7 @@ qaqc_thresholds <- function(.data) {
     check_val_missing(dat, "Calculation", is_stop = FALSE)
   }
 
-  field_sort <- c("Site_ID", "State", "Group", "Depth_Category")
-  dat <- dplyr::arrange_at(dat, field_sort)
+  dat
 }
 
 #' Format threshold metadata for use in wqdashboard
@@ -128,23 +125,23 @@ format_thresholds <- function(.data) {
     dplyr::rename(
       "Site" = "Site_ID",
       "Depth" = "Depth_Category",
-      "Math" = "Calculation",
       "Min" = "Threshold_Min",
       "Max" = "Threshold_Max"
     ) %>%
+    dplyr::arrange_at(c("Site", "State", "Group", "Depth")) %>%
     dplyr::mutate(
-      "Math" = dplyr::case_when(
-        .data$Math %in% c(NA, "average") ~ "mean",
-        .data$Math == "minimum" ~ "min",
-        .data$Math == "maximum" ~ "max",
-        TRUE ~ .data$Math
+      "Calculation" = dplyr::case_when(
+        .data$Calculation %in% c(NA, "average") ~ "mean",
+        .data$Calculation == "minimum" ~ "min",
+        .data$Calculation == "maximum" ~ "max",
+        TRUE ~ .data$Calculation
       )
     ) %>%
     dplyr::mutate(
       "Best" = dplyr::case_when(
         is.na(.data$Excellent) | is.na(.data$Good) | is.na(.data$Fair) ~ NA,
-        .data$Excellent > .data$Good ~ "high",
-        .data$Excellent < .data$Good ~ "low",
+        .data$Excellent > .data$Fair ~ "high",
+        .data$Excellent < .data$Fair ~ "low",
         TRUE ~ NA
       )
     )

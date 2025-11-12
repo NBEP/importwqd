@@ -97,12 +97,12 @@ test_that("format_sites works", {
 
   # Test edge case - weird depths
   df_in <- tst$sites_qaqc
-  df_in$Max_Depth_m <- c(2,5)
+  df_in$Max_Depth_m <- c(2, 5)
 
   df_out <- tst$sites_final
-  df_out$Max_Surface <- c(NA,1)
+  df_out$Max_Surface <- c(NA, 1)
   df_out$Max_Midwater <- c(NA, 4)
-  df_out$Max_Depth <- c(2,5)
+  df_out$Max_Depth <- c(2, 5)
 
   expect_equal(
     suppressMessages(
