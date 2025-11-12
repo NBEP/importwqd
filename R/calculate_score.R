@@ -25,8 +25,9 @@
 #' value was calculated (score_typ), and a category_score (score_str).
 #'
 calculate_score <- function(
-    site_id, parameter, unit, depth = NA, score_max, score_min, score_mean,
-    score_median) {
+  site_id, parameter, unit, depth = NA, score_max, score_min, score_mean,
+  score_median
+) {
   # Find thresholds
   df <- find_threshold(site_id, parameter, depth)
 

@@ -9,11 +9,11 @@
 #' * Checks if depth values are illogical (eg surface depth is greater than
 #' midwater depth)
 #'
-#' @param .data Input dataframe.
+#' @param .data Input dataframe
 #'
-#' @return Updated dataframe.
+#' @return Updated dataframe
 qaqc_sites <- function(.data) {
-  message("Checking site data...\n")
+  message("Checking site data...")
 
   # Define vars
   field_need <- c("Site_ID", "Site_Name", "Latitude", "Longitude")
@@ -23,7 +23,7 @@ qaqc_sites <- function(.data) {
   )
 
   # Check - missing columns?
-  check_column_missing(.data, field_need)
+  check_col_missing(.data, field_need)
 
   # Check - missing values?
   for (field in field_need) {
@@ -64,7 +64,7 @@ qaqc_sites <- function(.data) {
   if (any(!chk)) {
     stop(
       "Illogical depth values. Check rows: ",
-      paste(which[chk], collapse = ", ")
+      paste(which(!chk), collapse = ", ")
     )
   }
 
@@ -73,13 +73,13 @@ qaqc_sites <- function(.data) {
 
 #' Format site metadata for use in wqdashboard
 #'
-#' @description `format_sites()` formats site metadata for use in wqdashboard.
+#' @description `format_sites()` formats site metadata for use in [wqdashboard].
 #'
 #' @param .data Input dataframe.
 #'
 #' @return Updated dataframe.
 format_sites <- function(.data) {
-  message("\nFormatting site data...\n")
+  message("Formatting site data...")
 
   # Drop extra columns
   field_all <- c(
@@ -108,7 +108,7 @@ format_sites <- function(.data) {
       drop_uniform_col("Town")
   }
 
-  if ("Town" %in% colnames(df)) {
+  if ("Town" %in% colnames(dat)) {
     message("\tUpdating town names")
     dat <- dat %>%
       dplyr::mutate(
@@ -117,9 +117,10 @@ format_sites <- function(.data) {
           .data$Town,
           paste0(.data$Town, ", ", .data$State)
         )
-      )
-    dat$Town <- NULL
-  } else if ("County" %in% colnames(df)) {
+      ) %>%
+      dplyr::mutate("County_Code" = .data$County) %>%
+      dplyr::select(!c("Town", "County"))
+  } else if ("County" %in% colnames(dat)) {
     message("\tUpdating county names")
     dat <- dat %>%
       dplyr::mutate(

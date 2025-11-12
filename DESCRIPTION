@@ -5,7 +5,7 @@ Version: 0.1.0
 Authors@R: c(
     person(
       "Mariel", "Sorlien",
-      email = "msorlien@info.nbep"",
+      email = "msorlien@nbep.org",
       role = c("aut", "cre")
     )
   )
@@ -14,3 +14,15 @@ Description: More about what it does (maybe more than one line).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    data.table,
+    dplyr,
+    magrittr,
+    rlang,
+    wqformat (>= 0.1.0.9000)
+Remotes: 
+    massbays-tech/wqformat
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.3.3
