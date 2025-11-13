@@ -11,9 +11,11 @@
 #'
 #' @param .data Input dataframe
 #'
+#' @seealso [format_sites()]
+#'
 #' @return Updated dataframe
 qaqc_sites <- function(.data) {
-  message("Checking site data...")
+  message("Checking site metadata...")
 
   # Define vars
   field_need <- c("Site_ID", "Site_Name", "Latitude", "Longitude")
@@ -76,6 +78,8 @@ qaqc_sites <- function(.data) {
 #' @description `format_sites()` formats site metadata for use in [wqdashboard].
 #'
 #' @param .data Input dataframe.
+#'
+#' @seealso [qaqc_sites()]
 #'
 #' @return Updated dataframe.
 format_sites <- function(.data) {

@@ -22,3 +22,6 @@ formatting errors. Specifically, it runs the following checks:
 * Checks if depth values are illogical (eg surface depth is greater than
 midwater depth)
 }
+\seealso{
+[format_sites()]
+}

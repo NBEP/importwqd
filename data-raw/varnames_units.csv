@@ -1,14 +1,14 @@
-WQX,Other,measurements
-#/100mL,#/dL|#/100ml,
+wqdashboard,Other,measurements
+#/100mL,#/dL,
 ac,,acre
 cfs,ft3/sec,
-cfu/100mL,cfu/100ml|CFU/100ml|#col/100mL,
+cfu/100mL,#col/100mL|#/100mL,
 cm/sec,,cm_per_sec
 days,,day
 decibar,,dbar
 Deg,,degree
-deg C,C|c,C
-deg F,F,F
+deg C,,C
+deg F,,F
 deg K,,K
 ft,feet,
 ft/sec,,ft_per_sec
@@ -29,8 +29,8 @@ km/hr,,kph
 km/sec,,km_per_sec
 knots,,knot
 L/hr,,l_per_hr
-L/min,l/min,l_per_min
-L/sec,l/sec,l_per_sec
+L/min,,l_per_min
+L/sec,,l_per_sec
 lb,,lbs
 lb/day,lbs/day,lbs / day
 lbs/kgal,lb/kgal,
@@ -39,23 +39,21 @@ m3/hr,,m3_per_hr
 m3/min,,m3_per_min
 m3/sec,,m3_per_sec
 metric ton,,metric_ton
-mg/L,mg/l,mg / l
-Mgd,mgd|MGD,
-mi,Mile,mi
-mi2,Sq Mi,mi2
+mg/L,,mg / l
+mi,Mile,
+mi2,Sq Mi,
 millibar,,mbar
 minutes,,min
-mL/L,ml/l,ml / l
+mL/L,,ml / l
 mL/min,,ml_per_min
 mL/sec,,ml_per_sec
 mm/sec,,mm_per_sec
 months,,mon
-MPN/100mL,MPN/100ml,
 ms,,msec
 mSv,pCi,
 Mw,,MWh
-ng/L,ng/l,ng / l
-None,nu|s.u.|S.U.,
+ng/L,,ng / l
+None,nu,
 NTU,ATU|BU|FAU|FBU|FNMU|FNRU|FTU|NTMU|NTRU,
 Pascal,,Pa
 PCU,CU|HU,
@@ -65,10 +63,10 @@ seconds,,sec
 tons,,short_tons
 tons/sec,,short_tons / sec
 ug/kg,ng/g,ug / kg
-ug/L,ug/l|mg/m3|ng/cm3,ug / l
-umol/L,umol/l,umol / l
-uS,umho,
-uS/cm,uS/cm|umho/cm|uS/cm at 25 degrees C|umhos/cm,
+ug/L,mg/m3|ng/cm3,ug / l
+umol/L,,umol / l
+uS,umho|umhos,
+uS/cm,umho/cm|umhos/cm|uS/cm at 25 degrees C,
 Watts,,W
 weeks,,wk
 years,,yr

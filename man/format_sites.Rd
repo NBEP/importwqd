@@ -15,3 +15,6 @@ Updated dataframe.
 \description{
 `format_sites()` formats site metadata for use in [wqdashboard].
 }
+\seealso{
+[qaqc_sites()]
+}

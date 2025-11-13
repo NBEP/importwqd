@@ -2,23 +2,25 @@
 % Please edit documentation in R/import_results.R
 \name{qaqc_results}
 \alias{qaqc_results}
-\title{QAQC Results}
+\title{Check water quality data for formatting errors}
 \usage{
-qaqc_results(df, date_format = NULL)
+qaqc_results(.data, site_data)
 }
 \arguments{
-\item{df}{Input dataframe.}
+\item{.data}{Input dataframe}
 
-\item{date_format}{Date format as string.}
+\item{site_data}{Dataframe containing site metadata.}
 }
 \value{
-Updated dataframe.
+Updated dataframe
 }
 \description{
-Run quick quality control check on water quality data. Runs the
-  following checks:
-  * Checks all mandatory columns present
-  * Checks for missing values
-  * Formats dates
-  * Formats units
+`qaqc_results()` checks imported water quality data for major
+formatting errors. Specifically, it runs the following checks:
+* Checks for missing columns
+* Checks for missing values
+* Checks for unknown sites
+}
+\seealso{
+[format_results()], [score_results()]
 }
