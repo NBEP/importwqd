@@ -17,7 +17,6 @@ LazyData: true
 Imports: 
     data.table,
     dplyr,
-    lubridate,
     magrittr,
     measurements,
     rlang,
@@ -28,3 +27,5 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
+Depends: 
+    R (>= 3.5)

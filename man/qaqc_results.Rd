@@ -17,9 +17,12 @@ Updated dataframe
 \description{
 `qaqc_results()` checks imported water quality data for major
 formatting errors. Specifically, it runs the following checks:
-* Checks for missing columns
 * Checks for missing values
 * Checks for unknown sites
+* Checks Results, Depth columns are numeric
+* Checks Depth is in meters
+* Assigns depth category
+* Standardizes units
 }
 \seealso{
 [format_results()], [score_results()]

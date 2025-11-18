@@ -58,10 +58,10 @@ calculate_score <- function(
   }
 
   # Standardize units
-  new_score <- convert_unit(score, unit, df$Unit, FALSE)
+  new_score <- convert_unit(score, unit, df$Unit)
 
   # If unable to standardize units, return data
-  if (is.na(new_score)) {
+  if (new_score == -999999) {
     return(
       list(
         score_typ = typ,

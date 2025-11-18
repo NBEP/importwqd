@@ -70,8 +70,8 @@ find_threshold <- function(site_id, parameter, depth = NA) {
 
 #' Convert Threshold Unit
 #'
-#' @description Converts threshold value to new unit. NA values returned as
-#' -999999
+#' @description Converts threshold value to new unit. `NA` values are returned
+#' as -999999
 #'
 #' @param x Numeric. Value to convert.
 #' @param old_unit String. Current unit.
@@ -85,11 +85,5 @@ convert_threshold_unit <- function(x, old_unit, new_unit) {
     return(-999999)
   }
 
-  new_thresh <- convert_unit(x, old_unit, new_unit, FALSE)
-
-  if (is.na(new_thresh)) {
-    return(-999999)
-  }
-
-  return(new_thresh)
+  convert_unit(x, old_unit, new_unit)
 }

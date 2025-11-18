@@ -2,9 +2,12 @@
 #'
 #' @description `qaqc_results()` checks imported water quality data for major
 #' formatting errors. Specifically, it runs the following checks:
-#' * Checks for missing columns
 #' * Checks for missing values
 #' * Checks for unknown sites
+#' * Checks Results, Depth columns are numeric
+#' * Checks Depth is in meters
+#' * Assigns depth category
+#' * Standardizes units
 #'
 #' @param .data Input dataframe
 #' @param site_data Dataframe containing site metadata.
@@ -15,44 +18,91 @@
 qaqc_results <- function(.data, site_data) {
   message("Checking data...")
 
-  # Define variables
-  field_need <- c("Site_ID", "Date", "Parameter", "Result", "Result_Unit")
-  field_optional <- c(
-    "Activity_Type", "Depth", "Depth_Unit", "Depth_Category",
-    "Detection_Limit", "Detection_Limit_Unit", "Qualifier"
-  )
-
-  dat <- .data
-
   # Check - missing data?
-  check_col_missing(dat, field_need)
+  check_val_missing(.data, "Site_ID")
+  check_val_missing(.data, "Date")
+  check_val_missing(.data, "Parameter")
 
-  for (field in field_need) {
-    check_val_missing(dat, field)
+  chk <- is.na(.data$Qualifier) & is.na(.data$Result)
+  if (any(chk)) {
+    stop(
+      "Result missing. Check rows: ",
+      paste(which(chk), collapse = ", ")
+    )
+  }
+
+  chk <- !is.na(.data$Result) & is.na(.data$Result_Unit)
+  if (any(chk)) {
+    stop(
+      "Result_Unit missing. Check rows: ",
+      paste(which(chk), collapse = ", ")
+    )
+  }
+
+  chk <- is.na(.data$Detection_Limit_Unit) &
+    (!is.na(.data$Lower_Detection_Limit) | !is.na(.data$Upper_Detection_Limit))
+  if (any(chk)) {
+    stop(
+      "Detection_Limit_Unit missing. Check rows: ",
+      paste(which(chk), collapse = ", ")
+    )
   }
 
   # Check - all sites valid?
   site_list <- site_data$Site_ID
-  data_sites <- unique(dat$Site_ID)
+  data_sites <- unique(.data$Site_ID)
 
   chk <- setdiff(site_list, data_sites)
   if (length(chk) > 0) {
     stop("Invalid Site_ID: ", paste(chk, collapse = ", "), call. = FALSE)
   }
 
-  # Format data
-  field_missing <- setdiff(field_optional, colnames(dat))
-  dat[field_missing] <- NA
-
-  dat <- dat %>%
+  # Check - columns correct format? Depth in m?
+  dat <- .data %>%
     wqformat::col_to_numeric("Result", silent = FALSE) %>%
-    wqformat::col_to_numeric("Depth", silent = FALSE) %>%
-    dplyr::mutate("Year" = lubridate::year(.data$Date))
+    wqformat::col_to_numeric("Lower_Detection_Limit", silent = FALSE) %>%
+    wqformat::col_to_numeric("Upper_Detection_Limit", silent = FALSE) %>%
+    wqformat::col_to_numeric("Depth", silent = FALSE)
 
-  # Additional formatting - TO DO
+  depth_cat <- c("Surface", "Midwater", "Near Bottom", "Bottom")
 
-  dat <- depth_to_m(dat)
-  dat <- assign_depth_category(dat)
+  wqformat::warn_invalid_var(dat, "Depth_Unit", "m")
+  wqformat::warn_invalid_var(dat, "Depth_Category", depth_cat)
+
+  # Update depth category
+  depth_col <- c("Max_Surface", "Max_Midwater", "Max_Depth")
+  site_depth <- dplyr::select(site_data, dplyr::any_of(c("Site_ID", depth_col)))
+
+  dat <- dplyr::left_join(dat, site_depth, by = "Site_ID", keep = FALSE) %>%
+    dplyr::mutate(
+      "Depth_Category" = dplyr::case_when(
+        !is.na(.data$Depth_Category) ~ .data$Depth_Category,
+        is.na(.data$Depth) | is.na(.data$Depth_Unit) |
+          .data$Depth_Unit != "m" ~ NA,
+        is.na(.data$Max_Depth) & is.na(.data$Max_Midwater) &
+          is.na(.data$Max_Surface) ~ NA,
+        !is.na(.data$Max_Depth) & .data$Depth >= .data$Max_Depth ~ "Bottom",
+        !is.na(.data$Max_Midwater) & .data$Depth >= .data$Max_Midwater ~
+          "Near Bottom",
+        !is.na(.data$Max_Surface) & .data$Depth >= .data$Max_Surface ~
+          "Midwater",
+        TRUE ~ "Surface"
+      )
+    ) %>%
+    dplyr::select(!dplyr::any_of(depth_col))
+
+  # Final adjustments
+  dat %>%
+    dplyr::mutate("Year" = strftime(.data$Date, "%z")) %>%
+    dplyr::mutate(
+      "Parameter" = dplyr::if_else(
+        .data$Parameter == "Escherichia coli",
+        "E. coli",
+        .data$Parameter
+      )
+    ) %>%
+    standardize_result_units() %>%
+    standardize_detection_units()
 }
 
 #' Format Results
@@ -67,8 +117,7 @@ format_results <- function(df) {
   message("Formatting data...")
 
   # TEMP TRANSFER FROM ABOVE
-  df <- set_nondetect_values(df)
-  dat <- standardize_units(dat)
+  df <- set_nondetect_values(df)  # Can just do this here, don't even need separate function
 
   # Set Variables
   field_keep <- c(

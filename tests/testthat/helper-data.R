@@ -93,6 +93,23 @@ tst <- list(
     Good = c(NA, 6.5, NA, NA, NA),
     Fair = c(NA, 5, NA, NA, NA),
     Best = c(NA, "high", NA, NA, NA)
-  )
+  ),
   # Fake data
+  data_raw = data.frame(
+    Site_ID = c("001", "001", "002"),
+    Activity_Type = NA,
+    Date = as.Date("2025-11-12"),
+    Depth = NA,
+    Depth_Unit = "m",
+    Depth_Category = NA,
+    Parameter = c(
+      "DO % or whatever", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)"
+    ),
+    Result = c(80, 200, 12),
+    Result_Unit = c("%", "ng/L", "mg/L"),
+    Detection_Limit_Type = NA,
+    Detection_Limit = 5,
+    Detection_Limit_Unit = "mg/L",
+    Qualifier = NA
+  )
 )
