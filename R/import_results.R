@@ -52,7 +52,7 @@ qaqc_results <- function(.data, site_data) {
   site_list <- site_data$Site_ID
   data_sites <- unique(.data$Site_ID)
 
-  chk <- setdiff(site_list, data_sites)
+  chk <- setdiff(data_sites, site_list)
   if (length(chk) > 0) {
     stop("Invalid Site_ID: ", paste(chk, collapse = ", "), call. = FALSE)
   }
@@ -93,7 +93,7 @@ qaqc_results <- function(.data, site_data) {
 
   # Final adjustments
   dat %>%
-    dplyr::mutate("Year" = strftime(.data$Date, "%z")) %>%
+    dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y"))) %>%
     dplyr::mutate(
       "Parameter" = dplyr::if_else(
         .data$Parameter == "Escherichia coli",

@@ -15,7 +15,7 @@ standardize_result_units <- function(.data) {
   param_unit <- dat_temp %>%
     dplyr::group_by(.data$Parameter) %>%
     dplyr::summarize(
-      "n" = length(unique(.data$Parameter)),
+      "n" = length(unique(.data$Result_Unit)),
       "temp_unit" = dplyr::last(.data$Result_Unit)
     ) %>%
     dplyr::filter(.data$n > 1) %>%
@@ -55,7 +55,7 @@ standardize_result_units <- function(.data) {
   dat <- dplyr::left_join(.data, dat_temp, by = join_col)
 
   # Update units, results
-  dat %>%
+  dat <- dat %>%
     dplyr::mutate(
       "Result" = dplyr::if_else(
         is.na(.data$temp_result),
@@ -71,6 +71,24 @@ standardize_result_units <- function(.data) {
       )
     ) %>%
     dplyr::select(!dplyr::any_of(c("temp_unit", "temp_result")))
+
+  # Check - any rows missing unit?
+  chk <- is.na(dat$Result) | is.na(dat$Result_Unit)
+
+  if (all(!chk)) {
+    return(dat)
+  }
+
+  # Patch in missing units
+  dplyr::left_join(dat, param_unit, by = "Parameter") %>%
+    dplyr::mutate(
+      "Result_Unit" = dplyr::if_else(
+        is.na(.data$temp_unit),
+        .data$Result_Unit,
+        .data$temp_unit
+      )
+    ) %>%
+    dplyr::select(!"temp_unit")
 }
 
 #' Standardize detection limit units
@@ -111,21 +129,44 @@ standardize_detection_units <- function(.data) {
     )
 
   # Check - any rows fail to update data?
-  chk <- dat2$temp_lower == -999999 | dat2$temp_upper == -999999
+  chk <- (!is.na(dat2$temp_lower) & dat2$temp_lower == -999999) |
+    (!is.na(dat2$temp_upper) & dat2$temp_upper == -999999)
   if (any(chk)) {
     bad_par <- dat2[which(chk), ]
     bad_par <- unique(bad_par$temp_row)
     stop(
       "Result and detection units are incompatible. Check rows: ",
-      paste(bad_par, collapse = ","),
+      paste(bad_par, collapse = ", "),
       call. = FALSE
     )
   }
 
-  # Combine data
-  dat2 <- dplyr::select(dat2, !c("temp_upper", "temp_lower"))
+  dat2 <- dat2 %>%
+    dplyr::mutate(
+      "Lower_Detection_Limit" = dplyr::if_else(
+        is.na(.data$temp_lower),
+        .data$Lower_Detection_Limit,
+        .data$temp_lower
+      )
+    ) %>%
+    dplyr::mutate(
+      "Upper_Detection_Limit" = dplyr::if_else(
+        is.na(.data$temp_upper),
+        .data$Upper_Detection_Limit,
+        .data$temp_upper
+      )
+    ) %>%
+    dplyr::mutate(
+      "Detection_Limit_Unit" = dplyr::if_else(
+        is.na(.data$Result_Unit),
+        .data$Detection_Limit_Unit,
+        .data$Result_Unit
+      )
+    ) %>%
+    dplyr::select(!c("temp_upper", "temp_lower"))
 
+  # Combine data
   rbind(dat1, dat2) %>%
-    dplyr::arrange("temp_row") %>%
+    dplyr::arrange(.data$temp_row) %>%
     dplyr::select(!"temp_row")
 }

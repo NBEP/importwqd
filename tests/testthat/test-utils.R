@@ -98,12 +98,6 @@ test_that("drop_uniform_col works", {
     Col3 = c("G", "G", "G")
   )
 
-  # Test - include_na = TRUE
-  df_out <- data.frame(
-    Col1 = c("A", "B", "C"),
-    Col2 = c(NA, "E", "E")
-  )
-
   expect_equal(
     suppressMessages(
       df_in %>%
@@ -111,12 +105,10 @@ test_that("drop_uniform_col works", {
         drop_uniform_col("Col2") %>%
         drop_uniform_col("Col3")
     ),
-    df_out
-  )
-
-  # Test - include_na = FALSE
-  df_out <- data.frame(
-    Col1 = c("A", "B", "C")
+    data.frame(
+      Col1 = c("A", "B", "C"),
+      Col2 = c(NA, "E", "E")
+    )
   )
 
   expect_equal(
@@ -126,7 +118,9 @@ test_that("drop_uniform_col works", {
         drop_uniform_col("Col2", include_na = FALSE) %>%
         drop_uniform_col("Col3", include_na = FALSE)
     ),
-    df_out
+    data.frame(
+      Col1 = c("A", "B", "C")
+    )
   )
 })
 
