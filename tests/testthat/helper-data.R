@@ -138,5 +138,20 @@ tst <- list(
     Detection_Limit_Unit = "mg/L",
     Qualifier = c("DL", NA, "DL", NA, NA, NA, NA, NA),
     Year = c(2021, 2023)
+  ),
+  data_final = data.frame(
+    Site_ID = c(
+      "001", "001", "001", "001", "002", "002", "002", "002"
+    ),
+    Date = c(
+      as.Date("2021-06-30"), as.Date("2023-07-12"), as.Date("2021-08-05"),
+      as.Date("2023-05-25")
+    ),
+    Year = c(2021, 2023),
+    Parameter = "Dissolved oxygen (DO)",
+    Result = c(0.05, 3, 0.05, 4, 6, 8, 7, 9),
+    Result_Unit = "mg/L",
+    Depth = "Surface",
+    Month = c("June", "July", "August", "May")
   )
 )

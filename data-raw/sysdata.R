@@ -10,7 +10,5 @@ varnames_units <- readr::read_csv(
 wqd_units <- varnames_units$measurements
 names(wqd_units) <- varnames_units$wqdashboard
 
-# Add qualifier codes ----
-
 # Save data ----
 usethis::use_data(wqd_units, internal = TRUE, overwrite = TRUE)

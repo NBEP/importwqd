@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_score.R
 \name{calculate_score}
 \alias{calculate_score}
-\title{Calculate Score}
+\title{Calculate annual parameter score}
 \usage{
 calculate_score(
   site_id,
@@ -33,19 +33,21 @@ calculate_score(
 \item{score_median}{Median score.}
 }
 \value{
-List including the annual value (score_num), way in which the annual
-value was calculated (score_typ), and a category_score (score_str).
+List including a numeric score (score_num), way the numeric score was
+calculated (score_typ), and a categorical score (score_str).
 }
 \description{
-`calculate_score()` assigns numeric and categorical scores for
-each parameter. Values are calculated by comparing the input data to the
-threshold values for the relevant site, sampling depth, and parameter.
+`calculate_score()` calculates annual numeric and categorical
+scores for each parameter/site/depth combination.
 
 The numeric score returns the annual minimum, maximum, median, or mean value.
-If the threshold table does not specify which value to return, the numeric
-score uses the mean value.
+If the threshold table does not specify which value to return, the mean value
+is used.
 
 The categorical score compares the numeric score to the threshold table and
 returns a value of Excellent, Good, Fair, Poor, Does Not Meet Criteria, or
 Meets Criteria.
+}
+\seealso{
+score_results()
 }

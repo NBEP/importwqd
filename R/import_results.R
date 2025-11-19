@@ -105,93 +105,64 @@ qaqc_results <- function(.data, site_data) {
     standardize_detection_units()
 }
 
-#' Format Results
+#' Format water quality data for wqdasbhoard
 #'
-#' @description Formats water quality data for use in app. Must run
-#'   `QAQC_results` first.
+#' @description `format_results()` formats water quality data for use in
+#' wqdashboard. Must run `qaqc_results()` first.
 #'
-#' @param df Input dataframe.
+#' @inheritParams qaqc_results
 #'
 #' @return Updated dataframe.
-format_results <- function(df) {
+format_results <- function(.data) {
   message("Formatting data...")
 
-  # TEMP TRANSFER FROM ABOVE
-  df <- set_nondetect_values(df)  # Can just do this here, don't even need separate function
-
-  # Set Variables
-  field_keep <- c(
-    "Site_ID", "Date", "Year", "Parameter", "Result",
-    "Result_Unit", "Depth_Category"
-  )
-  field_keep <- intersect(field_keep, colnames(df))
-
   # Drop extra rows
-  row_count <- nrow(df)
+  message("\tDropping extra rows")
+  q_under <- c(
+    "<2B", "2-5B", "BQL", "BRL", "D>T", "DL", "IDL", "K", "LTGTE", "U"
+  )
+  q_over <- c("GT", "E", "EE")
+  keep_qual <- c(NA, q_under, q_over)
 
-  if ("Qualifier" %in% colnames(df)) {
-    df <- df %>%
-      dplyr::filter(.data$Qualifier %in% qaqc_flag$suspect)
-  }
+  dat <- .data %>%
+    dplyr::filter(.data$Qualifier %in% keep_qual) %>%
+    dplyr::filter(
+      !grepl("quality control", .data$Activity_Type, ignore.case = TRUE)
+    )
 
-  chk <- nrow(df) - row_count
-  if (chk > 0) {
-    message("\tDropped ", chk, " rows of flagged data")
-  }
-  row_count <- nrow(df)
+  # Update nondetect, overdetect values
+  chk <- is.na(dat$Qualifier)
+  if (any(!chk)) {
+    message("\tSetting nondetect, overdetect values")
 
-  if ("Activity_Type" %in% colnames(df)) {
-    df <- df %>%
-      dplyr::filter(
-        is.na(.data$Activity_Type) |
-          !stringr::str_detect(.data$Activity_Type, "Quality Control")
+    dat <- dat %>%
+      dplyr::mutate(
+        "Result" = dplyr::case_when(
+          !is.na(.data$Result) | is.na(.data$Qualifier) ~ .data$Result,
+          .data$Qualifier %in% q_over ~ .data$Upper_Detection_Limit,
+          .data$Qualifier %in% q_under & .data$Parameter == "pH" ~
+            .data$Lower_Detection_Limit,
+          .data$Qualifier %in% q_under & is.na(.data$Lower_Detection_Limit) ~ 0,
+          .data$Qualifier %in% q_under ~ .data$Lower_Detection_Limit / 2,
+          TRUE ~ .data$Result
+        )
       )
   }
 
-  chk <- nrow(df) - row_count
-  if (chk > 0) {
-    message("\tDropped ", chk, " rows of quality control data")
-  }
+  check_val_missing(dat, "Result")
 
-  # Drop extra columns
-  chk <- length(df) - length(field_keep)
-  if (chk > 0) {
-    df <- dplyr::select(df, dplyr::any_of(field_keep))
-    message("\t", toString(chk), " columns removed")
-  }
+  # Adjust columns
+  message("\tDropping extra columns")
 
-  # Rename columns
-  df <- dplyr::rename(df, Unit = Result_Unit)
-  if ("Depth_Category" %in% colnames(df)) {
-    df <- dplyr::rename(df, Depth = Depth_Category)
-  } else {
-    df <- dplyr::mutate(df, Depth = NA)
-  }
+  field_keep <- c(
+    "Site_ID", "Date", "Year", "Parameter", "Result", "Result_Unit",
+    "Depth_Category"
+  )
 
-  # Add column for Month
-  df <- dplyr::mutate(df, Month = strftime(Date, "%B"))
-
-  # Add Site_Name, Description
-  sites <- dplyr::select(df_sites, c("Site_ID", "Site_Name"))
-  df <- dplyr::left_join(df, sites, by = "Site_ID") %>%
-    dplyr::mutate(Description = paste0(
-      "<b>", Site_Name, "</b><br>",
-      format(Date, format = "%B %d, %Y"), "<br>"
-    )) %>%
-    dplyr::mutate(Description = dplyr::if_else(
-      !is.na(Depth),
-      paste0(Description, "Depth: ", Depth, "<br>"),
-      Description
-    )) %>%
-    dplyr::mutate(Description = paste0(
-      Description,
-      Parameter, ": ", pretty_number(Result)
-    )) %>%
-    dplyr::mutate(Description = dplyr::if_else(
-      !Unit %in% c(NA, "None"),
-      paste(Description, Unit),
-      Description
-    ))
+  dat %>%
+    dplyr::select(dplyr::any_of(field_keep)) %>%
+    dplyr::rename("Depth" = "Depth_Category") %>%
+    dplyr::mutate("Month" = strftime(.data$Date, "%B"))
 }
 
 #' Format df_score

@@ -2,17 +2,17 @@
 % Please edit documentation in R/import_results.R
 \name{format_results}
 \alias{format_results}
-\title{Format Results}
+\title{Format water quality data for wqdasbhoard}
 \usage{
-format_results(df)
+format_results(.data)
 }
 \arguments{
-\item{df}{Input dataframe.}
+\item{.data}{Input dataframe}
 }
 \value{
 Updated dataframe.
 }
 \description{
-Formats water quality data for use in app. Must run
-  `QAQC_results` first.
+`format_results()` formats water quality data for use in
+wqdashboard. Must run `qaqc_results()` first.
 }
