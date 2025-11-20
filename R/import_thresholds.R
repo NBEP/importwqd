@@ -39,6 +39,7 @@ qaqc_thresholds <- function(.data) {
   .data[missing_col] <- NA
 
   dat <- .data %>%
+    wqformat::state_to_abb("State") %>%
     wqformat::col_to_numeric("Threshold_Min", silent = FALSE) %>%
     wqformat::col_to_numeric("Threshold_Max", silent = FALSE) %>%
     wqformat::col_to_numeric("Excellent", silent = FALSE) %>%
@@ -115,7 +116,7 @@ qaqc_thresholds <- function(.data) {
 #' @description `format_thresholds()` formats threshold metadata for use in
 #' [wqdashboard].
 #'
-#' @param .data Input dataframe.
+#' @param .data Input dataframe
 #'
 #' @return Updated dataframe.
 format_thresholds <- function(.data) {

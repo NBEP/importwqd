@@ -7,7 +7,7 @@
 format_thresholds(.data)
 }
 \arguments{
-\item{.data}{Input dataframe.}
+\item{.data}{Input dataframe}
 }
 \value{
 Updated dataframe.

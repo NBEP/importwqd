@@ -10,12 +10,12 @@
 #' * Standardizes units
 #'
 #' @param .data Input dataframe
-#' @param site_data Dataframe containing site metadata.
+#' @param sites Dataframe containing site metadata
 #'
 #' @seealso [format_results()], [score_results()]
 #'
 #' @return Updated dataframe
-qaqc_results <- function(.data, site_data) {
+qaqc_results <- function(.data, sites) {
   message("Checking data...")
 
   # Check - missing data?
@@ -49,7 +49,7 @@ qaqc_results <- function(.data, site_data) {
   }
 
   # Check - all sites valid?
-  site_list <- site_data$Site_ID
+  site_list <- sites$Site_ID
   data_sites <- unique(.data$Site_ID)
 
   chk <- setdiff(data_sites, site_list)
@@ -71,7 +71,7 @@ qaqc_results <- function(.data, site_data) {
 
   # Update depth category
   depth_col <- c("Max_Surface", "Max_Midwater", "Max_Depth")
-  site_depth <- dplyr::select(site_data, dplyr::any_of(c("Site_ID", depth_col)))
+  site_depth <- dplyr::select(sites, dplyr::any_of(c("Site_ID", depth_col)))
 
   dat <- dplyr::left_join(dat, site_depth, by = "Site_ID", keep = FALSE) %>%
     dplyr::mutate(
@@ -110,10 +110,12 @@ qaqc_results <- function(.data, site_data) {
 #' @description `format_results()` formats water quality data for use in
 #' wqdashboard. Must run `qaqc_results()` first.
 #'
+#' @param thresholds Dataframe containing threshold values
+#'
 #' @inheritParams qaqc_results
 #'
 #' @return Updated dataframe.
-format_results <- function(.data) {
+format_results <- function(.data, sites, thresholds) {
   message("Formatting data...")
 
   # Drop extra rows
@@ -151,102 +153,161 @@ format_results <- function(.data) {
 
   check_val_missing(dat, "Result")
 
+  # Adding threshold data
+  message("\tAdding threshold values")
+  df_temp <- dat %>%
+    dplyr::select("Site_ID", "Depth_Category", "Parameter") %>%
+    unique()
+
+  df_sites <- sites %>%
+    dplyr::select("Site_ID", "State", "Group")
+
+  df_temp <- dplyr::left_join(df_temp, df_sites) %>%
+    dplyr::mutate(
+      "thresh_temp" = mapply(
+        function(id, group, state, depth, par) {
+          add_thresholds(thresholds, id, group, state, depth, par)
+        },
+        .data$Site_ID, .data$Group, .data$State,
+        .data$Depth_Category, .data$Parameter, SIMPLIFY = FALSE
+      )
+    ) %>%
+    tidyr::unnest_wider("thresh_temp") %>%
+    dplyr::select(!c("State", "Group"))
+
+  dat <- dplyr::left_join(
+    dat, df_temp, by = c("Site_ID", "Depth_Category", "Parameter")
+  )
+
   # Adjust columns
   message("\tDropping extra columns")
 
   field_keep <- c(
     "Site_ID", "Date", "Year", "Parameter", "Result", "Result_Unit",
-    "Depth_Category"
+    "Depth_Category", "Calculation", "Min", "Max", "Excellent", "Good", "Fair",
+    "Best"
   )
 
   dat %>%
     dplyr::select(dplyr::any_of(field_keep)) %>%
-    dplyr::rename("Depth" = "Depth_Category") %>%
+    dplyr::rename("Depth" = "Depth_Category", "Unit" = "Result_Unit") %>%
     dplyr::mutate("Month" = strftime(.data$Date, "%B"))
 }
 
-#' Format df_score
+#' Calculate annual scores and format results for wqdashboard
 #'
-#' @description Formats water quality data for use in app. Must run
-#'   `format_results` first.
+#' @description `score_results()` calculates annual scores and formats data
+#' for use in [wqdashboard]. Must run `format_results()` first.
 #'
-#' @param df Input dataframe.
+#' @inheritParams qaqc_results
 #'
-#' @return Updated dataframe.
-score_results <- function(df) {
+#' @return Updated dataframe
+score_results <- function(.data, sites) {
   # Calculate scores, etc
-  message("\nFormatting df_score...\n")
-  field_group <- c("Site_ID", "Depth", "Parameter", "Unit", "Year")
+  message("Formatting data scores...")
 
-  df <- df %>%
-    dplyr::group_by_at(field_group) %>%
+  message("\tGrouping data")
+  dat <- .data %>%
+    dplyr::group_by_at(c("Site_ID", "Parameter", "Depth", "Year")) %>%
     dplyr::summarise(
-      score_max = max(Result),
-      score_min = min(Result),
-      score_mean = mean(Result),
-      score_median = median(Result),
+      "score_max" = max(.data$Result),
+      "score_min" = min(.data$Result),
+      "score_mean" = mean(.data$Result),
+      "score_median" = median(.data$Result),
+      "Unit" = dplyr::last(.data$Unit),
+      "score_typ" = dplyr::last(.data$Calculation),
+      "Min" = dplyr::last(.data$Min),
+      "Max" = dplyr::last(.data$Max),
+      "Excellent" = dplyr::last(.data$Excellent),
+      "Good" = dplyr::last(.data$Good),
+      "Fair" = dplyr::last(.data$Fair),
+      "Best" = dplyr::last(.data$Best),
       .groups = "drop"
     )
-  message("\tGrouped data by year\n\tCalculating scores...")
 
-  df <- df %>%
+  message("\tCalculating score")
+  dat <- dat %>%
     dplyr::mutate(
-      score_temp = mapply(
-        function(id, par, unit, depth, a, b, c, d) {
-          calculate_score(id, par, unit, depth, a, b, c, d)
-        },
-        Site_ID, Parameter, Unit, Depth,
-        score_max, score_min, score_mean, score_median,
-        SIMPLIFY = FALSE
+      "score_num" = dplyr::case_when(
+        is.na(.data$score_typ) | .data$score_typ == "mean" ~
+          .data$score_mean,
+        .data$score_typ == "max" ~ .data$score_max,
+        .data$score_typ == "min" ~ .data$score_min,
+        .data$score_typ == "median"  ~ .data$score_median,
+        TRUE ~ .data$score_mean
       )
     ) %>%
-    tidyr::unnest_wider(score_temp) %>%
-    dplyr::select(!score_max:score_median) %>%
-    dplyr::mutate(score_num = pretty_number(score_num))
-  df <- suppressMessages(check_val_count(df, "Depth"))
-  message("\t... ok")
+    dplyr::mutate(
+      "score_str" = dplyr::case_when(
+        is.na(.data$Best) ~ NA,
+        .data$Best == "high" & .data$score_num >= .data$Excellent ~ "Excellent",
+        .data$Best == "high" & .data$score_num >= .data$Good ~ "Good",
+        .data$Best == "high" & .data$score_num >= .data$Fair ~ "Fair",
+        .data$Best == "high" ~ "Poor",
+        .data$Best == "low" & .data$score_num <= .data$Excellent ~ "Excellent",
+        .data$Best == "low" & .data$score_num <= .data$Good ~ "Good",
+        .data$Best == "low" & .data$score_num <= .data$Fair ~ "Fair",
+        .data$Best == "low" ~ "Poor",
+        TRUE ~ NA
+      )
+    ) %>%
+    dplyr::mutate(
+      "score_str" = dplyr::case_when(
+        !is.na(.data$score_str) ~ .data$score_str,
+        is.na(.data$Min) & is.na(.data$Max) ~ NA,
+        !is.na(.data$Min) & .data$score_num < .data$Min ~
+          "Does Not Meet Criteria",
+        !is.na(.data$Max) & .data$score_num > .data$Max ~
+          "Does Not Meet Criteria",
+        TRUE ~ "Meets Criteria"
+      )
+    ) %>%
+    dplyr::select(
+      c(
+        "Site_ID", "Parameter", "Unit", "Depth", "Year", "score_typ",
+        "score_num", "score_str"
+      )
+    )
+
+  message("\tFormatting data")
 
   # Generate dataframe of site/year/parameter/depth combinations
-  list_sites <- unique(df_sites$Site_ID)
-  list_years <- unique(df_data$Year)
-  list_param <- unique(df_data$Parameter)
-
-  df_present <- df %>%
-    dplyr::select(Site_ID, Year) %>%
+  df_temp <- dat %>%
+    dplyr::select("Site_ID", "Year", "Parameter", "Depth") %>%
     unique()
-  df_all <- expand.grid(list_sites, list_years)
-  colnames(df_all) <- c("Site_ID", "Year")
-  df_missing <- dplyr::setdiff(df_all, df_present)
 
-  df_join <- merge(df_present, list_param, by = NULL) %>%
-    dplyr::rename(Parameter = y)
-  if ("Depth" %in% colnames(df)) {
-    df_join <- merge(df_join, unique(df$Depth), by = NULL) %>%
-      dplyr::rename(Depth = y)
+  df_all <- expand.grid(
+    Site_ID = unique(dat$Site_ID),
+    Year = unique(dat$Year),
+    Parameter = unique(dat$Parameter),
+    Depth = unique(dat$Depth)
+  )
+
+  df_missing <- dplyr::setdiff(df_all, df_temp)
+
+  if (nrow(df_missing) > 0) {
+    dat <- dplyr::bind_rows(dat, df_missing)
   }
-
-  # Join df with dataframe, add rows for missing site/year combos
-  df_join <- merge(df_join, df, all.x = TRUE)
-  df <- dplyr::bind_rows(df_join, df_missing)
 
   # Add site data
   site_col <- c(
     "Site_ID", "Site_Name", "Latitude", "Longitude", "Town_Code",
     "County_Code", "State", "Watershed", "Group"
   )
-  site_col <- intersect(colnames(df_sites), site_col)
-  sites_temp <- dplyr::select(df_sites, all_of(site_col))
-  if ("Town_Code" %in% colnames(sites_temp)) {
-    sites_temp <- sites_temp %>%
+
+  df_sites <- dplyr::select(sites, dplyr::any_of(site_col))
+
+  if ("Town_Code" %in% colnames(df_sites)) {
+    df_sites <- df_sites %>%
       dplyr::select(!dplyr::any_of("State")) %>%
-      dplyr::rename(Town = Town_Code)
-  } else if ("County_Code" %in% colnames(sites_temp)) {
-    sites_temp <- sites_temp %>%
+      dplyr::rename("Town" = "Town_Code")
+  } else if ("County_Code" %in% colnames(df_sites)) {
+    df_sites <- df_sites %>%
       dplyr::select(!dplyr::any_of("State")) %>%
-      dplyr::rename(County = County_Code)
+      dplyr::rename("County" = "County_Code")
   }
 
-  df <- merge(df, sites_temp, all.x = TRUE)
+  dat <- dplyr::left_join(dat, df_sites, by = "Site_ID")
 
   # Final tweaks
   col_order <- c(
@@ -254,19 +315,20 @@ score_results <- function(df) {
     "Watershed", "Group", "Depth", "Parameter", "Unit",
     "score_typ", "score_num", "score_str", "Latitude", "Longitude"
   )
-  col_order <- intersect(col_order, colnames(df))
 
-  df <- df %>%
-    dplyr::select(dplyr::all_of(col_order)) %>%
-    dplyr::mutate(score_str = dplyr::case_when(
-      !is.na(score_str) ~ score_str,
-      !is.na(score_num) ~ "No Threshold Established",
-      TRUE ~ "No Data Available"
-    )) %>%
-    dplyr::mutate(Parameter = dplyr::if_else(
-      is.na(Parameter), "-", Parameter
-    )) %>%
-    dplyr::arrange(Site_Name, Parameter)
-
-  df <- add_popup_text(df)
+  dat <- dat %>%
+    dplyr::select(dplyr::any_of(col_order)) %>%
+    dplyr::mutate(
+      "score_str" = dplyr::case_when(
+        !is.na(.data$score_str) ~ .data$score_str,
+        !is.na(.data$score_num) ~ "No Threshold Established",
+        TRUE ~ "No Data Available"
+      )
+    ) %>%
+    dplyr::mutate(
+      "Parameter" = dplyr::if_else(
+        is.na(.data$Parameter), "-", .data$Parameter
+      )
+    ) %>%
+    dplyr::arrange(.data$Site_Name, .data$Parameter)
 }

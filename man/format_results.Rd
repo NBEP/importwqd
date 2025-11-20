@@ -4,10 +4,14 @@
 \alias{format_results}
 \title{Format water quality data for wqdasbhoard}
 \usage{
-format_results(.data)
+format_results(.data, sites, thresholds)
 }
 \arguments{
 \item{.data}{Input dataframe}
+
+\item{sites}{Dataframe containing site metadata}
+
+\item{thresholds}{Dataframe containing threshold values}
 }
 \value{
 Updated dataframe.

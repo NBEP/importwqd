@@ -4,12 +4,12 @@
 \alias{qaqc_results}
 \title{Check water quality data for formatting errors}
 \usage{
-qaqc_results(.data, site_data)
+qaqc_results(.data, sites)
 }
 \arguments{
 \item{.data}{Input dataframe}
 
-\item{site_data}{Dataframe containing site metadata.}
+\item{sites}{Dataframe containing site metadata}
 }
 \value{
 Updated dataframe

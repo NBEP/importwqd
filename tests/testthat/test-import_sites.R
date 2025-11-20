@@ -86,6 +86,7 @@ test_that("format_sites works", {
 
   df_out <- tst$sites_final
   df_out$Town_Code <- NULL
+  df_out$County <- NULL
   df_out$County_Code <- c("Providence County, RI", "Worcester County, MA")
 
   expect_equal(

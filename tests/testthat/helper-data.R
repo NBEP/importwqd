@@ -1,5 +1,5 @@
 tst <- list(
-  # Fake site metadata
+  # Fake site metadata ----
   sites_raw = data.frame(
     Site_ID = c("001", "002"),
     Site_Name = c("Site1", "Site2"),
@@ -33,16 +33,16 @@ tst <- list(
     Site_Name = c("Site1", "Site2"),
     Latitude = c(41.83, 42.28),
     Longitude = c(-71.41, -71.77),
+    County = c("Providence", "Worcester"),
     State = c("RI", "MA"),
     Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
     Max_Surface = 1,
     Max_Midwater = c(9, 11),
     Max_Depth = c(10, 12),
-    Town_Code = c("Providence, RI", "Worcester, MA"),
-    County_Code = c("Providence", "Worcester")
+    Town_Code = c("Providence, RI", "Worcester, MA")
   ),
-  # Threshold data
+  # Threshold data ----
   threshold_raw = data.frame(
     State = c("RI", "RI", "RI", "MA", NA),
     Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA),
@@ -95,7 +95,7 @@ tst <- list(
     Fair = c(NA, 5, NA, NA, NA),
     Best = c(NA, "high", NA, NA, NA)
   ),
-  # Fake data
+  # Fake data ----
   data_raw = data.frame(
     Site_ID = c(
       "001", "001", "001", "001", "002", "002", "002", "002"
@@ -150,8 +150,15 @@ tst <- list(
     Year = c(2021, 2023),
     Parameter = "Dissolved oxygen (DO)",
     Result = c(0.05, 3, 0.05, 4, 6, 8, 7, 9),
-    Result_Unit = "mg/L",
+    Unit = "mg/L",
     Depth = "Surface",
+    Calculation = c("min", "min", "min", "min", "mean", "mean", "mean", "mean"),
+    Min = c(5, 5, 5, 5, NA, NA, NA, NA),
+    Max = NA_integer_,
+    Excellent = c(8, 8, 8, 8, NA, NA, NA, NA),
+    Good = c(6.5, 6.5, 6.5, 6.5, NA, NA, NA, NA),
+    Fair = c(5, 5, 5, 5, NA, NA, NA, NA),
+    Best = c("high", "high", "high", "high", NA, NA, NA, NA),
     Month = c("June", "July", "August", "May")
   )
 )

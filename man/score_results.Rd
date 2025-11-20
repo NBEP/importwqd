@@ -2,17 +2,19 @@
 % Please edit documentation in R/import_results.R
 \name{score_results}
 \alias{score_results}
-\title{Format df_score}
+\title{Calculate annual scores and format results for wqdashboard}
 \usage{
-score_results(df)
+score_results(.data, sites)
 }
 \arguments{
-\item{df}{Input dataframe.}
+\item{.data}{Input dataframe}
+
+\item{sites}{Dataframe containing site metadata}
 }
 \value{
-Updated dataframe.
+Updated dataframe
 }
 \description{
-Formats water quality data for use in app. Must run
-  `format_results` first.
+`score_results()` calculates annual scores and formats data
+for use in [wqdashboard]. Must run `format_results()` first.
 }

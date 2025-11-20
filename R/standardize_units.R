@@ -170,3 +170,131 @@ standardize_detection_units <- function(.data) {
     dplyr::arrange(.data$temp_row) %>%
     dplyr::select(!"temp_row")
 }
+
+#' Standardize threshold units
+#'
+#' @description `standardize_threshold_units()` updates threshold data so that
+#' each parameter uses the same units as those used in `result_data`.
+#'
+#' @param .data Dataframe
+#' @param result_data Dataframe containing result data.
+#'
+#' @returns Updated dataframe. Unit and threshold values will be updated to
+#' match the units used in `result_data`.
+standardize_threshold_units <- function(.data, result_data) {
+  result_units <- result_data %>%
+    dplyr::group_by(.data$Parameter) %>%
+    dplyr::summarize("temp_unit" = dplyr::last(.data$Unit))
+
+  dat <- dplyr::left_join(.data, result_units, by ="Parameter")
+
+  # Check - all units match?
+  chk <- dat$Unit == dat$temp_unit | is.na(dat$temp_unit)
+  if (all(chk)) {
+    return(.data)
+  }
+
+  # Split data in two groups - fine as is, convert unit
+  dat <- dplyr::mutate(dat, "temp_row" = dplyr::row_number())
+
+  dat1 <- dat[which(chk), ]
+  dat2 <- dat[which(!chk), ] %>%
+    dplyr::mutate(
+      "temp_min" = mapply(
+        function(x, y, z) convert_unit(x, y, z),
+        .data$Min, .data$Unit, .data$temp_unit
+      )
+    ) %>%
+    dplyr::mutate(
+      "temp_max" = mapply(
+        function(x, y, z) convert_unit(x, y, z),
+        .data$Max, .data$Unit, .data$temp_unit
+      )
+    ) %>%
+    dplyr::mutate(
+      "temp_exc" = mapply(
+        function(x, y, z) convert_unit(x, y, z),
+        .data$Excellent, .data$Unit, .data$temp_unit
+      )
+    ) %>%
+    dplyr::mutate(
+      "temp_good" = mapply(
+        function(x, y, z) convert_unit(x, y, z),
+        .data$Good, .data$Unit, .data$temp_unit
+      )
+    ) %>%
+    dplyr::mutate(
+      "temp_fair" = mapply(
+        function(x, y, z) convert_unit(x, y, z),
+        .data$Fair, .data$Unit, .data$temp_unit
+      )
+    )
+
+  # Check - any rows fail to update data?
+  chk <- (!is.na(dat2$temp_min) & dat2$temp_min == -999999) |
+    (!is.na(dat2$temp_max) & dat2$temp_max == -999999) |
+    (!is.na(dat2$temp_exc) & dat2$temp_exc == -999999) |
+    (!is.na(dat2$temp_good) & dat2$temp_good == -999999) |
+    (!is.na(dat2$temp_fair) & dat2$temp_fair == -999999)
+  if (any(chk)) {
+    bad_par <- dat2[which(chk), ]
+    bad_par <- unique(bad_par$Parameter)
+    stop(
+      "Threshold and result units do not match. Check parameters: ",
+      paste(bad_par, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  dat2 <- dat2 %>%
+    dplyr::mutate(
+      "Min" = dplyr::if_else(
+        is.na(.data$temp_min),
+        .data$Min,
+        .data$temp_min
+      )
+    ) %>%
+    dplyr::mutate(
+      "Max" = dplyr::if_else(
+        is.na(.data$temp_max),
+        .data$Max,
+        .data$temp_max
+      )
+    ) %>%
+    dplyr::mutate(
+      "Excellent" = dplyr::if_else(
+        is.na(.data$temp_exc),
+        .data$Excellent,
+        .data$temp_exc
+      )
+    ) %>%
+    dplyr::mutate(
+      "Good" = dplyr::if_else(
+        is.na(.data$temp_good),
+        .data$Good,
+        .data$temp_good
+      )
+    ) %>%
+    dplyr::mutate(
+      "Fair" = dplyr::if_else(
+        is.na(.data$temp_fair),
+        .data$Fair,
+        .data$temp_fair
+      )
+    ) %>%
+    dplyr::mutate(
+      "Unit" = dplyr::if_else(
+        is.na(.data$temp_unit),
+        .data$Unit,
+        .data$temp_unit
+      )
+    ) %>%
+    dplyr::select(
+      !c("temp_max", "temp_min", "temp_exc", "temp_good", "temp_fair")
+    )
+
+  # Combine data
+  rbind(dat1, dat2) %>%
+    dplyr::arrange(.data$temp_row) %>%
+    dplyr::select(!c("temp_row", "temp_unit"))
+}

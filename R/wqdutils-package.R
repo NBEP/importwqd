@@ -5,5 +5,6 @@
 #' @importFrom data.table :=
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
+#' @importFrom stats median
 ## usethis namespace: end
 NULL

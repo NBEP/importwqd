@@ -122,8 +122,7 @@ format_sites <- function(.data) {
           paste0(.data$Town, ", ", .data$State)
         )
       ) %>%
-      dplyr::mutate("County_Code" = .data$County) %>%
-      dplyr::select(!c("Town", "County"))
+      dplyr::select(!"Town")
   } else if ("County" %in% colnames(dat)) {
     message("\tUpdating county names")
     dat <- dat %>%

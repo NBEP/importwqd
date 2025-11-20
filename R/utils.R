@@ -206,3 +206,57 @@ convert_unit <- function(x, old_unit, new_unit) {
 
   y
 }
+
+#' Add threshold values
+#'
+#' @description
+#' `add_thresholds()` checks stored threshold values, and locates the relevant
+#' threshold values for a given site, parameter, and depth. If no thresholds
+#' found, returns NULL.
+#'
+#' @param site_id String. Site ID.
+#' @param group String. Site group.
+#' @param state String. State where the site is located.
+#' @param depth String. Depth category.
+#' @param parameter String. Parameter.
+#'
+#' @return One row dataframe with list of thresholds for provided site,
+#' parameter, and depth. If no thresholds found, returns NULL.
+#'
+#' @noRd
+add_thresholds <- function(
+    thresholds, site_id, group, state, depth, parameter) {
+
+  dat <- thresholds %>%
+    dplyr::filter(
+      .data$Parameter == parameter,
+      is.na(.data$State) | .data$State == state,
+      is.na(.data$Group) | .data$Group == group,
+      is.na(.data$Site) | .data$Site == site_id,
+      is.na(.data$Depth) | .data$Depth == depth
+    )
+
+  if (nrow(dat) == 0) {
+    return(
+      list(
+        Calculation = "mean",
+        Min = NA,
+        Max = NA,
+        Excellent = NA,
+        Good = NA,
+        Fair = NA,
+        Best = NA
+      )
+    )
+  }
+
+  list(
+    Calculation = dat$Calculation[1],
+    Min = dat$Min[1],
+    Max = dat$Max[1],
+    Excellent = dat$Excellent[1],
+    Good = dat$Good[1],
+    Fair = dat$Fair[1],
+    Best = dat$Best[1]
+  )
+}

@@ -79,7 +79,7 @@ test_that("qaqc_results error messages", {
 test_that("format_results works", {
   expect_equal(
     suppressMessages(
-      format_results(tst$data_qaqc)
+      format_results(tst$data_qaqc, tst$sites_qaqc, tst$threshold_final)
     ),
     tst$data_final
   )

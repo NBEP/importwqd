@@ -134,3 +134,36 @@ test_that("convert_unit works", {
   expect_equal(convert_unit(42, "deg C", "deg C"), 42)
   expect_equal(convert_unit(0, "deg C", "mg"), -999999)
 })
+
+test_that("add_thresholds works", {
+  thresh <- tst$threshold_final
+
+  expect_equal(
+    add_thresholds(
+      thresh, "001", "Coldwater", "RI", "Surface", "Dissolved oxygen (DO)"
+    ),
+    list(
+      Calculation = "min",
+      Min = 5,
+      Max = NA_integer_,
+      Excellent = 8,
+      Good = 6.5,
+      Fair = 5,
+      Best = "high"
+    )
+  )
+  expect_equal(
+    add_thresholds(
+      thresh, "002", "Warmwater", "MA", "Surface", "Dissolved oxygen (DO)"
+    ),
+    list(
+      Calculation = "mean",
+      Min = NA,
+      Max = NA,
+      Excellent = NA,
+      Good = NA,
+      Fair = NA,
+      Best = NA
+    )
+  )
+})

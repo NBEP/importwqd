@@ -88,3 +88,41 @@ test_that("standardize_detection_units error messages", {
     regexp = "Result and detection units are incompatible. Check rows: 1, 5"
   )
 })
+
+# Test standardize_threshold_units ----
+test_that("standardize_threshold_units works", {
+  df_param <- data.frame(
+    "Parameter" = "Dissolved oxygen (DO)",
+    "Unit" = "ug/L"
+  )
+
+  df_out <- tst$threshold_final
+  df_out$Unit <- c("None", "ug/L", "ug/L", "ug/L", "mg/L")
+  df_out$Min <- c(6.5, 5000, 4800, 5000, NA)
+  df_out$Excellent <- c(NA, 8000, NA, NA, NA)
+  df_out$Good <- c(NA, 6500, NA, NA, NA)
+  df_out$Fair <- c(NA, 5000, NA, NA, NA)
+
+  expect_equal(
+    standardize_threshold_units(tst$threshold_final, df_param),
+    df_out
+  )
+
+  # Check edge case - all units correct
+  expect_equal(
+    standardize_threshold_units(tst$threshold_final, tst$data_final),
+    tst$threshold_final
+  )
+})
+
+test_that("standardize_threshold_units error messages", {
+  df_param <- data.frame(
+    "Parameter" = "Dissolved oxygen (DO)",
+    "Unit" = "deg C"
+  )
+
+  expect_error(
+    standardize_threshold_units(tst$threshold_final, df_param),
+    regexp = "Threshold and result units do not match"
+  )
+})
