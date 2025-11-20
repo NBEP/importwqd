@@ -1,5 +1,5 @@
 tst <- list(
-  # Fake site metadata ----
+  # Sites ----
   sites_raw = data.frame(
     Site_ID = c("001", "002"),
     Site_Name = c("Site1", "Site2"),
@@ -42,7 +42,7 @@ tst <- list(
     Max_Depth = c(10, 12),
     Town_Code = c("Providence, RI", "Worcester, MA")
   ),
-  # Threshold data ----
+  # Thresholds ----
   threshold_raw = data.frame(
     State = c("RI", "RI", "RI", "MA", NA),
     Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA),
@@ -95,7 +95,7 @@ tst <- list(
     Fair = c(NA, 5, NA, NA, NA),
     Best = c(NA, "high", NA, NA, NA)
   ),
-  # Fake data ----
+  # Data ----
   data_raw = data.frame(
     Site_ID = c(
       "001", "001", "001", "001", "002", "002", "002", "002"
@@ -160,5 +160,29 @@ tst <- list(
     Fair = c(5, 5, 5, 5, NA, NA, NA, NA),
     Best = c("high", "high", "high", "high", NA, NA, NA, NA),
     Month = c("June", "July", "August", "May")
+  ),
+  data_score = data.frame(
+    Year = c(2021, 2023),
+    Site_Name = c("Site1", "Site1", "Site2", "Site2"),
+    Site_ID = c("001", "001", "002", "002"),
+    Town = c(
+      "Providence, RI", "Providence, RI", "Worcester, MA", "Worcester, MA"
+    ),
+    # State = c("RI", "RI", "MA", "MA"),
+    Watershed = c(
+      "Narragnasett Bay", "Narragnasett Bay", "Upper Blackstone River",
+      "Upper Blackstone River"
+    ),
+    Group = c("Coldwater", "Coldwater", "Warmwater", "Warmwater"),
+    Depth = "Surface",
+    Parameter = "Dissolved oxygen (DO)",
+    Unit = "mg/L",
+    score_typ = c("min", "min", "mean", "mean"),
+    score_num = c(0.05, 3, 6.5, 8.5),
+    score_str = c(
+      "Poor", "Poor", "No Threshold Established", "No Threshold Established"
+    ),
+    Latitude = c(41.83, 41.83, 42.28, 42.28),
+    Longitude = c(-71.41, -71.41, -71.77, -71.77)
   )
 )

@@ -84,3 +84,61 @@ test_that("format_results works", {
     tst$data_final
   )
 })
+
+# Test score_results ----
+test_that("score_results works", {
+  expect_equal(
+    suppressMessages(
+      score_results(tst$data_final, tst$sites_final)
+    ),
+    tst$data_score
+  )
+
+  # Test edge case
+  df_in <- tst$data_final
+  df_in$Date[1] <- as.Date("2022-06-30")
+  df_in$Year[1] <- 2022
+
+  df_sites <- tst$sites_final
+  df_sites$Town_Code <- NULL
+  df_sites$County <- NULL
+  df_sites$County_Code <- c("Providence County", "Worcester County")
+
+  df_out <- data.frame(
+    Year = c(2021, 2022, 2023, 2021, 2023, 2022),
+    Site_Name = c("Site1", "Site1", "Site1", "Site2", "Site2", "Site2"),
+    Site_ID = c("001", "001", "001", "002", "002", "002"),
+    County = c(
+      "Providence County", "Providence County", "Providence County",
+      "Worcester County", "Worcester County", "Worcester County"
+    ),
+    # State = c("RI", "RI", "RI", "MA", "MA", "MA"),
+    Watershed = c(
+      "Narragnasett Bay", "Narragnasett Bay", "Narragnasett Bay",
+      "Upper Blackstone River", "Upper Blackstone River",
+      "Upper Blackstone River"
+    ),
+    Group = c(
+      "Coldwater", "Coldwater", "Coldwater", "Warmwater", "Warmwater",
+      "Warmwater"
+    ),
+    Depth = "Surface",
+    Parameter = "Dissolved oxygen (DO)",
+    Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "mg/L", NA),
+    score_typ = c("min", "min", "min", "mean", "mean", NA),
+    score_num = c(0.05, 0.05, 3, 6.5, 8.5, NA),
+    score_str = c(
+      "Poor", "Poor", "Poor", "No Threshold Established",
+      "No Threshold Established", "No Data Available"
+    ),
+    Latitude = c(41.83, 41.83, 41.83, 42.28, 42.28, 42.28),
+    Longitude = c(-71.41, -71.41, -71.41, -71.77, -71.77, -71.77)
+  )
+
+  expect_equal(
+    suppressMessages(
+      score_results(df_in, df_sites)
+    ),
+    df_out
+  )
+})

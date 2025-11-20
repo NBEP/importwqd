@@ -223,7 +223,8 @@ score_results <- function(.data, sites) {
       "Fair" = dplyr::last(.data$Fair),
       "Best" = dplyr::last(.data$Best),
       .groups = "drop"
-    )
+    ) %>%
+    data.frame()  # fix test error
 
   message("\tCalculating score")
   dat <- dat %>%
@@ -316,7 +317,7 @@ score_results <- function(.data, sites) {
     "score_typ", "score_num", "score_str", "Latitude", "Longitude"
   )
 
-  dat <- dat %>%
+  dat %>%
     dplyr::select(dplyr::any_of(col_order)) %>%
     dplyr::mutate(
       "score_str" = dplyr::case_when(
