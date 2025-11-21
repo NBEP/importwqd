@@ -14,6 +14,8 @@
 #' @seealso [format_sites()]
 #'
 #' @return Updated dataframe
+#'
+#' @export
 qaqc_sites <- function(.data) {
   message("Checking site metadata...")
 
@@ -41,6 +43,12 @@ qaqc_sites <- function(.data) {
   check_val_duplicate(.data, "Site_ID")
   check_val_duplicate(.data, "Site_Name", is_stop = FALSE)
   check_val_duplicate(.data, c("Latitude", "Longitude"), is_stop = FALSE)
+
+  # Drop empty columns
+  chk <- apply(.data, 2, function(x) all(is.na(x)))
+  empty_col <- colnames(.data)[which(chk)]
+  drop_col <- setdiff(empty_col, field_optional)
+  .data[drop_col] <- NULL
 
   # Update columns
   missing_col <- setdiff(field_optional, colnames(.data))
@@ -82,6 +90,8 @@ qaqc_sites <- function(.data) {
 #' @seealso [qaqc_sites()]
 #'
 #' @return Updated dataframe.
+#'
+#' @export
 format_sites <- function(.data) {
   message("Formatting site data...")
 

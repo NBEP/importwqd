@@ -11,7 +11,7 @@ standardize_result_units(.data)
 }
 \value{
 Updated dataframe. Unit and result values will be updated to ensure
-each parameter uses a single, consitent unit.
+each parameter uses a single, consistent unit.
 }
 \description{
 `standardize_result_units()` updates result data so that each

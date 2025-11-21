@@ -10,7 +10,7 @@ format_thresholds(.data)
 \item{.data}{Input dataframe}
 }
 \value{
-Updated dataframe.
+Updated dataframe
 }
 \description{
 `format_thresholds()` formats threshold metadata for use in

@@ -15,6 +15,8 @@
 #' @seealso [format_results()], [score_results()]
 #'
 #' @return Updated dataframe
+#'
+#' @export
 qaqc_results <- function(.data, sites) {
   message("Checking data...")
 
@@ -114,7 +116,9 @@ qaqc_results <- function(.data, sites) {
 #'
 #' @inheritParams qaqc_results
 #'
-#' @return Updated dataframe.
+#' @return Updated dataframe
+#'
+#' @export
 format_results <- function(.data, sites, thresholds) {
   message("Formatting data...")
 
@@ -204,6 +208,8 @@ format_results <- function(.data, sites, thresholds) {
 #' @inheritParams qaqc_results
 #'
 #' @return Updated dataframe
+#'
+#' @export
 score_results <- function(.data, sites) {
   # Calculate scores, etc
   message("Formatting data scores...")

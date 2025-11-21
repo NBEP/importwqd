@@ -11,7 +11,8 @@ tst <- list(
     Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
     Max_Depth_m = c(10, 12),
-    Red_Herring = "foo"
+    Red_Herring = "foo",
+    Blank_Herring = NA
   ),
   sites_qaqc = data.frame(
     Site_ID = c("001", "002"),

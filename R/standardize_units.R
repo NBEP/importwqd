@@ -6,7 +6,9 @@
 #' @param .data Dataframe
 #'
 #' @returns Updated dataframe. Unit and result values will be updated to ensure
-#' each parameter uses a single, consitent unit.
+#' each parameter uses a single, consistent unit.
+#'
+#' @export
 standardize_result_units <- function(.data) {
   # Set var
   dat_temp <- dplyr::filter(.data, !is.na(.data$Result))
@@ -100,6 +102,8 @@ standardize_result_units <- function(.data) {
 #'
 #' @returns Updated dataframe. Detection limit and detection limit unit will
 #' be updated to match that row's result unit.
+#'
+#' @export
 standardize_detection_units <- function(.data) {
   # Check - all rows okay as is?
   chk <- is.na(.data$Detection_Limit_Unit) |
@@ -181,6 +185,8 @@ standardize_detection_units <- function(.data) {
 #'
 #' @returns Updated dataframe. Unit and threshold values will be updated to
 #' match the units used in `result_data`.
+#'
+#' @export
 standardize_threshold_units <- function(.data, result_data) {
   result_units <- result_data %>%
     dplyr::group_by(.data$Parameter) %>%

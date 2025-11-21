@@ -14,7 +14,7 @@ format_results(.data, sites, thresholds)
 \item{thresholds}{Dataframe containing threshold values}
 }
 \value{
-Updated dataframe.
+Updated dataframe
 }
 \description{
 `format_results()` formats water quality data for use in

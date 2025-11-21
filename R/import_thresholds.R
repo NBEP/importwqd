@@ -9,6 +9,8 @@
 #' @param .data Input dataframe
 #'
 #' @return Updated dataframe
+#'
+#' @export
 qaqc_thresholds <- function(.data) {
   message("Checking thresholds...")
 
@@ -118,7 +120,9 @@ qaqc_thresholds <- function(.data) {
 #'
 #' @param .data Input dataframe
 #'
-#' @return Updated dataframe.
+#' @return Updated dataframe
+#'
+#' @export
 format_thresholds <- function(.data) {
   message("Formatting threshold data...")
 
