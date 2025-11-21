@@ -10,7 +10,8 @@ coverage](https://codecov.io/gh/NBEP/wqdutils/graph/badge.svg)](https://app.code
 [![R-CMD-check](https://github.com/NBEP/wqdutils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NBEP/wqdutils/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of wqdutils is to …
+wqdutils contains helper functions that format data for
+[wqdashboard](https://github.com/NBEP/wqdashboard).
 
 ## Installation
 
@@ -18,8 +19,12 @@ You can install the development version of wqdutils from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("NBEP/wqdutils")
+# install
+install.packages('remotes')
+remotes::install_github('NBEP/wqdutils')
+
+# load
+library(wqdutils)
 ```
 
 ## Example

@@ -81,9 +81,9 @@ qaqc_thresholds <- function(.data) {
 
   chk <- is.na(dat$Excellent) | is.na(dat$Good) | is.na(dat$Fair) |
     (dat$Excellent > dat$Fair & dat$Excellent >= dat$Good &
-       dat$Good >= dat$Fair) |
+      dat$Good >= dat$Fair) |
     (dat$Excellent < dat$Fair & dat$Excellent <= dat$Good &
-       dat$Good <= dat$Fair)
+      dat$Good <= dat$Fair)
 
   if (any(!chk)) {
     stop(

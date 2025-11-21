@@ -225,8 +225,8 @@ convert_unit <- function(x, old_unit, new_unit) {
 #'
 #' @noRd
 add_thresholds <- function(
-    thresholds, site_id, group, state, depth, parameter) {
-
+  thresholds, site_id, group, state, depth, parameter
+) {
   dat <- thresholds %>%
     dplyr::filter(
       .data$Parameter == parameter,

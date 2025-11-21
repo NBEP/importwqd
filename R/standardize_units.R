@@ -186,7 +186,7 @@ standardize_threshold_units <- function(.data, result_data) {
     dplyr::group_by(.data$Parameter) %>%
     dplyr::summarize("temp_unit" = dplyr::last(.data$Unit))
 
-  dat <- dplyr::left_join(.data, result_units, by ="Parameter")
+  dat <- dplyr::left_join(.data, result_units, by = "Parameter")
 
   # Check - all units match?
   chk <- dat$Unit == dat$temp_unit | is.na(dat$temp_unit)

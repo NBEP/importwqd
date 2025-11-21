@@ -169,14 +169,16 @@ format_results <- function(.data, sites, thresholds) {
           add_thresholds(thresholds, id, group, state, depth, par)
         },
         .data$Site_ID, .data$Group, .data$State,
-        .data$Depth_Category, .data$Parameter, SIMPLIFY = FALSE
+        .data$Depth_Category, .data$Parameter,
+        SIMPLIFY = FALSE
       )
     ) %>%
     tidyr::unnest_wider("thresh_temp") %>%
     dplyr::select(!c("State", "Group"))
 
   dat <- dplyr::left_join(
-    dat, df_temp, by = c("Site_ID", "Depth_Category", "Parameter")
+    dat, df_temp,
+    by = c("Site_ID", "Depth_Category", "Parameter")
   )
 
   # Adjust columns
@@ -224,7 +226,7 @@ score_results <- function(.data, sites) {
       "Best" = dplyr::last(.data$Best),
       .groups = "drop"
     ) %>%
-    data.frame()  # fix test error
+    data.frame() # fix test error
 
   message("\tCalculating score")
   dat <- dat %>%
@@ -234,7 +236,7 @@ score_results <- function(.data, sites) {
           .data$score_mean,
         .data$score_typ == "max" ~ .data$score_max,
         .data$score_typ == "min" ~ .data$score_min,
-        .data$score_typ == "median"  ~ .data$score_median,
+        .data$score_typ == "median" ~ .data$score_median,
         TRUE ~ .data$score_mean
       )
     ) %>%
