@@ -10,13 +10,13 @@ coverage](https://codecov.io/gh/NBEP/importwqd/graph/badge.svg)](https://app.cod
 [![R-CMD-check](https://github.com/NBEP/importwqd/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NBEP/importwqd/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-importwqd contains helper functions that format data for
-[wqdashboard](https://github.com/NBEP/wqdashboard).
+importwqd is an auxiliary package for
+[wqdashboard](https://github.com/NBEP/wqdashboard). Its functions are
+designed to import, standardize, and format data for wqdashboard.
 
 ## Installation
 
-You can install the development version of importwqd from
-[GitHub](https://github.com/) with:
+You can install importwqd from [GitHub](https://github.com/) with:
 
 ``` r
 # install
@@ -25,13 +25,4 @@ remotes::install_github('NBEP/importwqd')
 
 # load
 library(importwqd)
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(importwqd)
-## basic example code
 ```
