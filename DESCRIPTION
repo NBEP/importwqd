@@ -1,4 +1,4 @@
-Package: wqdutils
+Package: importwqd
 Type: Package
 Title: Helper package for wqdashboard
 Version: 0.1.0

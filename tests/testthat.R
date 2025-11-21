@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(wqdutils)
+library(importwqd)
 
-test_check("wqdutils")
+test_check("importwqd")
