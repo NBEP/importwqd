@@ -4,10 +4,13 @@
 \alias{qaqc_thresholds}
 \title{Check thresholds metadata for formatting errors}
 \usage{
-qaqc_thresholds(.data)
+qaqc_thresholds(.data, in_format = "wqdashboard")
 }
 \arguments{
 \item{.data}{Input dataframe}
+
+\item{in_format}{String. Input format used for parameters, units. Default
+"wqdashboard"}
 }
 \value{
 Updated dataframe

@@ -7,11 +7,13 @@
 #' * Checks if rows contain logical threshold values
 #'
 #' @param .data Input dataframe
+#' @param in_format String. Input format used for parameters, units. Default
+#' "wqdashboard"
 #'
 #' @return Updated dataframe
 #'
 #' @export
-qaqc_thresholds <- function(.data) {
+qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
   message("Checking thresholds...")
 
   # Define variables
@@ -41,6 +43,8 @@ qaqc_thresholds <- function(.data) {
   .data[missing_col] <- NA
 
   dat <- .data %>%
+    wqformat::update_param("Parameter", in_format, "wqdashboard") %>%
+    wqformat::update_unit("Unit", in_format, "wqdashboard") %>%
     wqformat::state_to_abb("State") %>%
     wqformat::col_to_numeric("Threshold_Min", silent = FALSE) %>%
     wqformat::col_to_numeric("Threshold_Max", silent = FALSE) %>%
@@ -124,7 +128,7 @@ qaqc_thresholds <- function(.data) {
 #'
 #' @export
 format_thresholds <- function(.data) {
-  message("Formatting threshold data...")
+  message("Formatting thresholds...")
 
   .data %>%
     dplyr::rename(

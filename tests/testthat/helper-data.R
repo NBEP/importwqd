@@ -47,7 +47,7 @@ tst <- list(
     Depth_Category = c(NA, "Surface", NA, NA, NA),
     Parameter = c(
       "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "pH", "Nitrates"
+      "pH", "Nitrate"
     ),
     Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L"),
     Calculation = c("minimum", "minimum", "minimum", "mean", "max"),
@@ -65,7 +65,7 @@ tst <- list(
     Depth_Category = c(NA, "Surface", NA, NA, NA),
     Parameter = c(
       "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "pH", "Nitrates"
+      "pH", "Nitrate"
     ),
     Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L"),
     Calculation = c("minimum", "minimum", "minimum", "mean", "max"),
@@ -82,7 +82,7 @@ tst <- list(
     Depth = c(NA, NA, "Surface", NA, NA),
     Parameter = c(
       "pH", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "Dissolved oxygen (DO)", "Nitrates"
+      "Dissolved oxygen (DO)", "Nitrate"
     ),
     Unit = c("None", "mg/L", "mg/L", "mg/L", "mg/L"),
     Calculation = c("mean", "min", "min", "min", "max"),
