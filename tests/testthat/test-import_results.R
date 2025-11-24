@@ -100,19 +100,13 @@ test_that("score_results works", {
   df_in$Year[1] <- 2022
 
   df_sites <- tst$sites_final
-  df_sites$Town_Code <- NULL
-  df_sites$County <- NULL
-  df_sites$County_Code <- c("Providence County", "Worcester County")
+  df_sites$Town <- NULL
 
   df_out <- data.frame(
     Year = c(2021, 2022, 2023, 2021, 2023, 2022),
     Site_Name = c("Site1", "Site1", "Site1", "Site2", "Site2", "Site2"),
     Site_ID = c("001", "001", "001", "002", "002", "002"),
-    County = c(
-      "Providence County", "Providence County", "Providence County",
-      "Worcester County", "Worcester County", "Worcester County"
-    ),
-    # State = c("RI", "RI", "RI", "MA", "MA", "MA"),
+    State = c("RI", "RI", "RI", "MA", "MA", "MA"),
     Watershed = c(
       "Narragnasett Bay", "Narragnasett Bay", "Narragnasett Bay",
       "Upper Blackstone River", "Upper Blackstone River",

@@ -300,29 +300,24 @@ score_results <- function(.data, sites) {
 
   # Add site data
   site_col <- c(
-    "Site_ID", "Site_Name", "Latitude", "Longitude", "Town_Code",
-    "County_Code", "State", "Watershed", "Group"
+    "Site_ID", "Site_Name", "Latitude", "Longitude", "Town", "State",
+    "Watershed", "Group"
   )
 
   df_sites <- dplyr::select(sites, dplyr::any_of(site_col))
 
-  if ("Town_Code" %in% colnames(df_sites)) {
+  if ("Town" %in% colnames(df_sites)) {
     df_sites <- df_sites %>%
-      dplyr::select(!dplyr::any_of("State")) %>%
-      dplyr::rename("Town" = "Town_Code")
-  } else if ("County_Code" %in% colnames(df_sites)) {
-    df_sites <- df_sites %>%
-      dplyr::select(!dplyr::any_of("State")) %>%
-      dplyr::rename("County" = "County_Code")
+      dplyr::select(!dplyr::any_of("State"))
   }
 
   dat <- dplyr::left_join(dat, df_sites, by = "Site_ID")
 
   # Final tweaks
   col_order <- c(
-    "Year", "Site_Name", "Site_ID", "Town", "County", "State",
-    "Watershed", "Group", "Depth", "Parameter", "Unit",
-    "score_typ", "score_num", "score_str", "Latitude", "Longitude"
+    "Year", "Site_Name", "Site_ID", "Town", "State", "Watershed", "Group",
+    "Depth", "Parameter", "Unit", "score_typ", "score_num", "score_str",
+    "Latitude", "Longitude"
   )
 
   dat %>%

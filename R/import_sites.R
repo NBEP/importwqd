@@ -24,7 +24,7 @@ qaqc_sites <- function(.data, state = NA) {
   # Define vars
   field_need <- c("Site_ID", "Site_Name", "Latitude", "Longitude")
   field_optional <- c(
-    "Town", "County", "State", "Watershed", "Group", "Max_Surface_Depth_m",
+    "Town", "State", "Watershed", "Group", "Max_Surface_Depth_m",
     "Max_Midwater_Depth_m", "Max_Depth_m"
   )
 
@@ -106,7 +106,7 @@ format_sites <- function(.data) {
 
   # Drop extra columns
   field_all <- c(
-    "Site_ID", "Site_Name", "Latitude", "Longitude", "Town", "County", "State",
+    "Site_ID", "Site_Name", "Latitude", "Longitude", "Town", "State",
     "Watershed", "Group", "Max_Surface_Depth_m", "Max_Midwater_Depth_m",
     "Max_Depth_m"
   )
@@ -121,13 +121,11 @@ format_sites <- function(.data) {
     ) %>%
     drop_uniform_col("Watershed") %>%
     drop_uniform_col("State") %>%
-    drop_empty_col("County") %>%
     drop_empty_col("Town")
 
   if (!"State" %in% colnames(dat)) {
     dat$State <- NA
     dat <- dat %>%
-      drop_uniform_col("County") %>%
       drop_uniform_col("Town")
   }
 
@@ -135,31 +133,12 @@ format_sites <- function(.data) {
     message("\tUpdating town names")
     dat <- dat %>%
       dplyr::mutate(
-        "Town_Code" = dplyr::if_else(
+        "Town" = dplyr::if_else(
           is.na(.data$State),
           .data$Town,
           paste0(.data$Town, ", ", .data$State)
         )
-      ) %>%
-      dplyr::select(!"Town")
-  } else if ("County" %in% colnames(dat)) {
-    message("\tUpdating county names")
-    dat <- dat %>%
-      dplyr::mutate(
-        "County_Code" = dplyr::if_else(
-          grepl("County", .data$County),
-          .data$County,
-          paste(.data$County, "County")
-        )
-      ) %>%
-      dplyr::mutate(
-        "County_Code" = dplyr::if_else(
-          is.na(.data$State),
-          .data$County_Code,
-          paste0(.data$County_Code, ", ", .data$State)
-        )
       )
-    dat$County <- NULL
   }
 
   dat %>%

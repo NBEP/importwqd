@@ -11,7 +11,7 @@ test_that("qaqc_sites works", {
 
   df_out <- tst$sites_qaqc
   df_out$State <- "RI"
-  df_out <- df_out[c(1:6, 8:11, 7, 12:13)] # Move location of "State" column
+  df_out <- df_out[c(1:5, 7:10, 6, 11:12)] # Move location of "State" column
 
   expect_equal(
     suppressMessages(qaqc_sites(df_in, "Rhode Island")),
@@ -84,7 +84,7 @@ test_that("format_sites works", {
 
   df_out <- tst$sites_final
   df_out$State <- NULL
-  df_out$Town_Code <- c("Providence", "Worcester")
+  df_out$Town <- c("Providence", "Worcester")
 
   expect_equal(
     suppressMessages(
@@ -98,9 +98,7 @@ test_that("format_sites works", {
   df_in$Town <- NA
 
   df_out <- tst$sites_final
-  df_out$Town_Code <- NULL
-  df_out$County <- NULL
-  df_out$County_Code <- c("Providence County, RI", "Worcester County, MA")
+  df_out$Town <- NULL
 
   expect_equal(
     suppressMessages(

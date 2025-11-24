@@ -6,7 +6,6 @@ tst <- list(
     Latitude = c(41.83, 42.28),
     Longitude = c(-71.41, -71.77),
     Town = c("Providence", "Worcester"),
-    County = c("Providence", "Worcester"),
     State = c("Rhode Island", "Massachusetts"),
     Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
@@ -20,7 +19,6 @@ tst <- list(
     Latitude = c(41.83, 42.28),
     Longitude = c(-71.41, -71.77),
     Town = c("Providence", "Worcester"),
-    County = c("Providence", "Worcester"),
     State = c("RI", "MA"),
     Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
@@ -34,14 +32,13 @@ tst <- list(
     Site_Name = c("Site1", "Site2"),
     Latitude = c(41.83, 42.28),
     Longitude = c(-71.41, -71.77),
-    County = c("Providence", "Worcester"),
+    Town = c("Providence, RI", "Worcester, MA"),
     State = c("RI", "MA"),
     Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
     Max_Surface = 1,
     Max_Midwater = c(9, 11),
-    Max_Depth = c(10, 12),
-    Town_Code = c("Providence, RI", "Worcester, MA")
+    Max_Depth = c(10, 12)
   ),
   # Thresholds ----
   threshold_raw = data.frame(
@@ -169,7 +166,6 @@ tst <- list(
     Town = c(
       "Providence, RI", "Providence, RI", "Worcester, MA", "Worcester, MA"
     ),
-    # State = c("RI", "RI", "MA", "MA"),
     Watershed = c(
       "Narragnasett Bay", "Narragnasett Bay", "Upper Blackstone River",
       "Upper Blackstone River"

@@ -4,10 +4,13 @@
 \alias{qaqc_sites}
 \title{Check site metadata for formatting errors}
 \usage{
-qaqc_sites(.data)
+qaqc_sites(.data, state = NA)
 }
 \arguments{
 \item{.data}{Input dataframe}
+
+\item{state}{String. State name or abbreviation. Will replace `NA` rows in
+"State" column. Default `NA`.}
 }
 \value{
 Updated dataframe
