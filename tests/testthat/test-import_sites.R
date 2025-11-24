@@ -4,6 +4,19 @@ test_that("qaqc_sites works", {
     suppressMessages(qaqc_sites(tst$sites_raw)),
     tst$sites_qaqc
   )
+
+  # Edge case
+  df_in <- tst$sites_raw
+  df_in$State <- NULL
+
+  df_out <- tst$sites_qaqc
+  df_out$State <- "RI"
+  df_out <- df_out[c(1:6, 8:11, 7, 12:13)] # Move location of "State" column
+
+  expect_equal(
+    suppressMessages(qaqc_sites(df_in, "Rhode Island")),
+    df_out
+  )
 })
 
 test_that("qaqc_sites error messages", {
