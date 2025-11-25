@@ -1,4 +1,31 @@
 # Check qaqc_sites ----
+test_that("prep_sites works", {
+  df_in <- tst$sites_raw
+  colnames(df_in) <- c(
+    "Site ID", "Site Name", "Latitude", "Longitude", "Town", "State",
+    "Watershed", "Group", "Max Depth", "Red_Herring", "Blank_Herring"
+  )
+
+  df_colnames <- data.frame(
+    wqdashboard = c("Site_ID", "Site_Name", "Max_Depth_m"),
+    Custom = c("Site ID", "Site Name", "Max Depth")
+  )
+
+  expect_equal(
+    suppressMessages(prep_sites(df_in, df_colnames)),
+    tst$sites_raw
+  )
+
+  # Edge case
+  df_colnames$Custom <- NA
+
+  expect_equal(
+    suppressMessages(prep_sites(df_in, df_colnames)),
+    df_in
+  )
+})
+
+# Check qaqc_sites ----
 test_that("qaqc_sites works", {
   expect_equal(
     suppressMessages(qaqc_sites(tst$sites_raw)),

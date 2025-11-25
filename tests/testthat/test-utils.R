@@ -167,3 +167,35 @@ test_that("add_thresholds works", {
     )
   )
 })
+
+test_that("try_rename works", {
+  df_in <- data.frame(
+    Col1 = c("foofy", "foo"),
+    Col2 = c("foo", "bar")
+  )
+
+  df_var <- data.frame(
+    wqdashboard = c("what", "a", "superb", "owl"),
+    Custom = c(NA, NA, "foo", "bar")
+  )
+
+  expect_equal(
+    try_rename(df_in, "Col2", df_var),
+    data.frame(
+      Col1 = c("foofy", "foo"),
+      Col2 = c("superb", "owl")
+    )
+  )
+
+  # Test edge cases
+  df_var$Custom <- NA
+
+  expect_message(
+    try_rename(df_in, "Col2", df_var),
+    regexp = "\tDid not update Col2"
+  )
+  expect_message(
+    try_rename(df_in, "Col3", df_var),
+    regexp = "\tDid not find Col3"
+  )
+})

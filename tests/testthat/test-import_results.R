@@ -1,3 +1,64 @@
+# Test prep_results ----
+test_that("prep_results works", {
+  df_in <- tst$data_raw
+  df_in$Parameter <- "DO"
+  df_in$Result_Unit <- c(NA, "ug/l", NA, "ug/l", "ug/l", "mg/l", "mg/l", "mg/l")
+  df_in$Detection_Limit_Unit <- c(
+    "ug/l", "ug/l", "ug/l", "ug/l", "mg/l", "mg/l", "mg/l", "mg/l"
+  )
+  df_in$Qualifier <- c("BDL", NA, "BDL", NA, NA, NA, NA, NA)
+  colnames(df_in) <- c(
+    "Site", "Activity Type", "Date", "Depth", "Depth Unit", "Depth Category",
+    "Parameter", "Result", "Unit", "Lower Detection Limit",
+    "Upper Detection Limit", "Detection Limit Unit", "Qualifier"
+  )
+
+  df_colnames <- data.frame(
+    wqdashboard = c(
+      "Site_ID", "Activity_Type", "Depth_Unit", "Depth_Category", "Result_Unit",
+      "Lower_Detection_Limit", "Upper_Detection_Limit", "Detection_Limit_Unit"
+    ),
+    Custom = c(
+      "Site", "Activity Type", "Depth Unit", "Depth Category", "Unit",
+      "Lower Detection Limit", "Upper Detection Limit", "Detection Limit Unit"
+    )
+  )
+  df_param <- data.frame(
+    wqdashboard = c("Dissolved oxygen (DO)", "Dissolved oxygen saturation"),
+    Custom = c("DO", NA)
+  )
+  df_unit <- data.frame(
+    wqdashboard = c("mg/L", "ug/L"),
+    Custom = c("mg/l", "ug/l")
+  )
+  df_qual <- data.frame(
+    wqdashboard = "DL",
+    Custom = "BDL"
+  )
+  df_activity <- data.frame(
+    wqdashboard = "Field Msr/Obs",
+    Custom = NA
+  )
+
+  expect_equal(
+    suppressMessages(
+      prep_results(df_in, df_colnames, df_param, df_unit, df_qual, df_activity)
+    ),
+    tst$data_raw
+  )
+
+  # Test edge cases
+  colnames(df_in) <- colnames(tst$data_raw)
+  df_colnames$Custom <- NA
+
+  expect_equal(
+    suppressMessages(
+      prep_results(df_in, df_colnames, df_param, df_unit, df_qual, df_activity)
+    ),
+    tst$data_raw
+  )
+})
+
 # Test qaqc_results ----
 test_that("qaqc_results works", {
   expect_equal(

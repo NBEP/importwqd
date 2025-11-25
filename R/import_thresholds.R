@@ -1,3 +1,21 @@
+#' Prepare threshold metadata
+#'
+#' @description `prep_trhesholds()` prepares site data for use in `wqdashboard`
+#' by updating parameter and unit names.
+#'
+#' @inheritParams prep_results
+#'
+#' @return Updated dataframe
+#'
+#' @export
+prep_thresholds <- function(.data, df_param, df_unit) {
+  message("Preparing thresholds...")
+
+  .data %>%
+    try_rename("Parameter", df_param) %>%
+    try_rename("Unit", df_unit)
+}
+
 #' Check thresholds metadata for formatting errors
 #'
 #' @description `qaqc_thresholds()` checks imported threshold metadata for major

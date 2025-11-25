@@ -1,3 +1,28 @@
+#' Prepare site metadata
+#'
+#' @description `prep_sites()` prepares site data for use in `wqdashboard` by
+#' updating colum names.
+#'
+#' @inheritParams prep_results
+#'
+#' @return Updated dataframe
+#'
+#' @export
+prep_sites <- function(.data, df_colnames) {
+  message("Preparing site metadata...")
+
+  df_colnames <- df_colnames %>%
+    dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
+
+  if (nrow(df_colnames) == 0) {
+    message("No changes made")
+    return(.data)
+  }
+
+  .data %>%
+    wqformat::rename_col(df_colnames$Custom, df_colnames$wqdashboard)
+}
+
 #' Check site metadata for formatting errors
 #'
 #' @description `qaqc_sites()` checks imported site metadata for major

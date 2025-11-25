@@ -1,3 +1,23 @@
+test_that("prep_thresholds works", {
+  df_in <- tst$threshold_raw
+  df_in$Parameter <- c("DO", "DO", "DO", "pH", "Nitrate")
+  df_in$Unit <- c("mg/l", "mg/l", "mg/l", "None", "mg/l")
+
+  df_param <- data.frame(
+    wqdashboard = c("Dissolved oxygen (DO)", "Dissolved oxygen saturation"),
+    Custom = c("DO", NA)
+  )
+  df_unit <- data.frame(
+    wqdashboard = c("mg/L", "ng/L"),
+    Custom = c("mg/l", "ng/l")
+  )
+
+  expect_equal(
+    suppressMessages(prep_thresholds(df_in, df_param, df_unit)),
+    tst$threshold_raw
+  )
+})
+
 test_that("qaqc_thresholds works", {
   df_in <- tst$threshold_raw[1:4, ]
   df_out <- tst$threshold_qaqc[1:4, ]

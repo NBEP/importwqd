@@ -1,3 +1,47 @@
+#' Prepare water quality data
+#'
+#' @description `prep_results()` prepares water quality data for use in
+#' `wqdashboard` by updating column and variable names.
+#'
+#' @param .data Input dataframe
+#' @param df_colnames Dataframe. Must include paired list of column names in
+#' columns "wqdashboard" and "Custom".
+#' @param df_param Dataframe. Must include paired list of parameter names in
+#' columns "wqdashboard" and "Custom".
+#' @param df_unit Dataframe. Must include paired list of unit names in columns
+#' "wqdashboard" and "Custom".
+#' @param df_qual Dataframe. Must include paired list of qualifier names in
+#' columns "wqdashboard" and "Custom".
+#' @param df_activity Dataframe. Must include paired list of activity type names
+#' in columns "wqdashboard" and "Custom".
+#'
+#' @return Updated dataframe
+#'
+#' @export
+prep_results <- function(
+  .data, df_colnames, df_param, df_unit, df_qual, df_activity
+) {
+  message("Preparing data...")
+
+  df_colnames <- df_colnames %>%
+    dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
+
+  if (nrow(df_colnames) == 0) {
+    message("Did not update column names")
+    dat <- .data
+  } else {
+    dat <- .data %>%
+      wqformat::rename_col(df_colnames$Custom, df_colnames$wqdashboard)
+  }
+
+  dat %>%
+    try_rename("Parameter", df_param) %>%
+    try_rename("Result_Unit", df_unit) %>%
+    try_rename("Detection_Limit_Unit", df_unit) %>%
+    try_rename("Qualifier", df_qual) %>%
+    try_rename("Activity_Type", df_activity)
+}
+
 #' Check water quality data for formatting errors
 #'
 #' @description `qaqc_results()` checks imported water quality data for major

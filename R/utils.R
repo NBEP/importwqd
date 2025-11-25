@@ -260,3 +260,34 @@ add_thresholds <- function(
     Best = dat$Best[1]
   )
 }
+
+#' Rename variables in column
+#'
+#' @description `try_rename()` is a helper function for `prep_thresholds()` and
+#' `prep_results()` that renames the variables in a column according to a paired
+#' list of variable names in `df_var`.
+#'
+#' @param .data Input dataframe
+#' @param col_name Column name.
+#' @param df_var Dataframe. Must include "wqdashboard" and "Custom"
+#' columns with a paired list of variable names.
+#'
+#' @return Updated dataframe. If `df_var` doesn't contain paired variable names
+#' or `col_name` does not exist, the original dataframe is returned.
+#'
+#' @noRd
+try_rename <- function(.data, col_name, df_var) {
+  df_var <- df_var %>%
+    dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
+
+  if (!col_name %in% colnames(.data)) {
+    message("\tDid not find ", col_name)
+    return(.data)
+  } else if (nrow(df_var) == 0) {
+    message("\tDid not update ", col_name)
+    return(.data)
+  }
+
+  .data %>%
+    wqformat::update_var(col_name, df_var$Custom, df_var$wqdashboard)
+}
