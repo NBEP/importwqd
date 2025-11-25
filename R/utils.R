@@ -176,6 +176,12 @@ convert_unit <- function(x, old_unit, new_unit) {
     return(x)
   }
 
+  # Exception check - cfu/100mL & MPN/100mL
+  chk <- c(old_unit, new_unit) %in% c("cfu/100mL", "MPN/100mL")
+  if (all(chk)) {
+    return(x)
+  }
+
   # Update names to work with measurements::conv_unit()
   if (old_unit %in% names(wqd_units)) {
     old_unit <- wqd_units[names(wqd_units) == old_unit]

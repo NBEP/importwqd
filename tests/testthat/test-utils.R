@@ -128,6 +128,7 @@ test_that("convert_unit works", {
   # Check conversions
   expect_equal(convert_unit(0, "deg C", "deg F"), 32) # simple conversion
   expect_equal(convert_unit(1, "mg/L", "ug/L"), 1000) # complex conversion
+  expect_equal(convert_unit(12, "cfu/100mL", "MPN/100mL"), 12) # fecal counts
 
   # Check edge cases
   expect_equal(convert_unit(NA, "deg C", "deg F"), NA)
