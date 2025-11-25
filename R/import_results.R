@@ -190,11 +190,11 @@ format_results <- function(.data, sites, thresholds) {
         "Result" = dplyr::case_when(
           !is.na(.data$Result) | is.na(.data$Qualifier) ~ .data$Result,
           .data$Qualifier %in% q_over ~ .data$Upper_Detection_Limit,
-          .data$Qualifier %in% q_under & .data$Parameter == "pH" ~
-            .data$Lower_Detection_Limit,
-          .data$Qualifier %in% q_under & is.na(.data$Lower_Detection_Limit) ~ 0,
-          .data$Qualifier %in% q_under ~ .data$Lower_Detection_Limit / 2,
-          TRUE ~ .data$Result
+          !.data$Qualifier %in% q_under ~ .data$Result,
+          .data$Parameter == "pH" ~ .data$Lower_Detection_Limit,
+          is.na(.data$Lower_Detection_Limit) ~ 0,
+          .data$Lower_Detection_Limit < 0 ~ .data$Lower_Detection_Limit,
+          TRUE ~ .data$Lower_Detection_Limit / 2
         )
       )
   }
