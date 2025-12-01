@@ -141,6 +141,9 @@ tst <- list(
     Site_ID = c(
       "001", "001", "001", "001", "002", "002", "002", "002"
     ),
+    Site_Name = c(
+      "Site1", "Site1", "Site1", "Site1", "Site2", "Site2","Site2", "Site2"
+    ),
     Date = c(
       as.Date("2021-06-30"), as.Date("2023-07-12"), as.Date("2021-08-05"),
       as.Date("2023-05-25")

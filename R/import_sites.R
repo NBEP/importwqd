@@ -166,6 +166,7 @@ format_sites <- function(.data) {
       )
   }
 
+  message("\tAdding depth thresholds")
   dat %>%
     dplyr::mutate(
       "Max_Surface" = dplyr::case_when(

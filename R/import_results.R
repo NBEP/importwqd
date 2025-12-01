@@ -128,9 +128,9 @@ qaqc_results <- function(.data, sites) {
         is.na(.data$Max_Depth) & is.na(.data$Max_Midwater) &
           is.na(.data$Max_Surface) ~ NA,
         !is.na(.data$Max_Depth) & .data$Depth >= .data$Max_Depth ~ "Bottom",
-        !is.na(.data$Max_Midwater) & .data$Depth >= .data$Max_Midwater ~
+        !is.na(.data$Max_Midwater) & .data$Depth > .data$Max_Midwater ~
           "Near Bottom",
-        !is.na(.data$Max_Surface) & .data$Depth >= .data$Max_Surface ~
+        !is.na(.data$Max_Surface) & .data$Depth > .data$Max_Surface ~
           "Midwater",
         TRUE ~ "Surface"
       )
@@ -208,7 +208,7 @@ format_results <- function(.data, sites, thresholds) {
     unique()
 
   df_sites <- sites %>%
-    dplyr::select("Site_ID", "State", "Group")
+    dplyr::select("Site_ID", "Site_Name", "State", "Group")
 
   df_temp <- dplyr::left_join(df_temp, df_sites) %>%
     dplyr::mutate(
@@ -233,9 +233,9 @@ format_results <- function(.data, sites, thresholds) {
   message("\tDropping extra columns")
 
   field_keep <- c(
-    "Site_ID", "Date", "Year", "Parameter", "Result", "Result_Unit",
-    "Depth_Category", "Calculation", "Min", "Max", "Excellent", "Good", "Fair",
-    "Best"
+    "Site_ID", "Site_Name", "Date", "Year", "Parameter", "Result",
+    "Result_Unit", "Depth_Category", "Calculation", "Min", "Max", "Excellent",
+    "Good", "Fair", "Best"
   )
 
   dat %>%

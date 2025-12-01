@@ -77,8 +77,8 @@ test_that("qaqc_results works", {
   df_out$Parameter <- "E. coli"
   df_out$Depth <- c(0.5, 1, 11, 12)
   df_out$Depth_Category <- c(
-    "Surface", "Midwater", "Bottom", "Bottom", "Surface", "Midwater",
-    "Near Bottom", "Bottom"
+    "Surface", "Surface", "Bottom", "Bottom", "Surface", "Surface",
+    "Midwater", "Bottom"
   )
 
   expect_equal(
