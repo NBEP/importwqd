@@ -200,3 +200,70 @@ test_that("try_rename works", {
     regexp = "\tDid not find Col3"
   )
 })
+
+# format_popup ----
+test_that("format_popup works", {
+  expect_equal(
+    format_popup("foo", "bar", "foofy"),
+    "foo<br><b>bar:</b> foofy"
+  )
+
+  # Extra options
+  expect_equal(
+    format_popup("foo", "bar", NA, na_value = "missing"),
+    "foo<br><b>bar:</b> missing"
+  )
+  expect_equal(
+    format_popup("foo", "bar", NA, hide_na = TRUE),
+    "foo"
+  )
+  expect_equal(
+    format_popup("foo", "bar", 12, style = "in_title: $in_data.00"),
+    "foo<br>bar: $12.00"
+  )
+
+  # NA handling
+  expect_equal(
+    format_popup(NA, "bar", 12),
+    "<b>bar:</b> 12"
+  )
+  expect_equal(
+    format_popup("foo", "bar", NA),
+    "foo<br><b>bar:</b> -"
+  )
+  expect_equal(
+    format_popup("foo", "bar", NA, style = "<b>in_title:</b> startin_dataend"),
+    "foo<br><b>bar:</b> start-end"
+  )
+  expect_equal(
+    format_popup(NA, "bar", NA, hide_na = TRUE),
+    NA
+  )
+
+  # Pipes
+  expect_equal(
+    "<h1>Suberb Owls</h1>" %>%
+      format_popup(
+        c("Great Horned Owl", "Saw-whet Owl"),
+        c("big", "small"),
+        style = "<b>in_title:</b> it is in_data"
+      ) %>%
+      format_popup("Barn Owl", "it has a heart-shaped face"),
+    "<h1>Suberb Owls</h1><br><b>Great Horned Owl:</b> it is big<br><b>Saw-whet Owl:</b> it is small<br><b>Barn Owl:</b> it has a heart-shaped face"
+  )
+})
+
+test_that("format_popup error message", {
+  expect_error(
+    format_popup("superb", "birb", c("owl", "duck")),
+    regexp = "in_title and in_data must be the same length"
+  )
+  expect_error(
+    format_popup("superb", "birb", "owl", style = "foo"),
+    regexp = "style must include in_title and in_data"
+  )
+  expect_error(
+    format_popup("superb", "birb", c("owl", "duck"), style = "foo"),
+    regexp = "in_title and in_data must be the same length\nstyle must include in_title and in_data"
+  )
+})

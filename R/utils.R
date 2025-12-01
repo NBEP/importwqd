@@ -297,3 +297,73 @@ try_rename <- function(.data, col_name, df_var) {
   .data %>%
     wqformat::update_var(col_name, df_var$Custom, df_var$wqdashboard)
 }
+
+#' Format paired title and value as descriptive text
+#'
+#' @description
+#' `format_popup()` formats input text and values as a line of text, which it
+#' appends to the input. Helper function for `popup_column()`.
+#' * Unless `style` is updated, each line is formatted as
+#' "<b>`in_title`:</b> `in_data`"
+#' * A delimiter (`<br>`) is added between each line of text.
+#'
+#' @param .data String. Line of text to append new lines to.
+#' @param in_title List or string. The title to place at the start of each new
+#' line. If list, must be same length as `in_data`.
+#' @param in_data List or string. Value to place after `in_title`. If list, must
+#' be same length as `in_title`.
+#' @param na_value String. Replacement for `NA` values. Default "-".
+#' @param hide_na Boolean. If `TRUE`, will not add a new line of text if
+#' `in_data` is `NA`. Default `TRUE`.
+#' @param style String. How to format each line of data. String must include
+#' "in_title" and "in_data" to represent the title and data value respectively.
+#' Default "<b>in_title:</b> in_data".
+#'
+#' @return Updated string.
+#'
+#' @noRd
+format_popup <- function(
+    .data, in_title, in_data, na_value = "-", hide_na = FALSE,
+    style = "<b>in_title:</b> in_data"
+  ) {
+  # Check input
+  chk <- length(in_title) == length(in_data)
+  chk2 <- grepl("in_title", style) & grepl("in_data", style)
+
+  if (!chk && any(!chk2)) {
+    stop(
+      "in_title and in_data must be the same length",
+      "\nstyle must include in_title and in_data"
+    )
+  } else if (!chk) {
+    stop("in_title and in_data must be the same length")
+  } else if (any(!chk2)) {
+    stop("style must include in_title and in_data")
+  }
+
+  # Set variables
+  names(in_data) <- in_title
+
+  # Append lines
+  for (i in names(in_data)) {
+    j <- in_data[[i]] # i = in_title, j = in_data
+
+    if (hide_na && is.na(j)) {
+      next
+    } else if (is.na(j)) {
+      new_line <- gsub("in_title", i, style)
+      new_line <- gsub("in_data", na_value, new_line)
+    } else {
+      new_line <- gsub("in_title", i, style)
+      new_line <- gsub("in_data", j, new_line)
+    }
+
+    if (is.na(.data)) {
+      .data <- new_line
+    } else {
+      .data <- paste0(.data, "<br>", new_line)
+    }
+  }
+
+  .data
+}
