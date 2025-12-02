@@ -7,7 +7,7 @@ tst <- list(
     Longitude = c(-71.41, -71.77),
     Town = c("Providence", "Worcester"),
     State = c("Rhode Island", "Massachusetts"),
-    Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
+    Watershed = c("Narragansett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
     Max_Depth_m = c(10, 12),
     Red_Herring = "foo",
@@ -20,7 +20,7 @@ tst <- list(
     Longitude = c(-71.41, -71.77),
     Town = c("Providence", "Worcester"),
     State = c("RI", "MA"),
-    Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
+    Watershed = c("Narragansett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
     Max_Depth_m = c(10, 12),
     Red_Herring = "foo",
@@ -34,7 +34,7 @@ tst <- list(
     Longitude = c(-71.41, -71.77),
     Town = c("Providence, RI", "Worcester, MA"),
     State = c("RI", "MA"),
-    Watershed = c("Narragnasett Bay", "Upper Blackstone River"),
+    Watershed = c("Narragansett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater"),
     Max_Surface = 1,
     Max_Midwater = c(9, 11),
@@ -142,7 +142,7 @@ tst <- list(
       "001", "001", "001", "001", "002", "002", "002", "002"
     ),
     Site_Name = c(
-      "Site1", "Site1", "Site1", "Site1", "Site2", "Site2","Site2", "Site2"
+      "Site1", "Site1", "Site1", "Site1", "Site2", "Site2", "Site2", "Site2"
     ),
     Date = c(
       as.Date("2021-06-30"), as.Date("2023-07-12"), as.Date("2021-08-05"),
@@ -160,7 +160,17 @@ tst <- list(
     Good = c(6.5, 6.5, 6.5, 6.5, NA, NA, NA, NA),
     Fair = c(5, 5, 5, 5, NA, NA, NA, NA),
     Best = c("high", "high", "high", "high", NA, NA, NA, NA),
-    Month = c("June", "July", "August", "May")
+    Month = c("June", "July", "August", "May"),
+    Description = c(
+      "<b>Site1</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 0.05 mg/L",
+      "<b>Site1</b><br>Date: July 12, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 3 mg/L",
+      "<b>Site1</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 0.05 mg/L",
+      "<b>Site1</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 4 mg/L",
+      "<b>Site2</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 6 mg/L",
+      "<b>Site2</b><br>Date: July 12, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 8 mg/L",
+      "<b>Site2</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 7 mg/L",
+      "<b>Site2</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 9 mg/L"
+    )
   ),
   data_score = data.frame(
     Year = c(2021, 2023),
@@ -170,19 +180,31 @@ tst <- list(
       "Providence, RI", "Providence, RI", "Worcester, MA", "Worcester, MA"
     ),
     Watershed = c(
-      "Narragnasett Bay", "Narragnasett Bay", "Upper Blackstone River",
+      "Narragansett Bay", "Narragansett Bay", "Upper Blackstone River",
       "Upper Blackstone River"
     ),
     Group = c("Coldwater", "Coldwater", "Warmwater", "Warmwater"),
     Depth = "Surface",
     Parameter = "Dissolved oxygen (DO)",
     Unit = "mg/L",
-    score_typ = c("min", "min", "mean", "mean"),
+    score_typ = c("Minimum", "Minimum", "Average", "Average"),
     score_num = c(0.05, 3, 6.5, 8.5),
     score_str = c(
       "Poor", "Poor", "No Threshold Established", "No Threshold Established"
     ),
     Latitude = c(41.83, 41.83, 42.28, 42.28),
-    Longitude = c(-71.41, -71.41, -71.77, -71.77)
+    Longitude = c(-71.41, -71.41, -71.77, -71.77),
+    popup_loc = c(
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface"
+    ),
+    popup_score = c(
+      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
+      "<br>Minimum: 3 mg/L<br>Score: Poor", "<br>Average: 6.5 mg/L",
+      "<br>Average: 8.5 mg/L"
+    ),
+    alt = c("Site1, Poor", "Site1, Poor", "Site2, 6.5 mg/L", "Site2, 8.5 mg/L")
   )
 )

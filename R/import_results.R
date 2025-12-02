@@ -229,7 +229,7 @@ format_results <- function(.data, sites, thresholds) {
     by = c("Site_ID", "Depth_Category", "Parameter")
   )
 
-  # Adjust columns
+  # Adjust columns, add "Description" column
   message("\tDropping extra columns")
 
   field_keep <- c(
@@ -241,7 +241,33 @@ format_results <- function(.data, sites, thresholds) {
   dat %>%
     dplyr::select(dplyr::any_of(field_keep)) %>%
     dplyr::rename("Depth" = "Depth_Category", "Unit" = "Result_Unit") %>%
-    dplyr::mutate("Month" = strftime(.data$Date, "%B"))
+    dplyr::mutate("Month" = strftime(.data$Date, "%B")) %>%
+    dplyr::mutate(
+      "Description" = paste0(
+        "<b>", .data$Site_Name, "</b><br>Date: ",
+        format(.data$Date, format = "%B %d, %Y")
+      )
+    ) %>%
+    dplyr::mutate(
+      "Description" = dplyr::if_else(
+        is.na(.data$Depth),
+        .data$Description,
+        paste0(.data$Description, "<br>Depth: ", .data$Depth)
+      )
+    ) %>%
+    dplyr::mutate(
+      "Description" = paste0(
+        .data$Description, "<br>", .data$Parameter, ": ",
+        pretty_number(.data$Result)
+      )
+    ) %>%
+    dplyr::mutate(
+      "Description" = dplyr::if_else(
+        .data$Unit %in% c(NA, "None"),
+        .data$Description,
+        paste(.data$Description, .data$Unit)
+      )
+    )
 }
 
 #' Calculate annual scores and format results for wqdashboard
@@ -357,15 +383,25 @@ score_results <- function(.data, sites) {
 
   dat <- dplyr::left_join(dat, df_sites, by = "Site_ID")
 
-  # Final tweaks
+  # Adjust data
   col_order <- c(
     "Year", "Site_Name", "Site_ID", "Town", "State", "Watershed", "Group",
     "Depth", "Parameter", "Unit", "score_typ", "score_num", "score_str",
     "Latitude", "Longitude"
   )
 
-  dat %>%
+  dat <- dat %>%
     dplyr::select(dplyr::any_of(col_order)) %>%
+    dplyr::mutate("score_num" = pretty_number(.data$score_num)) %>%
+    dplyr::mutate(
+      "score_typ" = dplyr::case_when(
+        .data$score_typ == "min" ~ "Minimum",
+        .data$score_typ == "max" ~ "Maximum",
+        .data$score_typ == "median" ~ "Median",
+        .data$score_typ == "mean" ~ "Average",
+        TRUE ~ .data$score_typ
+      )
+    ) %>%
     dplyr::mutate(
       "score_str" = dplyr::case_when(
         !is.na(.data$score_str) ~ .data$score_str,
@@ -373,10 +409,92 @@ score_results <- function(.data, sites) {
         TRUE ~ "No Data Available"
       )
     ) %>%
+    # dplyr::mutate(
+    #   "Parameter" = dplyr::if_else(
+    #     is.na(.data$Parameter), "-", .data$Parameter
+    #   )
+    # ) %>%
+    dplyr::arrange(.data$Site_Name, .data$Parameter) %>%
+    dplyr::mutate("popup_loc" = paste0("<b>", .data$Site_Name, "</b>"))
+
+  if ("Town" %in% colnames(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        "popup_loc" = dplyr::if_else(
+          is.na(.data$Town),
+          paste(.data$popup_loc, "<br>Town: -"),
+          paste(.data$popup_loc, "<br>Town:", .data$Town)
+        )
+      )
+  } else if ("State" %in% colnames(dat)) {
+    dat <- dat %>%
+      wqformat::abb_to_state("State") %>%
+      dplyr::mutate(
+        "popup_loc" = dplyr::if_else(
+          is.na(.data$State),
+          paste(.data$popup_loc, "<br>State: -"),
+          paste(.data$popup_loc, "<br>State:", .data$State)
+        )
+      )
+  }
+
+  if ("Watershed" %in% colnames(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        "popup_loc" = dplyr::if_else(
+          is.na(.data$Watershed),
+          paste(.data$popup_loc, "<br>Watershed: -"),
+          paste(.data$popup_loc, "<br>Watershed:", .data$Watershed)
+        )
+      )
+  }
+
+  if ("Group" %in% colnames(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        "popup_loc" = dplyr::if_else(
+          is.na(.data$Group),
+          paste(.data$popup_loc, "<br>Group: -"),
+          paste(.data$popup_loc, "<br>Group:", .data$Group)
+        )
+      )
+  }
+
+  if ("Depth" %in% colnames(dat)) {
+    dat <- dat %>%
+      dplyr::mutate(
+        "popup_loc" = dplyr::if_else(
+          is.na(.data$Depth),
+          paste(.data$popup_loc, "<br>Depth: -"),
+          paste(.data$popup_loc, "<br>Depth:", .data$Depth)
+        )
+      )
+  }
+
+  dat %>%
     dplyr::mutate(
-      "Parameter" = dplyr::if_else(
-        is.na(.data$Parameter), "-", .data$Parameter
+      "popup_score" = dplyr::case_when(
+        is.na(.data$score_num) ~ "<i>No data</i>",
+        .data$Unit %in% c(NA, "None") ~
+          paste0(.data$score_typ, ": ", .data$score_num),
+        TRUE ~ paste0(.data$score_typ, ": ", .data$score_num, " ", .data$Unit)
       )
     ) %>%
-    dplyr::arrange(.data$Site_Name, .data$Parameter)
+    dplyr::mutate(
+      "popup_score" = dplyr::if_else(
+        is.na(.data$score_num) | .data$score_str == "No Threshold Established",
+        paste0("<br>", .data$popup_score),
+        paste0("<br>", .data$popup_score, "<br>Score: ", .data$score_str)
+      )
+    ) %>%
+    dplyr::mutate(
+      "alt" = dplyr::case_when(
+        is.na(.data$score_num) ~ paste0(.data$Site_Name, ", No data"),
+        .data$score_str != "No Threshold Established" ~
+          paste0(.data$Site_Name, ", ", .data$score_str),
+        .data$Unit %in% c(NA, "None") ~
+          paste0(.data$Site_Name, ", ", .data$score_num),
+        TRUE ~ paste0(.data$Site_Name, ", ", .data$score_num, " ", .data$Unit)
+      )
+    )
 }

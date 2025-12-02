@@ -3,7 +3,6 @@
 export(format_results)
 export(format_sites)
 export(format_thresholds)
-export(popup_text)
 export(prep_results)
 export(prep_sites)
 export(prep_thresholds)

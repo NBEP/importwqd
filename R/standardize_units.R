@@ -67,7 +67,8 @@ standardize_result_units <- function(.data) {
     ) %>%
     dplyr::mutate(
       "Result_Unit" = dplyr::if_else(
-        is.na(.data$temp_unit),
+        is.na(.data$temp_unit) |
+          .data$temp_unit %in% c("cfu/100mL", "MPN/100mL"),
         .data$Result_Unit,
         .data$temp_unit
       )
@@ -85,7 +86,8 @@ standardize_result_units <- function(.data) {
   dplyr::left_join(dat, param_unit, by = "Parameter") %>%
     dplyr::mutate(
       "Result_Unit" = dplyr::if_else(
-        is.na(.data$temp_unit),
+        is.na(.data$temp_unit) |
+          .data$temp_unit %in% c("cfu/100mL", "MPN/100mL"),
         .data$Result_Unit,
         .data$temp_unit
       )
@@ -290,7 +292,8 @@ standardize_threshold_units <- function(.data, result_data) {
     ) %>%
     dplyr::mutate(
       "Unit" = dplyr::if_else(
-        is.na(.data$temp_unit),
+        is.na(.data$temp_unit) |
+          .data$temp_unit %in% c("cfu/100mL", "MPN/100mL"),
         .data$Unit,
         .data$temp_unit
       )

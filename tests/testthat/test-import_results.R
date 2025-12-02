@@ -167,9 +167,12 @@ test_that("score_results works", {
     Year = c(2021, 2022, 2023, 2021, 2023, 2022),
     Site_Name = c("Site1", "Site1", "Site1", "Site2", "Site2", "Site2"),
     Site_ID = c("001", "001", "001", "002", "002", "002"),
-    State = c("RI", "RI", "RI", "MA", "MA", "MA"),
+    State = c(
+      "Rhode Island", "Rhode Island", "Rhode Island", "Massachusetts",
+      "Massachusetts", "Massachusetts"
+    ),
     Watershed = c(
-      "Narragnasett Bay", "Narragnasett Bay", "Narragnasett Bay",
+      "Narragansett Bay", "Narragansett Bay", "Narragansett Bay",
       "Upper Blackstone River", "Upper Blackstone River",
       "Upper Blackstone River"
     ),
@@ -180,14 +183,32 @@ test_that("score_results works", {
     Depth = "Surface",
     Parameter = "Dissolved oxygen (DO)",
     Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "mg/L", NA),
-    score_typ = c("min", "min", "min", "mean", "mean", NA),
+    score_typ = c("Minimum", "Minimum", "Minimum", "Average", "Average", NA),
     score_num = c(0.05, 0.05, 3, 6.5, 8.5, NA),
     score_str = c(
       "Poor", "Poor", "Poor", "No Threshold Established",
       "No Threshold Established", "No Data Available"
     ),
     Latitude = c(41.83, 41.83, 41.83, 42.28, 42.28, 42.28),
-    Longitude = c(-71.41, -71.41, -71.41, -71.77, -71.77, -71.77)
+    Longitude = c(-71.41, -71.41, -71.41, -71.77, -71.77, -71.77),
+    popup_loc = c(
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface"
+    ),
+    popup_score = c(
+      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
+      "<br>Minimum: 3 mg/L<br>Score: Poor", "<br>Average: 6.5 mg/L",
+      "<br>Average: 8.5 mg/L", "<br><i>No data</i>"
+    ),
+    alt = c(
+      "Site1, Poor", "Site1, Poor", "Site1, Poor", "Site2, 6.5 mg/L",
+      "Site2, 8.5 mg/L", "Site2, No data"
+    )
   )
 
   expect_equal(
