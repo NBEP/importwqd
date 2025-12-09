@@ -156,6 +156,57 @@ drop_uniform_col <- function(.data, col_name, include_na = TRUE) {
   return(.data)
 }
 
+#' Standardize threshold units
+#'
+#' @description `update_threshold_units()` updates threshold data so that
+#' each parameter uses the same units as those used in `result_data`. Helper
+#' function for `format_results()`.
+#'
+#' @param .data Dataframe
+#' @param result_data Dataframe containing result data.
+#'
+#' @returns Updated dataframe. Unit and threshold values will be updated to
+#' match the units used in `result_data`.
+#'
+#' @noRd
+update_threshold_units <- function(.data, result_data) {
+  result_units <- result_data %>%
+    dplyr::group_by(.data$Parameter) %>%
+    dplyr::summarize("temp_unit" = dplyr::last(.data$Result_Unit))
+
+  dat <- dplyr::inner_join(.data, result_units, by = "Parameter")
+
+  if (nrow(dat) == 0) {
+    dat <- dplyr::select(dat, !"temp_unit")
+    return(dat)
+  }
+
+  dat <- suppressWarnings(
+    wqformat::standardize_units_across(
+      dat,
+      "temp_unit",
+      "Unit",
+      c("Min", "Max", "Excellent", "Good", "Fair"),
+      unit_format = "wqdashboard"
+    )
+  )
+
+  chk <- dat$Unit == dat$temp_unit | is.na(dat$Unit) | is.na(dat$temp_unit)
+  if (any(!chk)) {
+    bad_row <- dat[which(!chk), ]
+    bad_param <- unique(bad_row$Parameter)
+
+    warning(
+      "Removed thresholds for ", paste(bad_param, collapse = ", "),
+      " due to incompatible units",
+      call. = FALSE
+    )
+    dat <- dat[which(chk), ]
+  }
+
+  dplyr::select(dat, !"temp_unit")
+}
+
 #' Add threshold values
 #'
 #' @description

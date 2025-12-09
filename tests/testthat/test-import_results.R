@@ -142,6 +142,20 @@ test_that("format_results works", {
     ),
     tst$data_final
   )
+
+  # Edge case - no matching thresholds
+  df_thresh <- tst$threshold_final[1, ]
+
+  df_out <- tst$data_final
+  df_out$Calculation <- "mean"
+  df_out[c("Min", "Max", "Excellent", "Good", "Fair", "Best")] <- NA
+
+  expect_equal(
+    suppressMessages(
+      format_results(tst$data_qaqc, tst$sites_qaqc, df_thresh)
+    ),
+    df_out
+  )
 })
 
 # Test score_results ----

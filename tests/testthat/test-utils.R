@@ -157,6 +157,56 @@ test_that("add_thresholds works", {
   )
 })
 
+# Test standardize_threshold_units ----
+test_that("update_threshold_units works", {
+  df_param <- data.frame(
+    "Parameter" = "Dissolved oxygen (DO)",
+    "Result_Unit" = "ug/L"
+  )
+
+  df_out <- tst$threshold_final[2:4, ]
+  df_out$Unit <- c("ug/L", "ug/L", "ug/L")
+  df_out$Min <- c(5000, 4800, 5000)
+  df_out$Excellent <- c(8000, NA, NA)
+  df_out$Good <- c(6500, NA, NA)
+  df_out$Fair <- c(5000, NA, NA)
+  rownames(df_out) <- NULL
+
+  expect_equal(
+    update_threshold_units(tst$threshold_final, df_param),
+    df_out
+  )
+
+  # Check edge cases
+  df_out <- tst$threshold_final[2:4, ]
+  rownames(df_out) <- NULL
+
+  expect_equal(
+    update_threshold_units(tst$threshold_final, tst$data_qaqc),
+    df_out
+  )
+
+  df_thresh <- tst$threshold_final[1, ]
+  df_out <- tst$threshold_final[0, ]
+
+  expect_equal(
+    update_threshold_units(df_thresh, tst$data_qaqc),
+    df_out
+  )
+})
+
+test_that("update_threshold_units error messages", {
+  df_results <- data.frame(
+    "Parameter" = "Dissolved oxygen (DO)",
+    "Result_Unit" = "deg C"
+  )
+
+  expect_warning(
+    update_threshold_units(tst$threshold_final, df_results),
+    regexp = "Removed thresholds for Dissolved oxygen"
+  )
+})
+
 test_that("try_rename works", {
   df_in <- data.frame(
     Col1 = c("foofy", "foo"),

@@ -212,26 +212,34 @@ format_results <- function(.data, sites, thresholds) {
 
   # Adding threshold data
   message("\tAdding threshold values")
-  df_temp <- dat %>%
-    dplyr::select("Site_ID", "Depth_Category", "Parameter") %>%
-    unique()
-
   df_sites <- sites %>%
     dplyr::select("Site_ID", "Site_Name", "State", "Group")
 
-  df_temp <- dplyr::left_join(df_temp, df_sites) %>%
-    dplyr::mutate(
-      "thresh_temp" = mapply(
-        function(id, group, state, depth, par) {
-          add_thresholds(thresholds, id, group, state, depth, par)
-        },
-        .data$Site_ID, .data$Group, .data$State,
-        .data$Depth_Category, .data$Parameter,
-        SIMPLIFY = FALSE
-      )
-    ) %>%
-    tidyr::unnest_wider("thresh_temp") %>%
-    dplyr::select(!c("State", "Group"))
+  df_temp <- dat %>%
+    dplyr::select("Site_ID", "Depth_Category", "Parameter") %>%
+    unique()
+  df_temp <- dplyr::left_join(df_temp, df_sites)
+
+  df_thresh <- update_threshold_units(thresholds, dat)
+
+  if (nrow(df_thresh) > 0) {
+    df_temp <- df_temp %>%
+      dplyr::mutate(
+        "thresh_temp" = mapply(
+          function(id, group, state, depth, par) {
+            add_thresholds(df_thresh, id, group, state, depth, par)
+          },
+          .data$Site_ID, .data$Group, .data$State, .data$Depth_Category,
+          .data$Parameter,
+          SIMPLIFY = FALSE
+        )
+      ) %>%
+      tidyr::unnest_wider("thresh_temp") %>%
+      dplyr::select(!c("State", "Group"))
+  } else {
+    df_temp$Calculation <- "mean"
+    df_temp[c("Min", "Max", "Excellent", "Good", "Fair", "Best")] <- NA
+  }
 
   dat <- dplyr::left_join(
     dat, df_temp,
