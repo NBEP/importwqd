@@ -68,13 +68,11 @@ test_that("qaqc_results works", {
     tst$data_qaqc
   )
 
-  # Additional tests - depth handling, E. coli
+  # Additional tests - depth handling
   df_in <- tst$data_raw
-  df_in$Parameter <- "Escherichia coli"
   df_in$Depth <- c(0.5, 1, 11, 12)
 
   df_out <- tst$data_qaqc
-  df_out$Parameter <- "E. coli"
   df_out$Depth <- c(0.5, 1, 11, 12)
   df_out$Depth_Category <- c(
     "Surface", "Surface", "Bottom", "Bottom", "Surface", "Surface",

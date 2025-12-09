@@ -156,63 +156,6 @@ drop_uniform_col <- function(.data, col_name, include_na = TRUE) {
   return(.data)
 }
 
-#' Convert unit
-#'
-#' @description `convert_unit()` converts data to new unit. Helper function for
-#' `standardize_result_units()` and `standardize_detection_units()`.
-#'
-#' @param x Numeric. Value to convert.
-#' @param old_unit String. Current unit.
-#' @param new_unit String. New unit.
-#'
-#' @return If `old_unit` and `new_unit` are compatible, returns updated value.
-#' If they are incompatible, returns `-999999`.
-#'
-#' @noRd
-convert_unit <- function(x, old_unit, new_unit) {
-  if (is.na(x) || is.na(old_unit) || is.na(new_unit)) {
-    return(NA)
-  } else if (old_unit == new_unit) {
-    return(x)
-  }
-
-  # Exception check - cfu/100mL & MPN/100mL
-  chk <- c(old_unit, new_unit) %in% c("cfu/100mL", "MPN/100mL")
-  if (all(chk)) {
-    return(x)
-  }
-
-  # Update names to work with measurements::conv_unit()
-  if (old_unit %in% names(wqd_units)) {
-    old_unit <- wqd_units[names(wqd_units) == old_unit]
-  }
-
-  if (new_unit %in% names(wqd_units)) {
-    new_unit <- wqd_units[names(wqd_units) == new_unit]
-  }
-
-  # Run conversion
-  chk <- grepl("/", c(old_unit, new_unit))
-
-  if (any(chk)) {
-    y <- try(
-      measurements::conv_multiunit(x, old_unit, new_unit),
-      silent = TRUE
-    )
-  } else {
-    y <- try(
-      measurements::conv_unit(x, old_unit, new_unit),
-      silent = TRUE
-    )
-  }
-
-  if (inherits(y, "try-error")) {
-    return(-999999)
-  }
-
-  y
-}
-
 #' Add threshold values
 #'
 #' @description

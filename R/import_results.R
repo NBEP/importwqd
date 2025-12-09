@@ -108,7 +108,13 @@ qaqc_results <- function(.data, sites) {
     wqformat::col_to_numeric("Result", silent = FALSE) %>%
     wqformat::col_to_numeric("Lower_Detection_Limit", silent = FALSE) %>%
     wqformat::col_to_numeric("Upper_Detection_Limit", silent = FALSE) %>%
-    wqformat::col_to_numeric("Depth", silent = FALSE)
+    wqformat::col_to_numeric("Depth", silent = FALSE) %>%
+    dplyr::mutate(
+      "Depth" = mapply(
+        function(x, y) suppressWarnings(wqformat::convert_unit(x, y, "m")),
+        .data$Depth, .data$Depth_Unit
+      )
+    )
 
   depth_cat <- c("Surface", "Midwater", "Near Bottom", "Bottom")
 
@@ -140,15 +146,18 @@ qaqc_results <- function(.data, sites) {
   # Final adjustments
   dat %>%
     dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y"))) %>%
-    dplyr::mutate(
-      "Parameter" = dplyr::if_else(
-        .data$Parameter == "Escherichia coli",
-        "E. coli",
-        .data$Parameter
-      )
+    wqformat::standardize_units(
+      "Parameter",
+      "Result",
+      "Result_Unit",
+      warn_only = FALSE
     ) %>%
-    standardize_result_units() %>%
-    standardize_detection_units()
+    wqformat::standardize_units_across(
+      "Result_Unit",
+      "Detection_Limit_Unit",
+      c("Lower_Detection_Limit", "Upper_Detection_Limit"),
+      warn_only = FALSE
+    )
 }
 
 #' Format water quality data for wqdasbhoard
