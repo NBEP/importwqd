@@ -109,12 +109,7 @@ qaqc_results <- function(.data, sites) {
     wqformat::col_to_numeric("Lower_Detection_Limit", silent = FALSE) %>%
     wqformat::col_to_numeric("Upper_Detection_Limit", silent = FALSE) %>%
     wqformat::col_to_numeric("Depth", silent = FALSE) %>%
-    dplyr::mutate(
-      "Depth" = mapply(
-        function(x, y) suppressWarnings(wqformat::convert_unit(x, y, "m")),
-        .data$Depth, .data$Depth_Unit
-      )
-    )
+    wqformat::set_units("Depth", "Depth_Unit", "m", unit_format="wqdashboard")
 
   depth_cat <- c("Surface", "Midwater", "Near Bottom", "Bottom")
 
