@@ -56,17 +56,11 @@ qaqc_sites <- function(.data, state = NA) {
   # Check - missing columns?
   check_col_missing(.data, field_need)
 
-  # Check - missing values?
+  # Check - missing  or duplicate values?
   for (field in field_need) {
     check_val_missing(.data, field)
   }
 
-  field_check <- intersect(field_optional, colnames(.data))
-  for (field in field_check) {
-    check_val_missing(.data, field, is_stop = FALSE)
-  }
-
-  # Check - duplicate values?
   check_val_duplicate(.data, "Site_ID")
   check_val_duplicate(.data, "Site_Name", is_stop = FALSE)
   check_val_duplicate(.data, c("Latitude", "Longitude"), is_stop = FALSE)
@@ -76,6 +70,12 @@ qaqc_sites <- function(.data, state = NA) {
   empty_col <- colnames(.data)[which(chk)]
   drop_col <- setdiff(empty_col, field_optional)
   .data[drop_col] <- NULL
+
+  # Check - missing values in optional columns?
+  field_check <- intersect(field_optional, colnames(.data))
+  for (field in field_check) {
+    check_val_missing(.data, field, is_stop = FALSE)
+  }
 
   # Update columns
   missing_col <- setdiff(field_optional, colnames(.data))
