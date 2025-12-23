@@ -112,38 +112,65 @@ qaqc_sites <- function(.data, state = NA) {
     )
   }
 
-  dat
+  message("\tAdding depth thresholds")
+  dat %>%
+    dplyr::mutate(
+      "Max_Surface_Depth_m" = dplyr::case_when(
+        !is.na(.data$Max_Surface_Depth_m) ~ .data$Max_Surface_Depth_m,
+        !is.na(.data$Max_Midwater_Depth_m) & .data$Max_Midwater_Depth_m <= 1 ~
+          NA,
+        !is.na(.data$Max_Depth_m) & .data$Max_Depth_m <= 2 ~ NA,
+        TRUE ~ 1
+      )
+    ) %>%
+    dplyr::mutate(
+      "Max_Midwater_Depth_m" = dplyr::case_when(
+        !is.na(.data$Max_Midwater_Depth_m) ~ .data$Max_Midwater_Depth_m,
+        is.na(.data$Max_Depth_m) ~ NA,
+        .data$Max_Depth_m <= 2 ~ NA,
+        TRUE ~ .data$Max_Depth_m - 1
+      )
+    )
 }
 
 #' Format site metadata for use in wqdashboard
 #'
 #' @description `format_sites()` formats site metadata for use in [wqdashboard].
 #'
-#' @param .data Input dataframe.
+#' @param .data Input dataframe
+#' @param site_list List of site ID values.  Dataframe will be filtered for
+#' matching values in column "Site_ID". If `NULL`, dataframe will not be
+#' filtered. Default `NULL`.
 #'
 #' @seealso [qaqc_sites()]
 #'
 #' @return Updated dataframe.
 #'
 #' @export
-format_sites <- function(.data) {
+format_sites <- function(.data, site_list = NULL) {
   message("Formatting site data...")
+  dat <- .data
+
+  # Drop surplus sites
+  if (!is.null(site_list)) {
+    dat <- dat %>%
+      dplyr::filter(.data$Site_ID %in% site_list)
+
+    chk <- setdiff(.data$Site_ID, dat$Site_ID)
+    if (length(chk) > 0) {
+      message("Dropped ", length(chk), " sites: ", paste(chk, sep = ", "))
+    }
+  }
 
   # Drop extra columns
   field_all <- c(
     "Site_ID", "Site_Name", "Latitude", "Longitude", "Town", "State",
-    "Watershed", "Group", "Max_Surface_Depth_m", "Max_Midwater_Depth_m",
-    "Max_Depth_m"
+    "Watershed", "Group"
   )
 
   message("\tDropping extra columns")
-  dat <- .data %>%
+  dat <- dat %>%
     dplyr::select(dplyr::all_of(field_all)) %>%
-    dplyr::rename(
-      "Max_Surface" = "Max_Surface_Depth_m",
-      "Max_Midwater" = "Max_Midwater_Depth_m",
-      "Max_Depth" = "Max_Depth_m"
-    ) %>%
     drop_uniform_col("Watershed") %>%
     drop_uniform_col("State") %>%
     drop_empty_col("Town")
@@ -166,23 +193,5 @@ format_sites <- function(.data) {
       )
   }
 
-  message("\tAdding depth thresholds")
-  dat %>%
-    dplyr::mutate(
-      "Max_Surface" = dplyr::case_when(
-        !is.na(.data$Max_Surface) ~ .data$Max_Surface,
-        !is.na(.data$Max_Midwater) & .data$Max_Midwater <= 1 ~ NA,
-        !is.na(.data$Max_Depth) & .data$Max_Depth <= 2 ~ NA,
-        TRUE ~ 1
-      )
-    ) %>%
-    dplyr::mutate(
-      "Max_Midwater" = dplyr::case_when(
-        !is.na(.data$Max_Midwater) ~ .data$Max_Midwater,
-        is.na(.data$Max_Depth) ~ NA,
-        .data$Max_Depth <= 2 ~ NA,
-        TRUE ~ .data$Max_Depth - 1
-      )
-    ) %>%
-    drop_empty_col("State")
+  suppressMessages(drop_empty_col(dat, "State"))
 }

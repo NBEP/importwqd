@@ -117,8 +117,13 @@ qaqc_results <- function(.data, sites) {
   wqformat::warn_invalid_var(dat, "Depth_Category", depth_cat)
 
   # Update depth category
-  depth_col <- c("Max_Surface", "Max_Midwater", "Max_Depth")
-  site_depth <- dplyr::select(sites, dplyr::any_of(c("Site_ID", depth_col)))
+  site_depth <- sites %>%
+    dplyr::rename(
+      "Max_Surface" = "Max_Surface_Depth_m",
+      "Max_Midwater" = "Max_Midwater_Depth_m",
+      "Max_Depth" = "Max_Depth_m"
+    ) %>%
+    dplyr::select(c("Site_ID", "Max_Surface", "Max_Midwater", "Max_Depth"))
 
   dat <- dplyr::left_join(dat, site_depth, by = "Site_ID", keep = FALSE) %>%
     dplyr::mutate(
@@ -136,7 +141,7 @@ qaqc_results <- function(.data, sites) {
         TRUE ~ "Surface"
       )
     ) %>%
-    dplyr::select(!dplyr::any_of(depth_col))
+    dplyr::select(!c("Max_Surface", "Max_Midwater", "Max_Depth"))
 
   # Final adjustments
   dat %>%

@@ -63,7 +63,7 @@ test_that("prep_results works", {
 test_that("qaqc_results works", {
   expect_equal(
     suppressMessages(
-      qaqc_results(tst$data_raw, tst$sites_final)
+      qaqc_results(tst$data_raw, tst$sites_qaqc)
     ),
     tst$data_qaqc
   )
@@ -81,7 +81,7 @@ test_that("qaqc_results works", {
 
   expect_equal(
     suppressMessages(
-      qaqc_results(df_in, tst$sites_final)
+      qaqc_results(df_in, tst$sites_qaqc)
     ),
     df_out
   )
@@ -94,7 +94,7 @@ test_that("qaqc_results error messages", {
 
   expect_error(
     suppressMessages(
-      qaqc_results(df_in, tst$sites_final)
+      qaqc_results(df_in, tst$sites_qaqc)
     ),
     regexp = "Result missing. Check rows: 2, 4, 5, 6, 7, 8"
   )
@@ -104,7 +104,7 @@ test_that("qaqc_results error messages", {
 
   expect_error(
     suppressMessages(
-      qaqc_results(df_in, tst$sites_final)
+      qaqc_results(df_in, tst$sites_qaqc)
     ),
     regexp = "Result_Unit missing. Check rows: 2, 4, 5, 6, 7, 8"
   )
@@ -116,7 +116,7 @@ test_that("qaqc_results error messages", {
 
   expect_error(
     suppressMessages(
-      qaqc_results(df_in, tst$sites_final)
+      qaqc_results(df_in, tst$sites_qaqc)
     ),
     regexp = "Detection_Limit_Unit missing. Check rows: 1, 2, 5, 6"
   )
@@ -128,7 +128,7 @@ test_that("qaqc_results error messages", {
 
   expect_error(
     suppressMessages(
-      qaqc_results(df_in, tst$sites_final)
+      qaqc_results(df_in, tst$sites_qaqc)
     ),
     regexp = "Invalid Site_ID: 003"
   )

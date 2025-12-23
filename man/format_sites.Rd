@@ -4,10 +4,14 @@
 \alias{format_sites}
 \title{Format site metadata for use in wqdashboard}
 \usage{
-format_sites(.data)
+format_sites(.data, site_list = NULL)
 }
 \arguments{
-\item{.data}{Input dataframe.}
+\item{.data}{Input dataframe}
+
+\item{site_list}{List of site ID values.  Dataframe will be filtered for
+matching values in column "Site_ID". If `NULL`, dataframe will not be
+filtered. Default `NULL`.}
 }
 \value{
 Updated dataframe.

@@ -24,8 +24,8 @@ tst <- list(
     Group = c("Coldwater", "Warmwater"),
     Max_Depth_m = c(10, 12),
     Red_Herring = "foo",
-    Max_Surface_Depth_m = NA_integer_,
-    Max_Midwater_Depth_m = NA_integer_
+    Max_Surface_Depth_m = 1,
+    Max_Midwater_Depth_m = c(9, 11)
   ),
   sites_final = data.frame(
     Site_ID = c("001", "002"),
@@ -35,10 +35,7 @@ tst <- list(
     Town = c("Providence, RI", "Worcester, MA"),
     State = c("RI", "MA"),
     Watershed = c("Narragansett Bay", "Upper Blackstone River"),
-    Group = c("Coldwater", "Warmwater"),
-    Max_Surface = 1,
-    Max_Midwater = c(9, 11),
-    Max_Depth = c(10, 12)
+    Group = c("Coldwater", "Warmwater")
   ),
   # Thresholds ----
   threshold_raw = data.frame(

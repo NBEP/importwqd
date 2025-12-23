@@ -32,7 +32,7 @@ test_that("qaqc_sites works", {
     tst$sites_qaqc
   )
 
-  # Edge case
+  # Test edge case - default state
   df_in <- tst$sites_raw
   df_in$State <- NULL
 
@@ -42,6 +42,22 @@ test_that("qaqc_sites works", {
 
   expect_equal(
     suppressMessages(qaqc_sites(df_in, "Rhode Island")),
+    df_out
+  )
+
+  # Test edge case - weird depths
+  df_in <- tst$sites_raw
+  df_in$Max_Depth_m <- c(2, 5)
+
+  df_out <- tst$sites_qaqc
+  df_out$Max_Surface_Depth_m <- c(NA, 1)
+  df_out$Max_Midwater_Depth_m <- c(NA, 4)
+  df_out$Max_Depth_m <- c(2, 5)
+
+  expect_equal(
+    suppressMessages(
+      qaqc_sites(df_in)
+    ),
     df_out
   )
 })
@@ -134,18 +150,13 @@ test_that("format_sites works", {
     df_out
   )
 
-  # Test edge case - weird depths
-  df_in <- tst$sites_qaqc
-  df_in$Max_Depth_m <- c(2, 5)
-
-  df_out <- tst$sites_final
-  df_out$Max_Surface <- c(NA, 1)
-  df_out$Max_Midwater <- c(NA, 4)
-  df_out$Max_Depth <- c(2, 5)
+  # Test edge case - drop sites
+  df_out <- tst$sites_final[1, ]
+  df_out[c("Town", "State", "Watershed")] <- NULL
 
   expect_equal(
     suppressMessages(
-      format_sites(df_in)
+      format_sites(tst$sites_qaqc, site_list = "001")
     ),
     df_out
   )
