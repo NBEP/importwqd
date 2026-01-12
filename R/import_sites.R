@@ -158,7 +158,7 @@ format_sites <- function(.data, site_list = NULL) {
 
     chk <- setdiff(.data$Site_ID, dat$Site_ID)
     if (length(chk) > 0) {
-      message("Dropped ", length(chk), " sites: ", paste(chk, sep = ", "))
+      message("Dropped ", length(chk), " sites: ", paste(chk, collapse = ", "))
     }
   }
 
