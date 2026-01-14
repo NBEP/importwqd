@@ -225,7 +225,7 @@ update_threshold_units <- function(.data, result_data) {
 #'
 #' @noRd
 add_thresholds <- function(
-    thresholds, site_id, group, state, depth, parameter
+  thresholds, site_id, group, state, depth, parameter
 ) {
   dat <- thresholds %>%
     dplyr::filter(

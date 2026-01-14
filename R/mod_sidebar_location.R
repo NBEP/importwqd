@@ -116,11 +116,6 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    # Set variables ----
-    state <- unique(sites$State)
-    town <- unique(sites$Town) %>% sort()
-    watershed <- unique(sites$Watershed)
-
     # Toggle tabs ----
     observe({
       updateTabsetPanel(
@@ -148,10 +143,10 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
 
     # * Update by state ----
     observe({
-      if (is.null(town)) {
+      if (is.null(sites$Town)) {
         locval$town_sites <- filter_site_list("State", input$select_state)
       } else {
-        choices <- filter_towns(town, input$select_state)
+        choices <- filter_towns(sites, input$select_state)
 
         shinyWidgets::updatePickerInput(
           session = session,

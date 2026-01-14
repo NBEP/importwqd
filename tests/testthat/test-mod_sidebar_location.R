@@ -1,3 +1,6 @@
+library(shiny)
+library(shinytest2)
+
 testServer(
   mod_sidebar_location_server,
   # Add here your module params

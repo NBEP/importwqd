@@ -28,7 +28,7 @@ dropdown <- function(
     choices <- choices[!duplicated(choices)]
   }
 
-  if (sorted & is.null(choice_names)) {
+  if (sorted && is.null(choice_names)) {
     choices <- sort(choices, decreasing = decreasing)
   } else if (sorted) {
     choices <- choices[order(names(choices), decreasing = decreasing)]
@@ -36,7 +36,7 @@ dropdown <- function(
 
   selected <- choices[1]
   allow_actions <- FALSE
-  if (multiple & is.null(max_options)) {
+  if (multiple && is.null(max_options)) {
     selected <- choices
     allow_actions <- TRUE
   }

@@ -26,8 +26,8 @@ Imports:
     wqformat (>= 0.1.0.9000)
 Remotes: 
     massbays-tech/wqformat
-Suggests: 
-    shinytest,
+Suggests:
+    shinytest2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3

@@ -18,7 +18,6 @@ test_that("set_loc_choices works", {
     set_loc_choices(df_in),
     "blank"
   )
-
 })
 
 test_that("loc_tab works", {
@@ -73,7 +72,7 @@ test_that("create_site_list works", {
 
   # Edge case
   expect_equal(
-    create_site_list(df_in[0,]),
+    create_site_list(df_in[0, ]),
     NULL
   )
 })
@@ -90,5 +89,4 @@ test_that("filter_site_list works", {
     ),
     site_out
   )
-
 })

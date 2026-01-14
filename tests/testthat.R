@@ -7,8 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(shiny)
-library(shinytest)
 library(importwqd)
 
 test_check("importwqd")
