@@ -164,14 +164,20 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
 
     # * Update by town ----
     observe({
-      locval$town_sites <- filter_site_list("Town", input$select_town)
+      locval$town_sites <- filter_site_list(
+        sites,
+        "Town",
+        input$select_town
+      )
     }) %>%
       bindEvent(input$select_town)
 
     # * Update by watershed ----
     observe({
       locval$watershed_sites <- filter_site_list(
-        "Watershed", input$select_watershed
+        sites,
+        "Watershed",
+        input$select_watershed
       )
     }) %>%
       bindEvent(input$select_watershed)
