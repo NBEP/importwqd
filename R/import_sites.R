@@ -193,5 +193,7 @@ format_sites <- function(.data, site_list = NULL) {
       )
   }
 
+  dat <- wqformat::abb_to_state(dat, "State")
+
   suppressMessages(drop_empty_col(dat, "State"))
 }

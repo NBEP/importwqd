@@ -33,7 +33,7 @@ tst <- list(
     Latitude = c(41.83, 42.28),
     Longitude = c(-71.41, -71.77),
     Town = c("Providence, RI", "Worcester, MA"),
-    State = c("RI", "MA"),
+    State = c("Rhode Island", "Massachusetts"),
     Watershed = c("Narragansett Bay", "Upper Blackstone River"),
     Group = c("Coldwater", "Warmwater")
   ),
