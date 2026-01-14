@@ -144,7 +144,11 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
     # * Update by state ----
     observe({
       if (is.null(sites$Town)) {
-        locval$town_sites <- filter_site_list("State", input$select_state)
+        locval$town_sites <- filter_site_list(
+          sites,
+          "State",
+          input$select_state
+        )
       } else {
         choices <- filter_towns(sites, input$select_state)
 
