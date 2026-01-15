@@ -231,7 +231,7 @@ test_that("score_results works", {
   )
 })
 
-# Test sidebar_var ---
+# Test sidebar_var ----
 test_that("sidebar_var works", {
   expect_equal(
     sidebar_var(tst$sites_final, tst$data_final, tst$data_score),

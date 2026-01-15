@@ -542,16 +542,30 @@ score_results <- function(.data, sites) {
 #' @export
 sidebar_var <- function(df_sites, df_data, df_score) {
   # Define location variables
+  state <- NULL
+  town <- NULL
+  watershed <- NULL
+
+  if ("State" %in% colnames(df_sites)) {
+    state <- unique(df_sites$State)
+  }
+  if ("Town" %in% colnames(df_sites)) {
+    town <- unique(df_sites$Town)
+  }
+  if ("Watershed" %in% colnames(df_sites)) {
+    watershed <- unique(df_sites$Watershed)
+  }
+
   loc_choices <- NULL
   loc_tab <- "notoggle"
 
-  if (!is.null(df_sites$Town)) {
+  if (!is.null(town)) {
     loc_choices <- c("By Town" = "town")
-  } else if (!is.null(df_sites$State)) {
+  } else if (!is.null(state)) {
     loc_choices <- c("By State" = "town")
   }
 
-  if (!is.null(df_sites$Watershed)) {
+  if (!is.null(watershed)) {
     loc_choices <- c(loc_choices, "By Watershed" = "watershed")
   } else if (is.null(loc_choices)) {
     loc_choices <- "blank"
@@ -575,9 +589,9 @@ sidebar_var <- function(df_sites, df_data, df_score) {
   }
 
   list(
-    state = unique(df_sites$State),
-    town = unique(df_sites$Town),
-    watershed = unique(df_sites$Watershed),
+    state = state,
+    town = town,
+    watershed = watershed,
     site_id = unique(df_sites$Site_ID),
     site_name = unique(df_sites$Site_Name),
     loc_choices = loc_choices,
