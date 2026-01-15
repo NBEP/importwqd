@@ -4,18 +4,18 @@
 \alias{mod_sidebar_location_ui}
 \title{Sidebar location UI}
 \usage{
-mod_sidebar_location_ui(id, sites)
+mod_sidebar_location_ui(id, df_sites)
 }
 \arguments{
-\item{id}{Internal parameter for [shiny].}
+\item{id}{Namespace ID for module. Must match ID used by
+`mod_sidebar_location_server()`.}
 
-\item{sites}{Dataframe with site data. Must include columns Site_ID,
-Site_Name. Optionally may include columns State, Town, Watershed.
-Default `NULL`.}
+\item{df_sites}{Dataframe with site data. Must have been processed
+by `format_sites()` and  include columns Site_ID, Site_Name.}
 }
 \description{
-A shiny Module used to filter data by location. Submodule for
-`mod_sidebar_ui()`.
+`mod_sidebar_location_ui()` is a helper module for
+`mod_sidebar_ui()` that produces the UI used to filter and select sites.
 }
 \seealso{
 mod_sidebar_location_server

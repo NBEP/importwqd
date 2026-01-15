@@ -4,23 +4,33 @@
 \alias{mod_sidebar_location_server}
 \title{Sidebar location Server}
 \usage{
-mod_sidebar_location_server(id, sites, tab, selected_site)
+mod_sidebar_location_server(id, df_sites, selected_tab, selected_site)
 }
 \arguments{
-\item{id}{Internal parameter for [shiny].}
+\item{id}{Namespace ID for module. Must match ID used by
+`mod_sidebar_location_ui()`.}
 
-\item{sites}{Dataframe with site data. Must include columns Site_ID,
-Site_Name. Optionally may include columns State, Town, Watershed.
-Default `NULL`.}
+\item{df_sites}{Dataframe with site data. Must have been processed
+by `format_sites()` and  include columns Site_ID, Site_Name.}
 
-\item{tab}{Reactive variable. Name of selected tab.}
+\item{selected_tab}{Reactive variable. Name of selected tab.}
 
 \item{selected_site}{Reactive variable. Site_ID for site selected in
 `mod_map_ui()`.}
 }
+\value{
+Named list containing three variables: sites_all, sites_n, and
+site_list.
+* sites_all is a Site ID list for all sites selected in the dropdown
+`select_sites_all`.
+* sites_n is a Site ID string for the site selected in the dropdown
+`select_sites_n`.
+* site_list is a Site ID list of all site choices listed for dropdowns
+`select_sites_all` and `select_sites_n`. It is used by `mod_graphs_server()`.
+}
 \description{
-A shiny Module used to filter data by location. Submodule for
-`mod_sidebar_ui()`.
+`mod_sidebar_location_server()` is a helper module for
+`mod_sidebar_server()` that allows users to select and filter sites.
 }
 \seealso{
 mod_sidebar_location_ui

@@ -1,24 +1,22 @@
 #' Sidebar location UI
 #'
-#' @description A shiny Module used to filter data by location. Submodule for
-#' `mod_sidebar_ui()`.
+#' @description `mod_sidebar_location_ui()` is a helper module for
+#' `mod_sidebar_ui()` that produces the UI used to filter and select sites.
 #'
-#' @param id Internal parameter for [shiny].
-#' @param sites Dataframe with site data. Must include columns Site_ID,
-#' Site_Name. Optionally may include columns State, Town, Watershed.
-#' Default `NULL`.
+#' @param id Namespace ID for module. Must match ID used by
+#' `mod_sidebar_location_server()`.
+#'
+#' @inheritParams mod_sidebar_ui
 #'
 #' @seealso mod_sidebar_location_server
-#'
-#' @export
-mod_sidebar_location_ui <- function(id, sites) {
+mod_sidebar_location_ui <- function(id, df_sites) {
   ns <- NS(id)
 
   # define vars
-  state <- unique(sites$State)
-  town <- unique(sites$Town)
-  watershed <- unique(sites$Watershed)
-  loc_choices <- set_loc_choices(sites)
+  state <- unique(df_sites$State)
+  town <- unique(df_sites$Town)
+  watershed <- unique(df_sites$Watershed)
+  loc_choices <- set_loc_choices(df_sites)
 
   tagList(
     tabsetPanel(
@@ -80,8 +78,8 @@ mod_sidebar_location_ui <- function(id, sites) {
         dropdown(
           ns("select_sites_all"),
           label = h3("Select Sites"),
-          choices = sites$Site_ID,
-          choice_names = sites$Site_Name
+          choices = df_sites$Site_ID,
+          choice_names = df_sites$Site_Name
         )
       ),
       tabPanelBody(
@@ -89,8 +87,8 @@ mod_sidebar_location_ui <- function(id, sites) {
         dropdown(
           ns("select_sites_n"),
           label = h3("Select Site"),
-          choices = sites$Site_ID,
-          choice_names = sites$Site_Name,
+          choices = df_sites$Site_ID,
+          choice_names = df_sites$Site_Name,
           multiple = FALSE
         )
       )
@@ -100,19 +98,27 @@ mod_sidebar_location_ui <- function(id, sites) {
 
 #' Sidebar location Server
 #'
-#' @description A shiny Module used to filter data by location. Submodule for
-#' `mod_sidebar_ui()`.
+#' @description `mod_sidebar_location_server()` is a helper module for
+#' `mod_sidebar_server()` that allows users to select and filter sites.
 #'
-#' @param tab Reactive variable. Name of selected tab.
-#' @param selected_site Reactive variable. Site_ID for site selected in
-#' `mod_map_ui()`.
+#' @param id Namespace ID for module. Must match ID used by
+#' `mod_sidebar_location_ui()`.
 #'
-#' @inheritParams mod_sidebar_location_ui
+#' @inheritParams mod_sidebar_server
+#'
+#' @return Named list containing three variables: sites_all, sites_n, and
+#' site_list.
+#' * sites_all is a Site ID list for all sites selected in the dropdown
+#' `select_sites_all`.
+#' * sites_n is a Site ID string for the site selected in the dropdown
+#' `select_sites_n`.
+#' * site_list is a Site ID list of all site choices listed for dropdowns
+#' `select_sites_all` and `select_sites_n`. It is used by `mod_graphs_server()`.
 #'
 #' @seealso mod_sidebar_location_ui
-#'
-#' @export
-mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
+mod_sidebar_location_server <- function(
+  id, df_sites, selected_tab, selected_site
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -126,16 +132,16 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
       bindEvent(input$loc_type)
 
     observe({
-      if (tab() == "graphs") {
+      if (selected_tab() == "graphs") {
         updateTabsetPanel(inputId = "tabset_sites", selected = "sites_n")
       } else {
         updateTabsetPanel(inputId = "tabset_sites", selected = "sites_all")
       }
     }) %>%
-      bindEvent(tab())
+      bindEvent(selected_tab())
 
     # Set sites ----
-    default_sites <- create_site_list(sites)
+    default_sites <- create_site_list(df_sites)
     locval <- reactiveValues(
       town_sites = default_sites,
       watershed_sites = default_sites
@@ -143,14 +149,14 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
 
     # * Update by state ----
     observe({
-      if (is.null(sites$Town)) {
+      if (is.null(df_sites$Town)) {
         locval$town_sites <- filter_site_list(
-          sites,
+          df_sites,
           "State",
           input$select_state
         )
       } else {
-        choices <- filter_towns(sites, input$select_state)
+        choices <- filter_towns(df_sites, input$select_state)
 
         shinyWidgets::updatePickerInput(
           session = session,
@@ -165,7 +171,7 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
     # * Update by town ----
     observe({
       locval$town_sites <- filter_site_list(
-        sites,
+        df_sites,
         "Town",
         input$select_town
       )
@@ -175,7 +181,7 @@ mod_sidebar_location_server <- function(id, sites, tab, selected_site) {
     # * Update by watershed ----
     observe({
       locval$watershed_sites <- filter_site_list(
-        sites,
+        df_sites,
         "Watershed",
         input$select_watershed
       )

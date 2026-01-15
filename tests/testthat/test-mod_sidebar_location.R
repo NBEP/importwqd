@@ -5,7 +5,7 @@ testServer(
   mod_sidebar_location_server,
   # Add here your module params
   args = list(
-    sites = tst$sites_final
+    df_sites = tst$sites_final
   ),
   {
     ns <- session$ns
