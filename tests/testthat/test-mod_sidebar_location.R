@@ -33,7 +33,7 @@ testServer(
 )
 
 test_that("module ui works", {
-  ui <- mod_sidebar_location_ui("test", tst$sites_final)
+  ui <- mod_sidebar_location_ui("test", varlist = tst$s_var)
 
   # Check that formals have not been removed
   fmls <- formals(mod_sidebar_location_ui)

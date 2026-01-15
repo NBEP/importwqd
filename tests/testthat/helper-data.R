@@ -203,5 +203,20 @@ tst <- list(
       "<br>Average: 8.5 mg/L"
     ),
     alt = c("Site1, Poor", "Site1, Poor", "Site2, 6.5 mg/L", "Site2, 8.5 mg/L")
+  ),
+  # Misc ----
+  s_var = list(
+    state = c("Rhode Island", "Massachusetts"),
+    town = c("Providence, RI", "Worcester, MA"),
+    watershed = c("Narragansett Bay", "Upper Blackstone River"),
+    site_id = c("001", "002"),
+    site_name = c("Site1", "Site2"),
+    loc_choices = c("By Town" = "town", "By Watershed" = "watershed"),
+    loc_tab = "toggle",
+    param = "Dissolved oxygen (DO)",
+    param_score = "Dissolved oxygen (DO)",
+    depth = "Surface",
+    year = c(2021, 2023),
+    month = c("May", "June", "July", "August")
   )
 )

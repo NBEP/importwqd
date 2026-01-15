@@ -9,26 +9,20 @@
 #' @inheritParams mod_sidebar_ui
 #'
 #' @seealso mod_sidebar_location_server
-mod_sidebar_location_ui <- function(id, df_sites) {
+mod_sidebar_location_ui <- function(id, varlist) {
   ns <- NS(id)
-
-  # define vars
-  state <- unique(df_sites$State)
-  town <- unique(df_sites$Town)
-  watershed <- unique(df_sites$Watershed)
-  loc_choices <- set_loc_choices(df_sites)
 
   tagList(
     tabsetPanel(
       id = ns("tabset_toggle"),
       type = "hidden",
-      selected = loc_tab(loc_choices),
+      selected = varlist$loc_tab,
       tabPanelBody(
         "toggle",
         radioButtons(
           ns("loc_type"),
           label = h3("Select Location"),
-          choices = loc_choices
+          choices = varlist$loc_choices
         )
       ),
       tabPanelBody(
@@ -40,23 +34,23 @@ mod_sidebar_location_ui <- function(id, df_sites) {
     tabsetPanel(
       id = ns("tabset_loc"),
       type = "hidden",
-      selected = loc_choices[1],
+      selected = varlist$loc_choices[1],
       tabPanelBody(
         "town",
         conditionalPanel(
-          condition = paste(length(state), "> 0"),
+          condition = paste(length(varlist$state), "> 0"),
           dropdown(
             ns("select_state"),
             label = h4("Select State"),
-            choices = state
+            choices = varlist$state
           )
         ),
         conditionalPanel(
-          condition = paste(length(town), "> 0"),
+          condition = paste(length(varlist$town), "> 0"),
           dropdown(
             ns("select_town"),
             label = h4("Select Town"),
-            choices = town
+            choices = varlist$town
           )
         )
       ),
@@ -65,7 +59,7 @@ mod_sidebar_location_ui <- function(id, df_sites) {
         dropdown(
           ns("select_watershed"),
           label = h4("Select Watershed"),
-          choices = watershed
+          choices = varlist$watershed
         )
       ),
       tabPanelBody("blank")
@@ -78,8 +72,8 @@ mod_sidebar_location_ui <- function(id, df_sites) {
         dropdown(
           ns("select_sites_all"),
           label = h3("Select Sites"),
-          choices = df_sites$Site_ID,
-          choice_names = df_sites$Site_Name
+          choices = varlist$Site_ID,
+          choice_names = varlist$Site_Name
         )
       ),
       tabPanelBody(
@@ -87,8 +81,8 @@ mod_sidebar_location_ui <- function(id, df_sites) {
         dropdown(
           ns("select_sites_n"),
           label = h3("Select Site"),
-          choices = df_sites$Site_ID,
-          choice_names = df_sites$Site_Name,
+          choices = varlist$Site_ID,
+          choice_names = varlist$Site_Name,
           multiple = FALSE
         )
       )

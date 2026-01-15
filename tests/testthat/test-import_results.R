@@ -230,3 +230,54 @@ test_that("score_results works", {
     df_out
   )
 })
+
+# Test sidebar_var ---
+test_that("sidebar_var works", {
+  expect_equal(
+    sidebar_var(tst$sites_final, tst$data_final, tst$data_score),
+    tst$s_var
+  )
+
+  # Edge case - no town
+  df_sites <- tst$sites_final
+  df_sites$Town <- NULL
+
+  loc_choices <- c("town", "watershed")
+  names(loc_choices) <- c("By State", "By Watershed")
+
+  list_out <- tst$s_var
+  list_out["town"] <- list(NULL)
+  list_out$loc_choices <- loc_choices
+
+  expect_equal(
+    sidebar_var(df_sites, tst$data_final, tst$data_score),
+    list_out
+  )
+
+  # Edge case - no state or town
+  df_sites$State <- NULL
+
+  loc_choices <- "watershed"
+  names(loc_choices) <- "By Watershed"
+
+  list_out["state"] <- list(NULL)
+  list_out$loc_choices <- loc_choices
+  list_out$loc_tab <- "notoggle"
+
+  expect_equal(
+    sidebar_var(df_sites, tst$data_final, tst$data_score),
+    list_out
+  )
+
+  # Edge case - no state, town, or watershed
+  df_sites$Watershed <- NULL
+
+  list_out["watershed"] <- list(NULL)
+  list_out$loc_choices <- "blank"
+  list_out$loc_tab <- "blank"
+
+  expect_equal(
+    sidebar_var(df_sites, tst$data_final, tst$data_score),
+    list_out
+  )
+})

@@ -515,3 +515,79 @@ score_results <- function(.data, sites) {
       )
     )
 }
+
+#' Generate dropdown lists for sidebar
+#'
+#' @description `sidebar_var()` processes site and result data to generate
+#' a list of dropdown options for `mod_sidebar_ui()`.
+#'
+#' @param df_data Dataframe with result data. Must have been processed
+#' by `format_results()` and include columns Parameter, Month, Year.
+#' @param df_score Dataframe with data scores. Must have been processed
+#' by `score_results()` and include column Parameter.
+#' @param df_sites Dataframe with site data. Must have been processed
+#' by `format_sites()` and  include columns Site_ID, Site_Name.
+#'
+#' @return Named list containing the following:
+#' * state - List of state names.
+#' * town - List of town names.
+#' * watershed - List of watershed names.
+#' * param - List of parameters
+#' * param_short - List of parameters that include at least one categorical
+#' score (eg excellent, good, fair)
+#' * depth - List of depths
+#' * year - Sorted list of years
+#' * month - Continuous, sorted list of months
+#'
+#' @export
+sidebar_var <- function(df_sites, df_data, df_score) {
+  # Define location variables
+  loc_choices <- NULL
+  loc_tab <- "notoggle"
+
+  if (!is.null(df_sites$Town)) {
+    loc_choices <- c("By Town" = "town")
+  } else if (!is.null(df_sites$State)) {
+    loc_choices <- c("By State" = "town")
+  }
+
+  if (!is.null(df_sites$Watershed)) {
+    loc_choices <- c(loc_choices, "By Watershed" = "watershed")
+  } else if (is.null(loc_choices)) {
+    loc_choices <- "blank"
+    loc_tab <- "blank"
+  }
+
+  if (length(loc_choices) > 1) {
+    loc_tab <- "toggle"
+  }
+
+  # Define paramater variables
+  param_short <- df_score %>%
+    dplyr::filter(
+      !.data$score_str %in% c("No Data Available", "No Threshold Established")
+    )
+  param_short <- sort(unique(param_short$Parameter))
+
+  depth <- NULL
+  if ("Depth" %in% colnames(df_data)) {
+    depth <- sort_depth(df_data$Depth)
+  }
+
+  list(
+    state = unique(df_sites$State),
+    town = unique(df_sites$Town),
+    watershed = unique(df_sites$Watershed),
+    site_id = unique(df_sites$Site_ID),
+    site_name = unique(df_sites$Site_Name),
+    loc_choices = loc_choices,
+    loc_tab = loc_tab,
+    param = unique(df_data$Parameter),
+    param_score = param_short,
+    depth = depth,
+    year = sort(unique(df_data$Year)),
+    month = sort_months(df_data$Month)
+  )
+}
+
+
