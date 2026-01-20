@@ -67,24 +67,6 @@ test_that("qaqc_results works", {
     ),
     tst$data_qaqc
   )
-
-  # Additional tests - depth handling
-  df_in <- tst$data_raw
-  df_in$Depth <- c(0.5, 1, 11, 12)
-
-  df_out <- tst$data_qaqc
-  df_out$Depth <- c(0.5, 1, 11, 12)
-  df_out$Depth_Category <- c(
-    "Surface", "Surface", "Bottom", "Bottom", "Surface", "Surface",
-    "Midwater", "Bottom"
-  )
-
-  expect_equal(
-    suppressMessages(
-      qaqc_results(df_in, tst$sites_qaqc)
-    ),
-    df_out
-  )
 })
 
 test_that("qaqc_results error messages", {
@@ -129,6 +111,40 @@ test_that("qaqc_results error messages", {
   expect_error(
     suppressMessages(
       qaqc_results(df_in, tst$sites_qaqc)
+    ),
+    regexp = "Invalid Site_ID: 003"
+  )
+})
+
+# Test qaqc_cat_results ----
+test_that("qaqc_cat_results works", {
+  expect_equal(
+    suppressMessages(
+      qaqc_cat_results(tst$cat_raw, tst$sites_qaqc)
+    ),
+    tst$cat_qaqc
+  )
+})
+
+test_that("qaqc_cat_results error messages", {
+  # Test - missing data
+  df_in <- tst$cat_raw
+  df_in$Result <- NA
+
+  expect_error(
+    suppressMessages(
+      qaqc_cat_results(df_in, tst$sites_qaqc)
+    ),
+    regexp = "Result missing. Check rows: 2, 4, 5, 6, 7, 8"
+  )
+
+  # Test - invalid data
+  df_in <- tst$cat_raw
+  df_in$Site_ID <- "003"
+
+  expect_error(
+    suppressMessages(
+      qaqc_cat_results(df_in, tst$sites_qaqc)
     ),
     regexp = "Invalid Site_ID: 003"
   )
@@ -234,11 +250,16 @@ test_that("score_results works", {
 # Test sidebar_var ----
 test_that("sidebar_var works", {
   expect_equal(
-    sidebar_var(tst$sites_final, tst$data_final, tst$data_score),
+    sidebar_var(
+      tst$sites_final,
+      tst$data_final,
+      tst$data_score,
+      df_cat = tst$cat_qaqc
+    ),
     tst$s_var
   )
 
-  # Edge case - no town
+  # Edge case - no town, df_cat
   df_sites <- tst$sites_final
   df_sites$Town <- NULL
 
@@ -248,6 +269,7 @@ test_that("sidebar_var works", {
   list_out <- tst$s_var
   list_out["town"] <- list(NULL)
   list_out$loc_choices <- loc_choices
+  list_out["param_cat"] <- list(NULL)
 
   expect_equal(
     sidebar_var(df_sites, tst$data_final, tst$data_score),
@@ -279,5 +301,21 @@ test_that("sidebar_var works", {
   expect_equal(
     sidebar_var(df_sites, tst$data_final, tst$data_score),
     list_out
+  )
+})
+
+test_that("sidebar_var warning message", {
+  sites_in <- tst$sites_final
+  sites_in[3,1:2] = c("003", "Site3")
+  sites_in[4,1:2] = c("004", "Site4")
+
+  expect_warning(
+    sidebar_var(
+      sites_in,
+      tst$data_final,
+      tst$data_score,
+      df_cat = tst$cat_qaqc
+    ),
+    regexp = "df_sites includes 2 sites with no result data: 003, 004"
   )
 })

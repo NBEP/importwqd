@@ -212,7 +212,7 @@ update_threshold_units <- function(.data, result_data) {
 #' @description
 #' `add_thresholds()` checks stored threshold values, and locates the relevant
 #' threshold values for a given site, parameter, and depth. If no thresholds
-#' found, returns NULL.
+#' found, returns `NULL`.
 #'
 #' @param site_id String. Site ID.
 #' @param group String. Site group.
@@ -221,7 +221,7 @@ update_threshold_units <- function(.data, result_data) {
 #' @param parameter String. Parameter.
 #'
 #' @return One row dataframe with list of thresholds for provided site,
-#' parameter, and depth. If no thresholds found, returns NULL.
+#' parameter, and depth. If no thresholds found, returns `NULL`.
 #'
 #' @noRd
 add_thresholds <- function(
@@ -259,6 +259,62 @@ add_thresholds <- function(
     Fair = dat$Fair[1],
     Best = dat$Best[1]
   )
+}
+
+#' Add depth category
+#'
+#' @description
+#' `add_depth_category()` is a helper function for `qaqc_results()` and
+#' `qaqc_cat_results()` that updates the "Depth", "Depth Unit", and "Depth
+#' Category" columns.
+#'
+#' @param .data Dataframe. Must include columsn "Depth", "Depth Unit", and
+#' "Depth Category"
+#' @param df_sites Dataframe containing site data.
+#'
+#' @return updated dataframe where "Depth" and "Depth Unit" have been converted
+#' to meters and empty values in "Depth Category" have been filled out if
+#' possible.
+#'
+#' @noRd
+add_depth_category <- function(.data, df_sites) {
+  chk <- is.na(.data$Depth)
+  if (all(chk)) {
+    .data$Depth <- NA_integer_
+    .data$Depth_Unit <- "m"
+    return(.data)
+  }
+
+  dat <- .data %>%
+    wqformat::col_to_numeric("Depth", silent = FALSE) %>%
+    wqformat::set_units("Depth", "Depth_Unit", "m", unit_format = "wqdashboard")
+
+  depth_cat <- c("Surface", "Midwater", "Near Bottom", "Bottom")
+
+  wqformat::warn_invalid_var(dat, "Depth_Unit", "m")
+  wqformat::warn_invalid_var(dat, "Depth_Category", depth_cat)
+
+  depth_col <-  c("Max_Surface_Depth_m", "Max_Midwater_Depth_m", "Max_Depth_m")
+
+  df_sites <- dplyr::select(df_sites, dplyr::any_of(c("Site_ID", depth_col)))
+
+  dplyr::left_join(dat, df_sites, by = "Site_ID", keep = FALSE) %>%
+    dplyr::mutate(
+      "Depth_Category" = dplyr::case_when(
+        !is.na(.data$Depth_Category) ~ .data$Depth_Category,
+        is.na(.data$Depth) | is.na(.data$Depth_Unit) |
+          .data$Depth_Unit != "m" ~ NA,
+        is.na(.data$Max_Depth_m) & is.na(.data$Max_Midwater_Depth_m) &
+          is.na(.data$Max_Surface_Depth_m) ~ NA,
+        !is.na(.data$Max_Depth_m) & .data$Depth >= .data$Max_Depth_m ~ "Bottom",
+        !is.na(.data$Max_Midwater_Depth_m) &
+          .data$Depth > .data$Max_Midwater_Depth_m ~ "Near Bottom",
+        !is.na(.data$Max_Surface_Depth_m) &
+          .data$Depth > .data$Max_Surface_Depth_m ~ "Midwater",
+        TRUE ~ "Surface"
+      )
+    ) %>%
+    dplyr::select(!dplyr::any_of(depth_col))
 }
 
 #' Rename variables in column

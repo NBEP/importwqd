@@ -103,48 +103,12 @@ qaqc_results <- function(.data, sites) {
     stop("Invalid Site_ID: ", paste(chk, collapse = ", "), call. = FALSE)
   }
 
-  # Check - columns correct format? Depth in m?
-  dat <- .data %>%
+  # Format data
+  .data %>%
     wqformat::col_to_numeric("Result", silent = FALSE) %>%
     wqformat::col_to_numeric("Lower_Detection_Limit", silent = FALSE) %>%
     wqformat::col_to_numeric("Upper_Detection_Limit", silent = FALSE) %>%
-    wqformat::col_to_numeric("Depth", silent = FALSE) %>%
-    wqformat::set_units("Depth", "Depth_Unit", "m", unit_format = "wqdashboard")
-
-  depth_cat <- c("Surface", "Midwater", "Near Bottom", "Bottom")
-
-  wqformat::warn_invalid_var(dat, "Depth_Unit", "m")
-  wqformat::warn_invalid_var(dat, "Depth_Category", depth_cat)
-
-  # Update depth category
-  site_depth <- sites %>%
-    dplyr::rename(
-      "Max_Surface" = "Max_Surface_Depth_m",
-      "Max_Midwater" = "Max_Midwater_Depth_m",
-      "Max_Depth" = "Max_Depth_m"
-    ) %>%
-    dplyr::select(c("Site_ID", "Max_Surface", "Max_Midwater", "Max_Depth"))
-
-  dat <- dplyr::left_join(dat, site_depth, by = "Site_ID", keep = FALSE) %>%
-    dplyr::mutate(
-      "Depth_Category" = dplyr::case_when(
-        !is.na(.data$Depth_Category) ~ .data$Depth_Category,
-        is.na(.data$Depth) | is.na(.data$Depth_Unit) |
-          .data$Depth_Unit != "m" ~ NA,
-        is.na(.data$Max_Depth) & is.na(.data$Max_Midwater) &
-          is.na(.data$Max_Surface) ~ NA,
-        !is.na(.data$Max_Depth) & .data$Depth >= .data$Max_Depth ~ "Bottom",
-        !is.na(.data$Max_Midwater) & .data$Depth > .data$Max_Midwater ~
-          "Near Bottom",
-        !is.na(.data$Max_Surface) & .data$Depth > .data$Max_Surface ~
-          "Midwater",
-        TRUE ~ "Surface"
-      )
-    ) %>%
-    dplyr::select(!c("Max_Surface", "Max_Midwater", "Max_Depth"))
-
-  # Final adjustments
-  dat %>%
+    add_depth_category(sites) %>%
     dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y"))) %>%
     wqformat::standardize_units(
       "Parameter",
@@ -158,6 +122,56 @@ qaqc_results <- function(.data, sites) {
       c("Lower_Detection_Limit", "Upper_Detection_Limit"),
       warn_only = FALSE
     )
+}
+
+#' Check categorical water quality data for formatting errors
+#'
+#' @description `qaqc_cat_results()` checks categorical water quality data for
+#' major formatting errors. Specifically, it runs the following checks:
+#' * Checks for missing values
+#' * Checks for unknown sites
+#' * Checks Depth column is numeric
+#' * Checks Depth is in meters
+#' * Assigns depth category
+#'
+#' @param .data Input dataframe
+#' @param sites Dataframe containing site metadata
+#'
+#' @seealso [qaqc_results()]
+#'
+#' @return Updated dataframe
+#'
+#' @export
+qaqc_cat_results <- function(.data, sites) {
+  message("Checking categorical data...")
+
+  # Check - missing data?
+  check_val_missing(.data, "Site_ID")
+  check_val_missing(.data, "Date")
+  check_val_missing(.data, "Parameter")
+
+  chk <- is.na(.data$Qualifier) & is.na(.data$Result)
+
+  if (any(chk)) {
+    stop(
+      "Result missing. Check rows: ",
+      paste(which(chk), collapse = ", ")
+    )
+  }
+
+  # Check - all sites valid?
+  site_list <- sites$Site_ID
+  data_sites <- unique(.data$Site_ID)
+
+  chk <- setdiff(data_sites, site_list)
+  if (length(chk) > 0) {
+    stop("Invalid Site_ID: ", paste(chk, collapse = ", "), call. = FALSE)
+  }
+
+  # Final adjustments
+  .data %>%
+    add_depth_category(sites) %>%
+    dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y")))
 }
 
 #' Format water quality data for wqdasbhoard
@@ -527,6 +541,7 @@ score_results <- function(.data, sites) {
 #' by `score_results()` and include column Parameter.
 #' @param df_sites Dataframe with site data. Must have been processed
 #' by `format_sites()` and  include columns Site_ID, Site_Name.
+#' @param df_cat Dataframe with categorical data. Default `NULL`.
 #'
 #' @return Named list containing the following:
 #' * state - List of state names.
@@ -540,7 +555,24 @@ score_results <- function(.data, sites) {
 #' * month - Continuous, sorted list of months
 #'
 #' @export
-sidebar_var <- function(df_sites, df_data, df_score) {
+sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
+  # Filter df_sites by sites listed in df_data, df_cat
+  data_sites <- unique(df_data$Site_ID)
+  if (!is.null(df_cat)) {
+    data_sites <- c(data_sites, df_cat$Site_ID) %>%
+      unique()
+  }
+
+  chk <- setdiff(df_sites$Site_ID, data_sites)
+  if (length(chk) > 0) {
+    warning(
+      "df_sites includes ", length(chk),
+      " sites with no result data: ",
+      paste(chk, collapse = ", ")
+    )
+    df_sites <- dplyr::filter(df_sites, .data$Site_ID %in% data_sites)
+  }
+
   # Define location variables
   state <- NULL
   town <- NULL
@@ -583,6 +615,11 @@ sidebar_var <- function(df_sites, df_data, df_score) {
     )
   param_short <- sort(unique(param_short$Parameter))
 
+  param_cat <- NULL
+  if (!is.null(df_cat)) {
+    param_cat <- unique(df_cat$Parameter)
+  }
+
   depth <- NULL
   if ("Depth" %in% colnames(df_data)) {
     depth <- sort_depth(df_data$Depth)
@@ -598,6 +635,7 @@ sidebar_var <- function(df_sites, df_data, df_score) {
     loc_tab = loc_tab,
     param = unique(df_data$Parameter),
     param_score = param_short,
+    param_cat = param_cat,
     depth = depth,
     year = sort(unique(df_data$Year)),
     month = sort_months(df_data$Month)

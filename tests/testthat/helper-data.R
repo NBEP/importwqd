@@ -204,6 +204,48 @@ tst <- list(
     ),
     alt = c("Site1, Poor", "Site1, Poor", "Site2, 6.5 mg/L", "Site2, 8.5 mg/L")
   ),
+  # Categorical data ----
+  cat_raw = data.frame(
+    Site_ID = c(
+      "001", "001", "001", "001", "002", "002", "002", "002"
+    ),
+    Activity_Type = "Field Msr/Obs",
+    Date = c(
+      as.Date("2021-06-30"), as.Date("2023-07-12"), as.Date("2021-08-05"),
+      as.Date("2023-05-25")
+    ),
+    Depth = NA,
+    Depth_Unit = NA,
+    Depth_Category = NA,
+    Parameter = "Wind force, Beaufort scale",
+    Result = c(NA, 3, NA, 4, 2, 6, 7, 5),
+    Result_Unit = NA,
+    Lower_Detection_Limit = NA,
+    Upper_Detection_Limit = NA,
+    Detection_Limit_Unit = NA,
+    Qualifier = c("Q", NA, "Q", NA, NA, NA, NA, NA)
+  ),
+  cat_qaqc = data.frame(
+    Site_ID = c(
+      "001", "001", "001", "001", "002", "002", "002", "002"
+    ),
+    Activity_Type = "Field Msr/Obs",
+    Date = c(
+      as.Date("2021-06-30"), as.Date("2023-07-12"), as.Date("2021-08-05"),
+      as.Date("2023-05-25")
+    ),
+    Depth = NA_integer_,
+    Depth_Unit = "m",
+    Depth_Category = NA,
+    Parameter = "Wind force, Beaufort scale",
+    Result = c(NA, 3, NA, 4, 2, 6, 7, 5),
+    Result_Unit = NA,
+    Lower_Detection_Limit = NA,
+    Upper_Detection_Limit = NA,
+    Detection_Limit_Unit = NA,
+    Qualifier = c("Q", NA, "Q", NA, NA, NA, NA, NA),
+    Year = c(2021, 2023)
+  ),
   # Misc ----
   s_var = list(
     state = c("Rhode Island", "Massachusetts"),
@@ -215,6 +257,7 @@ tst <- list(
     loc_tab = "toggle",
     param = "Dissolved oxygen (DO)",
     param_score = "Dissolved oxygen (DO)",
+    param_cat = "Wind force, Beaufort scale",
     depth = "Surface",
     year = c(2021, 2023),
     month = c("May", "June", "July", "August")

@@ -207,6 +207,38 @@ test_that("update_threshold_units error messages", {
   )
 })
 
+test_that("add_depth_category works", {
+  df_in <- tst$data_raw
+  df_in$Depth <- c(50, 1, 11, 12)
+  df_in$Depth_Unit <- c("cm", "m", "m", "m")
+
+  df_out <- df_in
+  df_out$Depth <- c(0.5, 1, 11, 12)
+  df_out$Depth_Unit <- "m"
+  df_out$Depth_Category <- c(
+    "Surface", "Surface", "Bottom", "Bottom", "Surface", "Surface",
+    "Midwater", "Bottom"
+  )
+
+  expect_equal(
+    add_depth_category(df_in, tst$sites_qaqc),
+    df_out
+  )
+
+  # Edge case - no depths
+  df_in$Depth <- NA
+  df_in$Depth_Unit <- c(NA, "ft", "cm", "m")
+
+  df_out$Depth <- NA_integer_
+  df_out$Depth_Unit <- "m"
+  df_out$Depth_Category <- NA
+
+  expect_equal(
+    add_depth_category(df_in, tst$sites_qaqc),
+    df_out
+  )
+})
+
 test_that("try_rename works", {
   df_in <- data.frame(
     Col1 = c("foofy", "foo"),

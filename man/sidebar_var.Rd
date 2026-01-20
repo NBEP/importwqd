@@ -4,7 +4,7 @@
 \alias{sidebar_var}
 \title{Generate dropdown lists for sidebar}
 \usage{
-sidebar_var(df_sites, df_data, df_score)
+sidebar_var(df_sites, df_data, df_score, df_cat = NULL)
 }
 \arguments{
 \item{df_sites}{Dataframe with site data. Must have been processed
@@ -15,6 +15,8 @@ by `format_results()` and include columns Parameter, Month, Year.}
 
 \item{df_score}{Dataframe with data scores. Must have been processed
 by `score_results()` and include column Parameter.}
+
+\item{df_cat}{Dataframe with categorical data. Default `NULL`.}
 }
 \value{
 Named list containing the following:
