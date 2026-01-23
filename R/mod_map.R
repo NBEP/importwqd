@@ -54,11 +54,11 @@ mod_map_server <- function(
   shp_river = NULL
 ) {
   moduleServer(id, function(input, output, session) {
-    ns <- session$ns <-
-      # Set title ----
-      output$title <- renderText({
-        paste0(in_var$param_n(), " (", in_var$year(), ")")
-      })
+    ns <- session$ns
+    # Set title ----
+    output$title <- renderText({
+      paste0(in_var$param_n(), " (", in_var$year(), ")")
+    })
 
     # Static variables ----
     drop_col <- c(
@@ -66,17 +66,13 @@ mod_map_server <- function(
       "Latitude", "Longitude", "popup_loc", "popup_score", "alt"
     )
 
-    df_table_raw <- df_raw %>%
-      dplyr::filter(.data$Year == max(.data$Year)) %>%
-      dplyr::select(!dplyr::any_of(drop_col))
-
     # Reactive variables ----
     val <- reactiveValues(
       df_map = df_raw,
       score_range = c(0, 1),
       score_str = "No Data Available",
       legend = "",
-      df_table = df_table_raw,
+      df_table = dplyr::select(df_raw, !dplyr::any_of(drop_col)),
       show_score = TRUE,
       static_col = "Average",
       dynamic_col = "Average"
