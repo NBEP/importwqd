@@ -253,6 +253,7 @@ mod_sidebar_server <- function(
     }) %>%
       bindEvent(
         selected_tab(),
+        df_score_filter(),
         input$select_param_n,
         input$select_depth_n
       )
