@@ -158,8 +158,8 @@ mod_sidebar_ui <- function(id, varlist) {
 #'
 #' @export
 mod_sidebar_server <- function(
-    id, df_sites, df_data, df_score, selected_tab, selected_site
-    ) {
+  id, df_sites, df_data, df_score, selected_tab, selected_site
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -216,8 +216,8 @@ mod_sidebar_server <- function(
     })
 
     val <- reactiveValues(
-      df_map = df_score[0,],
-      df_report = df_score[0,]
+      df_map = df_score[0, ],
+      df_report = df_score[0, ]
     )
 
     observe({

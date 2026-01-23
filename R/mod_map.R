@@ -49,9 +49,9 @@ mod_map_ui <- function(id) {
 #'
 #' @export
 mod_map_server <- function(
-    id, sbVar, siteVar, df_raw, map_tab, shp_watershed = NULL,
-    shp_river = NULL
-  ) {
+  id, sbVar, siteVar, df_raw, map_tab, shp_watershed = NULL,
+  shp_river = NULL
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns <-
       # Set title ----
@@ -151,7 +151,7 @@ mod_map_server <- function(
         mapVar$show_score <- FALSE
       }
     }) %>%
-      bindEvent(input$tabset, ignoreInit=TRUE, once=TRUE)
+      bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
 
     # Map ----
     output$map <- leaflet::renderLeaflet({

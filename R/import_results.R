@@ -329,7 +329,7 @@ score_results <- function(.data, sites) {
   group_col <- intersect(colnames(.data), group_col)
 
   dat <- .data %>%
-    dplyr::group_by_at(group_col)%>%
+    dplyr::group_by_at(group_col) %>%
     dplyr::summarise(
       "score_max" = max(.data$Result),
       "score_min" = min(.data$Result),

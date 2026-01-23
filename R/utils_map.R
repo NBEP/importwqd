@@ -90,21 +90,20 @@ cat_pal <- function(score_str, is_legend = FALSE) {
   icon_shape <- "cross"
   icon_names <- "No Data Available"
 
-  if (any(score_str %in% x)) {
+  chk_x <- any(score_str %in% x)
+  chk_y <- any(score_str %in% y)
+  chk_legend <- chk_x & chk_y & is_legend
+
+  if (chk_x) {
     icon_color <- c("#347bc0", "#62c2dd", "#f3d56f", "#db7363", icon_color)
     icon_shape <- c("circle", "rect", "triangle", "diamond", icon_shape)
     icon_names <- c(x, icon_names)
   }
 
-  if (any(score_str %in% y)) {
+  if (chk_y & !chk_legend) {
     icon_color <- c("#62c2dd", "#db7363", icon_color)
     icon_shape <- c("rect", "diamond", icon_shape)
     icon_names <- c(y, icon_names)
-  }
-
-  if (is_legend) {
-    icon_color <- unique(icon_color)
-    icon_shape <- unique(icon_shape)
   }
 
   icon_symbols <- Map(
@@ -141,7 +140,7 @@ cat_labels <- function(score_str) {
 
   chk_x <- any(score_str %in% x)
   chk_y <- any(score_str %in% y)
-  if (chk_x & chk_y) {
+  if (chk_x && chk_y) {
     label_list <- c(
       "Excellent", "Good / Meets Criteria", "Fair",
       "Poor / Does Not Meet Criteria", label_list

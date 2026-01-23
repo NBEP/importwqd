@@ -37,7 +37,7 @@ report_table <- function(df, show_score = TRUE, col_title = "Average") {
 graph_table <- function(df, group) {
   df_wide <- prep_graph_table(df, group)
 
-  fig <- reactable::reactable(
+  reactable::reactable(
     df_wide,
     highlight = TRUE,
     defaultColDef = reactable::colDef(
@@ -54,6 +54,4 @@ graph_table <- function(df, group) {
       )
     )
   )
-
-  return(fig)
 }
