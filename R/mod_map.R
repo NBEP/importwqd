@@ -385,14 +385,14 @@ mod_map_server <- function(
     }) %>%
       bindEvent(val$df_map, val$dynamic_col)
 
-    observe({
-      if (map_type() == "score_str") {
-        hideCols(ns("table"), as.list(""))
-      } else {
-        hideCols(ns("table"), as.list("score_str"))
-      }
-    }) %>%
-      bindEvent(map_type())
+    # observe({
+    #   if (map_type() == "score_str") {
+    #     hideCols(ns("table"), as.list(""))
+    #   } else {
+    #     hideCols(ns("table"), as.list("score_str"))
+    #   }
+    # }) %>%
+    #   bindEvent(map_type())
 
     # Return data ----
     selected_site <- reactive({
