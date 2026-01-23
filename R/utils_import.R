@@ -95,7 +95,7 @@ check_val_missing <- function(.data, col_name, ignore_rows = NA,
     return(.data)
   }
 
-  msg <- paste(toString(chk), "empty rows detected in", col_name)
+  msg <- paste(toString(chk), "empty rows in", col_name)
   if (chk < 20) {
     msg <- paste0(msg, ". Check rows: ", paste(rws, collapse = ", "))
   }
@@ -144,7 +144,7 @@ drop_empty_col <- function(.data, col_name) {
 drop_uniform_col <- function(.data, col_name, include_na = TRUE) {
   chk <- unique(.data[[col_name]])
 
-  if (!include_na && !all(is.na(chk))) {
+  if (!include_na && length(chk) > 1) {
     chk <- chk[!is.na(chk)]
   }
 
@@ -294,7 +294,7 @@ add_depth_category <- function(.data, df_sites) {
   wqformat::warn_invalid_var(dat, "Depth_Unit", "m")
   wqformat::warn_invalid_var(dat, "Depth_Category", depth_cat)
 
-  depth_col <-  c("Max_Surface_Depth_m", "Max_Midwater_Depth_m", "Max_Depth_m")
+  depth_col <- c("Max_Surface_Depth_m", "Max_Midwater_Depth_m", "Max_Depth_m")
 
   df_sites <- dplyr::select(df_sites, dplyr::any_of(c("Site_ID", depth_col)))
 
@@ -303,7 +303,8 @@ add_depth_category <- function(.data, df_sites) {
       "Depth_Category" = dplyr::case_when(
         !is.na(.data$Depth_Category) ~ .data$Depth_Category,
         is.na(.data$Depth) | is.na(.data$Depth_Unit) |
-          .data$Depth_Unit != "m" ~ NA,
+          .data$Depth_Unit != "m" |
+          grepl("depth", tolower(.data$Parameter)) ~ NA,
         is.na(.data$Max_Depth_m) & is.na(.data$Max_Midwater_Depth_m) &
           is.na(.data$Max_Surface_Depth_m) ~ NA,
         !is.na(.data$Max_Depth_m) & .data$Depth >= .data$Max_Depth_m ~ "Bottom",

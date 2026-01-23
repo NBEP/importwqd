@@ -208,7 +208,6 @@ test_that("score_results works", {
       "Coldwater", "Coldwater", "Coldwater", "Warmwater", "Warmwater",
       "Warmwater"
     ),
-    Depth = "Surface",
     Parameter = "Dissolved oxygen (DO)",
     Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "mg/L", NA),
     score_typ = c("Minimum", "Minimum", "Minimum", "Average", "Average", NA),
@@ -220,12 +219,12 @@ test_that("score_results works", {
     Latitude = c(41.83, 41.83, 41.83, 42.28, 42.28, 42.28),
     Longitude = c(-71.41, -71.41, -71.41, -71.77, -71.77, -71.77),
     popup_loc = c(
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface"
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater"
     ),
     popup_score = c(
       "<br>Minimum: 0.05 mg/L<br>Score: Poor",
@@ -306,8 +305,8 @@ test_that("sidebar_var works", {
 
 test_that("sidebar_var warning message", {
   sites_in <- tst$sites_final
-  sites_in[3,1:2] = c("003", "Site3")
-  sites_in[4,1:2] = c("004", "Site4")
+  sites_in[3, 1:2] <- c("003", "Site3")
+  sites_in[4, 1:2] <- c("004", "Site4")
 
   expect_warning(
     sidebar_var(

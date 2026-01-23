@@ -49,7 +49,7 @@ mod_sidebar_ui <- function(id, varlist) {
             dropdown(
               ns("select_param_download"),
               label = h3("Select Indicators"),
-              choices = varlist$param
+              choices = c(varlist$param, varlist$param_cat)
             )
           )
         ),
@@ -137,23 +137,19 @@ mod_sidebar_ui <- function(id, varlist) {
   )
 }
 
-#' sidebar Server Functions
+#' Sidebar server
 #'
 #' @description `mod_sidebar_server()` produces the sidebar server for the
 #' companion app`wqdashboard`.
 #'
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_sidebar_ui()`.
-#' @param df_data_all Dataframe with raw result data. Must have been processed
-#' by `qaqc_results()`.
+#' @param df_sites Dataframe with site data. Must have been processed
+#' by `format_sites()` and  include columns Site_ID, Site_Name.
 #' @param df_data Dataframe with result data. Must have been processed
 #' by `format_results()` and include columns Parameter, Month, Year.
 #' @param df_score Dataframe with data scores. Must have been processed
 #' by `score_results()` and include column Parameter.
-#' @param df_sites_all Dataframe with raw site data. Must have been processed
-#' by `qaqc_sites()`.
-#' @param df_sites Dataframe with site data. Must have been processed
-#' by `format_sites()` and  include columns Site_ID, Site_Name.
 #' @param selected_tab Reactive variable. Name of selected tab.
 #' @param selected_site Reactive variable. Site_ID for site selected in
 #' `mod_map_ui()`.
@@ -162,9 +158,8 @@ mod_sidebar_ui <- function(id, varlist) {
 #'
 #' @export
 mod_sidebar_server <- function(
-  id, df_data_all, df_data, df_score, df_sites_all, df_sites, selected_tab,
-  selected_site
-) {
+    id, df_sites, df_data, df_score, selected_tab, selected_site
+    ) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -199,7 +194,7 @@ mod_sidebar_server <- function(
       bindEvent(selected_tab())
 
     observe({
-      if (length(unique(df_data$Depth)) > 1) {
+      if ("Depth" %in% colnames(df_data)) {
         updateTabsetPanel(inputId = "tabset_depth", selected = "depth_null")
       } else if (selected_tab() %in% c("map", "graphs")) {
         updateTabsetPanel(inputId = "tabset_depth", selected = "depth_n")
@@ -209,23 +204,47 @@ mod_sidebar_server <- function(
     }) %>%
       bindEvent(selected_tab())
 
-    # Generate output ----
-    # * Map ----
-
-    # * Report card ----
-
-    # * Graph ----
-
-    # * Download -----
-
-    # Load bearing outdated code ----
+    # Filter data ----
     df_score_filter <- reactive({
       req(input$select_year)
 
-      df <- dplyr::filter(df_score, .data$Year == input$select_year)
+      dat <- dplyr::filter(df_score, .data$Year == input$select_year)
 
-      return(df)
+      if (!input$chk_nascore) {
+        dat <- dplyr::filter(dat, !is.na(.data$score_num))
+      }
     })
+
+    val <- reactiveValues(
+      df_map = df_score[0,],
+      df_report = df_score[0,]
+    )
+
+    observe({
+      req(input$select_param_n)
+
+      if (selected_tab() == "map") {
+        param <- input$select_param_n
+        depth <- c(input$select_depth_n, NA)
+
+        dat <- df_score_filter() %>%
+          dplyr::filter(
+            .data$Parameter == !!param | is.na(.data$Parameter)
+          )
+
+        chk <- "Depth" %in% colnames(dat) & !grepl("depth", tolower(param))
+        if (chk) {
+          dat <- dplyr::filter(dat, .data$Depth %in% !!depth)
+        }
+
+        val$df_map <- dat
+      }
+    }) %>%
+      bindEvent(
+        selected_tab(),
+        input$select_param_n,
+        input$select_depth_n
+      )
 
     # Return data ----
     return(
@@ -241,10 +260,10 @@ mod_sidebar_server <- function(
         }),
         param_all = reactive({
           input$select_param_download
-        }),
+        }), # used for download
         param_n = reactive({
           input$select_param_n
-        }),
+        }), # used for map, graph
         param_short = reactive({
           input$select_param_score
         }), # used for report card
@@ -268,6 +287,9 @@ mod_sidebar_server <- function(
         }),
         df_score_f = reactive({
           df_score_filter()
+        }),
+        df_map = reactive({
+          val$df_map
         })
       )
     )

@@ -149,7 +149,6 @@ tst <- list(
     Parameter = "Dissolved oxygen (DO)",
     Result = c(0.05, 3, 0.05, 4, 6, 8, 7, 9),
     Unit = "mg/L",
-    Depth = "Surface",
     Calculation = c("min", "min", "min", "min", "mean", "mean", "mean", "mean"),
     Min = c(5, 5, 5, 5, NA, NA, NA, NA),
     Max = NA_integer_,
@@ -159,14 +158,14 @@ tst <- list(
     Best = c("high", "high", "high", "high", NA, NA, NA, NA),
     Month = c("June", "July", "August", "May"),
     Description = c(
-      "<b>Site1</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 0.05 mg/L",
-      "<b>Site1</b><br>Date: July 12, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 3 mg/L",
-      "<b>Site1</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 0.05 mg/L",
-      "<b>Site1</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 4 mg/L",
-      "<b>Site2</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 6 mg/L",
-      "<b>Site2</b><br>Date: July 12, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 8 mg/L",
-      "<b>Site2</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 7 mg/L",
-      "<b>Site2</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 9 mg/L"
+      "<b>Site1</b><br>Date: June 30, 2021<br>Dissolved oxygen (DO): 0.05 mg/L",
+      "<b>Site1</b><br>Date: July 12, 2023<br>Dissolved oxygen (DO): 3 mg/L",
+      "<b>Site1</b><br>Date: August 05, 2021<br>Dissolved oxygen (DO): 0.05 mg/L",
+      "<b>Site1</b><br>Date: May 25, 2023<br>Dissolved oxygen (DO): 4 mg/L",
+      "<b>Site2</b><br>Date: June 30, 2021<br>Dissolved oxygen (DO): 6 mg/L",
+      "<b>Site2</b><br>Date: July 12, 2023<br>Dissolved oxygen (DO): 8 mg/L",
+      "<b>Site2</b><br>Date: August 05, 2021<br>Dissolved oxygen (DO): 7 mg/L",
+      "<b>Site2</b><br>Date: May 25, 2023<br>Dissolved oxygen (DO): 9 mg/L"
     )
   ),
   data_score = data.frame(
@@ -181,7 +180,6 @@ tst <- list(
       "Upper Blackstone River"
     ),
     Group = c("Coldwater", "Coldwater", "Warmwater", "Warmwater"),
-    Depth = "Surface",
     Parameter = "Dissolved oxygen (DO)",
     Unit = "mg/L",
     score_typ = c("Minimum", "Minimum", "Average", "Average"),
@@ -192,10 +190,10 @@ tst <- list(
     Latitude = c(41.83, 41.83, 42.28, 42.28),
     Longitude = c(-71.41, -71.41, -71.77, -71.77),
     popup_loc = c(
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface"
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater"
     ),
     popup_score = c(
       "<br>Minimum: 0.05 mg/L<br>Score: Poor",
@@ -258,7 +256,7 @@ tst <- list(
     param = "Dissolved oxygen (DO)",
     param_score = "Dissolved oxygen (DO)",
     param_cat = "Wind force, Beaufort scale",
-    depth = "Surface",
+    depth = NULL,
     year = c(2021, 2023),
     month = c("May", "June", "July", "August")
   )

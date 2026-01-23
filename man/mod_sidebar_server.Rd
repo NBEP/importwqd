@@ -2,15 +2,13 @@
 % Please edit documentation in R/mod_sidebar.R
 \name{mod_sidebar_server}
 \alias{mod_sidebar_server}
-\title{sidebar Server Functions}
+\title{Sidebar server}
 \usage{
 mod_sidebar_server(
   id,
-  df_data_all,
+  df_sites,
   df_data,
   df_score,
-  df_sites_all,
-  df_sites,
   selected_tab,
   selected_site
 )
@@ -19,20 +17,14 @@ mod_sidebar_server(
 \item{id}{Namespace ID for module. Should match ID used by
 `mod_sidebar_ui()`.}
 
-\item{df_data_all}{Dataframe with raw result data. Must have been processed
-by `qaqc_results()`.}
+\item{df_sites}{Dataframe with site data. Must have been processed
+by `format_sites()` and  include columns Site_ID, Site_Name.}
 
 \item{df_data}{Dataframe with result data. Must have been processed
 by `format_results()` and include columns Parameter, Month, Year.}
 
 \item{df_score}{Dataframe with data scores. Must have been processed
 by `score_results()` and include column Parameter.}
-
-\item{df_sites_all}{Dataframe with raw site data. Must have been processed
-by `qaqc_sites()`.}
-
-\item{df_sites}{Dataframe with site data. Must have been processed
-by `format_sites()` and  include columns Site_ID, Site_Name.}
 
 \item{selected_tab}{Reactive variable. Name of selected tab.}
 

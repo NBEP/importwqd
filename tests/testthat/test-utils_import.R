@@ -50,17 +50,17 @@ test_that("check_val_missing works", {
   expect_equal(check_val_missing(df, "Col1"), df)
   expect_error(
     check_val_missing(df, "Col2"),
-    regexp = "2 empty rows detected in Col2. Check rows: 2, 3"
+    regexp = "2 empty rows in Col2. Check rows: 2, 3"
   )
   expect_warning(
     check_val_missing(df, "Col2", is_stop = FALSE),
-    regexp = "\t2 empty rows detected in Col2. Check rows: 2, 3"
+    regexp = "\t2 empty rows in Col2. Check rows: 2, 3"
   )
 
   # Edge case - ignore rows
   expect_error(
     check_val_missing(df, "Col2", ignore_rows = 3),
-    regexp = "1 empty rows detected in Col2. Check rows: 2"
+    regexp = "1 empty rows in Col2. Check rows: 2"
   )
   expect_equal(
     check_val_missing(df, "Col2", ignore_rows = c(2, 3)),

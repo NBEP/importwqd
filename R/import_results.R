@@ -269,23 +269,32 @@ format_results <- function(.data, sites, thresholds) {
     "Good", "Fair", "Best"
   )
 
-  dat %>%
+  dat <- dat %>%
     dplyr::select(dplyr::any_of(field_keep)) %>%
-    dplyr::rename("Depth" = "Depth_Category", "Unit" = "Result_Unit") %>%
+    drop_uniform_col("Depth_Category", include_na = FALSE) %>%
+    drop_uniform_col("Group") %>%
+    dplyr::rename("Unit" = "Result_Unit") %>%
     dplyr::mutate("Month" = strftime(.data$Date, "%B")) %>%
     dplyr::mutate(
       "Description" = paste0(
         "<b>", .data$Site_Name, "</b><br>Date: ",
         format(.data$Date, format = "%B %d, %Y")
       )
-    ) %>%
-    dplyr::mutate(
-      "Description" = dplyr::if_else(
-        is.na(.data$Depth),
-        .data$Description,
-        paste0(.data$Description, "<br>Depth: ", .data$Depth)
+    )
+
+  if ("Depth_Category" %in% colnames(dat)) {
+    dat <- dat %>%
+      dplyr::rename("Depth" = "Depth_Category") %>%
+      dplyr::mutate(
+        "Description" = dplyr::if_else(
+          is.na(.data$Depth),
+          paste0(.data$Description, "<br>Depth: -"),
+          paste0(.data$Description, "<br>Depth: ", .data$Depth)
+        )
       )
-    ) %>%
+  }
+
+  dat %>%
     dplyr::mutate(
       "Description" = paste0(
         .data$Description, "<br>", .data$Parameter, ": ",
@@ -316,8 +325,11 @@ score_results <- function(.data, sites) {
   message("Formatting data scores...")
 
   message("\tGrouping data")
+  group_col <- c("Site_ID", "Parameter", "Depth", "Year")
+  group_col <- intersect(colnames(.data), group_col)
+
   dat <- .data %>%
-    dplyr::group_by_at(c("Site_ID", "Parameter", "Depth", "Year")) %>%
+    dplyr::group_by_at(group_col)%>%
     dplyr::summarise(
       "score_max" = max(.data$Result),
       "score_min" = min(.data$Result),
@@ -373,25 +385,39 @@ score_results <- function(.data, sites) {
       )
     ) %>%
     dplyr::select(
-      c(
-        "Site_ID", "Parameter", "Unit", "Depth", "Year", "score_typ",
-        "score_num", "score_str"
+      dplyr::any_of(
+        c(
+          "Site_ID", "Parameter", "Unit", "Depth", "Year", "score_typ",
+          "score_num", "score_str"
+        )
       )
     )
 
   message("\tFormatting data")
 
   # Generate dataframe of site/year/parameter/depth combinations
-  df_temp <- dat %>%
-    dplyr::select("Site_ID", "Year", "Parameter", "Depth") %>%
-    unique()
+  if ("Depth" %in% colnames(dat)) {
+    df_temp <- dat %>%
+      dplyr::select("Site_ID", "Year", "Parameter", "Depth") %>%
+      unique()
 
-  df_all <- expand.grid(
-    Site_ID = unique(dat$Site_ID),
-    Year = unique(dat$Year),
-    Parameter = unique(dat$Parameter),
-    Depth = unique(dat$Depth)
-  )
+    df_all <- expand.grid(
+      Site_ID = unique(dat$Site_ID),
+      Year = unique(dat$Year),
+      Parameter = unique(dat$Parameter),
+      Depth = unique(dat$Depth)
+    )
+  } else {
+    df_temp <- dat %>%
+      dplyr::select("Site_ID", "Year", "Parameter") %>%
+      unique()
+
+    df_all <- expand.grid(
+      Site_ID = unique(dat$Site_ID),
+      Year = unique(dat$Year),
+      Parameter = unique(dat$Parameter)
+    )
+  }
 
   df_missing <- dplyr::setdiff(df_all, df_temp)
 
@@ -641,5 +667,3 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
     month = sort_months(df_data$Month)
   )
 }
-
-
