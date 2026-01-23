@@ -80,6 +80,8 @@ mod_map_server <- function(
 
     # * Most variables ----
     observe({
+      req(in_var$df_map())
+
       dat <- in_var$df_map() %>%
         dplyr::filter(!is.na(.data$score_num))
 
@@ -108,11 +110,12 @@ mod_map_server <- function(
       val$legend <- trimws(paste(in_var$param_n, par_unit))
       val$dynamic_col <- trimws(paste(col_title, par_unit))
     }) %>%
-      bindEvent(in_var$param_n(), in_var$df_map())
+      bindEvent(in_var$df_map())
 
     # * df_map ----
     observe({
       req(in_var$sites_all())
+      req(in_var$df_map())
 
       if (map_tab()) {
         sites <- in_var$sites_all()
