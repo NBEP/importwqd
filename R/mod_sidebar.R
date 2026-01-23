@@ -232,6 +232,7 @@ mod_sidebar_server <- function(
 
     observe({
       req(input$select_param_n)
+      req(df_score_filter())
 
       if (selected_tab() == "map") {
         param <- input$select_param_n
