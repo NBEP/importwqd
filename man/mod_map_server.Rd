@@ -6,8 +6,8 @@
 \usage{
 mod_map_server(
   id,
-  sbVar,
-  siteVar,
+  in_var,
+  map_bounds,
   df_raw,
   map_tab,
   shp_watershed = NULL,
@@ -18,19 +18,20 @@ mod_map_server(
 \item{id}{Namespace ID for module. Should match ID used by
 `mod_map_ui()`.}
 
-\item{sbVar}{Reactive output from `mod_sidebar_server`.}
+\item{in_var}{Reactive output from `mod_sidebar_server`.}
 
-\item{siteVar}{Static list. Coordinate boundaries for site data.}
+\item{map_bounds}{Numeric list. Map boundaries. Should be ordered minimum
+longitude, minimum latitude, maximum longitude, maximum latitude.}
 
-\item{df_raw}{Static dataframe. Default data.}
+\item{df_raw}{Dataframe. Default map data.}
 
 \item{map_tab}{Reactive boolean. If map tab is selected and data should be
 updated, set to `TRUE`. Else, set to `FALSE`.}
 
-\item{shp_watershed}{Static shapefile. Watershed polygons. Set to `NULL` if
+\item{shp_watershed}{Shapefile. Watershed polygons. Set to `NULL` if
 no shapefile available. Default `NULL`.}
 
-\item{shp_river}{Static shapefile. River polylines. Set to `NULL` if no
+\item{shp_river}{Shapefile. River polylines. Set to `NULL` if no
 shapefile available. Default `NULL`}
 }
 \value{

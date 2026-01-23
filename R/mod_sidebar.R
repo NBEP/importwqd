@@ -99,7 +99,7 @@ mod_sidebar_ui <- function(id, varlist) {
           id = ns("tabset_dates"),
           type = "hidden",
           tabPanelBody(
-            "by_year",
+            "year_n",
             dropdown(
               ns("select_year"),
               label = h3("Select Year"),
@@ -109,7 +109,7 @@ mod_sidebar_ui <- function(id, varlist) {
             )
           ),
           tabPanelBody(
-            "by_range",
+            "year_range",
             sliderInput(
               ns("select_year_range"),
               label = h3("Select Years"),
@@ -129,6 +129,16 @@ mod_sidebar_ui <- function(id, varlist) {
                 varlist$month[1],
                 varlist$month[length(varlist$month)]
               )
+            )
+          ),
+          tabPanelBody(
+            "year_all",
+            dropdown(
+              ns("select_year"),
+              label = h3("Select Years"),
+              choices = varlist$year,
+              decreasing = TRUE,
+              multiple = TRUE
             )
           )
         )
@@ -176,19 +186,19 @@ mod_sidebar_server <- function(
       if (selected_tab() == "map") {
         updateTabsetPanel(inputId = "tabset_param", selected = "param_n")
         updateTabsetPanel(inputId = "tabset_score", selected = "show_score")
-        updateTabsetPanel(inputId = "tabset_dates", selected = "by_year")
+        updateTabsetPanel(inputId = "tabset_dates", selected = "year_n")
       } else if (selected_tab() == "report_card") {
         updateTabsetPanel(inputId = "tabset_param", selected = "param_score")
         updateTabsetPanel(inputId = "tabset_score", selected = "show_score")
-        updateTabsetPanel(inputId = "tabset_dates", selected = "by_year")
+        updateTabsetPanel(inputId = "tabset_dates", selected = "year_n")
       } else if (selected_tab() == "graphs") {
         updateTabsetPanel(inputId = "tabset_param", selected = "param_n")
         updateTabsetPanel(inputId = "tabset_score", selected = "hide_score")
-        updateTabsetPanel(inputId = "tabset_dates", selected = "by_range")
+        updateTabsetPanel(inputId = "tabset_dates", selected = "year_range")
       } else {
         updateTabsetPanel(inputId = "tabset_param", selected = "param_download")
         updateTabsetPanel(inputId = "tabset_score", selected = "hide_score")
-        updateTabsetPanel(inputId = "tabset_dates", selected = "by_range")
+        updateTabsetPanel(inputId = "tabset_dates", selected = "year_all")
       }
     }) %>%
       bindEvent(selected_tab())

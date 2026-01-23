@@ -76,8 +76,8 @@ num_symbols <- function(.data, pal_range) {
 #' `cat_pal()` generates icons for categorical data.
 #'
 #' @param score_str List. Variable names.
-#' @param is_legend Boolean. If `TRUE`, formats symbols for a legend. If `FALSE`,
-#' formats symbols for map. Default `FALSE`.
+#' @param is_legend Boolean. If `TRUE`, formats symbols for a legend. If
+#' `FALSE`, formats symbols for map. Default `FALSE`.
 #'
 #' @returns Icon code
 #'
@@ -100,7 +100,7 @@ cat_pal <- function(score_str, is_legend = FALSE) {
     icon_names <- c(x, icon_names)
   }
 
-  if (chk_y & !chk_legend) {
+  if (chk_y && !chk_legend) {
     icon_color <- c("#62c2dd", "#db7363", icon_color)
     icon_shape <- c("rect", "diamond", icon_shape)
     icon_names <- c(y, icon_names)
