@@ -101,7 +101,7 @@ mod_sidebar_ui <- function(id, varlist) {
           tabPanelBody(
             "year_n",
             dropdown(
-              ns("select_year"),
+              ns("select_year_n"),
               label = h3("Select Year"),
               choices = varlist$year,
               decreasing = TRUE,
@@ -134,7 +134,7 @@ mod_sidebar_ui <- function(id, varlist) {
           tabPanelBody(
             "year_all",
             dropdown(
-              ns("select_year"),
+              ns("select_year_all"),
               label = h3("Select Years"),
               choices = varlist$year,
               decreasing = TRUE,
@@ -216,9 +216,9 @@ mod_sidebar_server <- function(
 
     # Filter data ----
     df_score_filter <- reactive({
-      req(input$select_year)
+      req(input$select_year_n)
 
-      dat <- dplyr::filter(df_score, .data$Year == input$select_year)
+      dat <- dplyr::filter(df_score, .data$Year == input$select_year_n)
 
       if (!input$chk_nascore) {
         dat <- dplyr::filter(dat, !is.na(.data$score_num))
@@ -287,7 +287,7 @@ mod_sidebar_server <- function(
           input$select_depth_all
         }),
         year = reactive({
-          input$select_year
+          input$select_year_n
         }),
         year_range = reactive({
           input$select_year_range
