@@ -204,7 +204,7 @@ mod_sidebar_server <- function(
       bindEvent(selected_tab())
 
     observe({
-      if ("Depth" %in% colnames(df_data)) {
+      if (!"Depth" %in% colnames(df_data)) {
         updateTabsetPanel(inputId = "tabset_depth", selected = "depth_null")
       } else if (selected_tab() %in% c("map", "graphs")) {
         updateTabsetPanel(inputId = "tabset_depth", selected = "depth_n")
@@ -238,7 +238,7 @@ mod_sidebar_server <- function(
 
       if (selected_tab() == "map") {
         param <- input$select_param_n
-        depth <- c(input$select_depth_n, NA)
+        depth <- input$select_depth_n
 
         dat <- df_score_filter() %>%
           dplyr::filter(
