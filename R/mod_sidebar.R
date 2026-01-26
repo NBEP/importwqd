@@ -223,6 +223,8 @@ mod_sidebar_server <- function(
       if (!input$chk_nascore) {
         dat <- dplyr::filter(dat, !is.na(.data$score_num))
       }
+
+      dat
     })
 
     val <- reactiveValues(
