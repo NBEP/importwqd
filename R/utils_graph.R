@@ -51,7 +51,7 @@ prep_graph_table <- function(.data, group) {
         wqformat::col_to_numeric(var)
     }
 
-    df_wide <- data.frame(df_wide)
+    df_wide <- data.frame(df_wide, check.names = FALSE)
   }
 
   df_wide

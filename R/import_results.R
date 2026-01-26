@@ -286,10 +286,10 @@ format_results <- function(.data, sites, thresholds) {
     dat <- dat %>%
       dplyr::rename("Depth" = "Depth_Category") %>%
       dplyr::mutate(
-        "Description" = dplyr::if_else(
-          is.na(.data$Depth),
-          paste0(.data$Description, "<br>Depth: -"),
-          paste0(.data$Description, "<br>Depth: ", .data$Depth)
+        "Description" = dplyr::case_when(
+          grepl("depth|height", .data$Parameter) ~ .data$Description,
+          is.na(.data$Depth) ~ paste0(.data$Description, "<br>Depth: -"),
+          TRUE ~ paste0(.data$Description, "<br>Depth: ", .data$Depth)
         )
       )
   }
@@ -401,12 +401,23 @@ score_results <- function(.data, sites) {
       dplyr::select("Site_ID", "Year", "Parameter", "Depth") %>%
       unique()
 
+    depth <- unique(dat$Depth)
+    depth <- depth[!is.na(depth)]
+
     df_all <- expand.grid(
       Site_ID = unique(dat$Site_ID),
       Year = unique(dat$Year),
       Parameter = unique(dat$Parameter),
-      Depth = unique(dat$Depth)
-    )
+      Depth = depth
+    ) %>%
+      dplyr::mutate(
+        "Depth" = dplyr::if_else(
+          grepl("depth|height", tolower(.data$Parameter)),
+          NA,
+          .data$Depth
+        )
+      ) %>%
+      unique()
   } else {
     df_temp <- dat %>%
       dplyr::select("Site_ID", "Year", "Parameter") %>%
@@ -520,10 +531,10 @@ score_results <- function(.data, sites) {
   if ("Depth" %in% colnames(dat)) {
     dat <- dat %>%
       dplyr::mutate(
-        "popup_loc" = dplyr::if_else(
-          is.na(.data$Depth),
-          paste(.data$popup_loc, "<br>Depth: -"),
-          paste(.data$popup_loc, "<br>Depth:", .data$Depth)
+        "popup_loc" = dplyr::case_when(
+          grepl("depth|height", tolower(.data$Parameter)) ~ .data$popup_loc,
+          is.na(.data$Depth) ~ paste(.data$popup_loc, "<br>Depth: -"),
+          TRUE ~ paste(.data$popup_loc, "<br>Depth:", .data$Depth)
         )
       )
   }
@@ -589,16 +600,6 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
       unique()
   }
 
-  chk <- setdiff(df_sites$Site_ID, data_sites)
-  if (length(chk) > 0) {
-    warning(
-      "df_sites includes ", length(chk),
-      " sites with no result data: ",
-      paste(chk, collapse = ", ")
-    )
-    df_sites <- dplyr::filter(df_sites, .data$Site_ID %in% data_sites)
-  }
-
   # Define location variables
   state <- NULL
   town <- NULL
@@ -649,6 +650,7 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
   depth <- NULL
   if ("Depth" %in% colnames(df_data)) {
     depth <- sort_depth(df_data$Depth)
+    depth <- depth[!is.na(depth)]
   }
 
   list(

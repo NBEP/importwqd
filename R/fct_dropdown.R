@@ -24,9 +24,7 @@ dropdown <- function(
     names(choices) <- choice_names
   }
 
-  if (length(choices) > 1) {
-    choices <- choices[!duplicated(choices)]
-  }
+  choices <- choices[!duplicated(choices)]
 
   if (sorted && is.null(choice_names)) {
     choices <- sort(choices, decreasing = decreasing)

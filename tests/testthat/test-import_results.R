@@ -1,12 +1,14 @@
 # Test prep_results ----
 test_that("prep_results works", {
   df_in <- tst$data_raw
-  df_in$Parameter <- "DO"
-  df_in$Result_Unit <- c(NA, "ug/l", NA, "ug/l", "ug/l", "mg/l", "mg/l", "mg/l")
-  df_in$Detection_Limit_Unit <- c(
-    "ug/l", "ug/l", "ug/l", "ug/l", "mg/l", "mg/l", "mg/l", "mg/l"
+  df_in$Parameter <- c("DO", "DO", "DO", "DO", "Secchi Depth")
+  df_in$Result_Unit <- c(
+    NA, "ug/l", NA, "ug/l", "m", "ug/l", "mg/l", "mg/l", "mg/l", "m"
   )
-  df_in$Qualifier <- c("BDL", NA, "BDL", NA, NA, NA, NA, NA)
+  df_in$Detection_Limit_Unit <- c(
+    "ug/l", "ug/l", "ug/l", "ug/l", NA, "mg/l", "mg/l", "mg/l", "mg/l", NA
+  )
+  df_in$Qualifier <- c("BDL", NA, "BDL", NA, NA, NA, NA, NA, NA, NA)
   colnames(df_in) <- c(
     "Site", "Activity Type", "Date", "Depth", "Depth Unit", "Depth Category",
     "Parameter", "Result", "Unit", "Lower Detection Limit",
@@ -24,8 +26,8 @@ test_that("prep_results works", {
     )
   )
   df_param <- data.frame(
-    wqdashboard = c("Dissolved oxygen (DO)", "Dissolved oxygen saturation"),
-    Custom = c("DO", NA)
+    wqdashboard = c("Dissolved oxygen (DO)", "Depth, Secchi disk depth"),
+    Custom = c("DO", "Secchi Depth")
   )
   df_unit <- data.frame(
     wqdashboard = c("mg/L", "ug/L"),
@@ -92,15 +94,15 @@ test_that("qaqc_results error messages", {
   )
 
   df_in <- tst$data_raw
-  df_in$Lower_Detection_Limit <- c(NA, 0.1, NA, NA)
-  df_in$Upper_Detection_Limit <- c(4, NA, NA, NA)
+  df_in$Lower_Detection_Limit <- c(NA, 0.1, NA, NA, NA)
+  df_in$Upper_Detection_Limit <- c(4, NA, NA, NA, NA)
   df_in$Detection_Limit_Unit <- NA
 
   expect_error(
     suppressMessages(
       qaqc_results(df_in, tst$sites_qaqc)
     ),
-    regexp = "Detection_Limit_Unit missing. Check rows: 1, 2, 5, 6"
+    regexp = "Detection_Limit_Unit missing. Check rows: 1, 2, 6, 7"
   )
 
 
@@ -183,58 +185,45 @@ test_that("score_results works", {
     tst$data_score
   )
 
-  # Test edge case
-  df_in <- tst$data_final
-  df_in$Date[1] <- as.Date("2022-06-30")
-  df_in$Year[1] <- 2022
+  # Test edge case - no depth, town (only 1 param for my sanity)
+  df_in <- tst$data_final[c(1:4, 6:9), ]
+  df_in$Depth <- NULL
 
   df_sites <- tst$sites_final
   df_sites$Town <- NULL
 
   df_out <- data.frame(
-    Year = c(2021, 2022, 2023, 2021, 2023, 2022),
-    Site_Name = c("Site1", "Site1", "Site1", "Site2", "Site2", "Site2"),
-    Site_ID = c("001", "001", "001", "002", "002", "002"),
-    State = c(
-      "Rhode Island", "Rhode Island", "Rhode Island", "Massachusetts",
-      "Massachusetts", "Massachusetts"
-    ),
+    Year = c(2021, 2023, 2021, 2023),
+    Site_Name = c("Site1", "Site1", "Site2", "Site2"),
+    Site_ID = c("001", "001", "002", "002"),
+    State = c("Rhode Island", "Rhode Island", "Massachusetts", "Massachusetts"),
     Watershed = c(
-      "Narragansett Bay", "Narragansett Bay", "Narragansett Bay",
-      "Upper Blackstone River", "Upper Blackstone River",
+      "Narragansett Bay", "Narragansett Bay", "Upper Blackstone River",
       "Upper Blackstone River"
     ),
-    Group = c(
-      "Coldwater", "Coldwater", "Coldwater", "Warmwater", "Warmwater",
-      "Warmwater"
-    ),
+    Group = c("Coldwater", "Coldwater", "Warmwater", "Warmwater"),
     Parameter = "Dissolved oxygen (DO)",
-    Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "mg/L", NA),
-    score_typ = c("Minimum", "Minimum", "Minimum", "Average", "Average", NA),
-    score_num = c(0.05, 0.05, 3, 6.5, 8.5, NA),
+    Unit = "mg/L",
+    score_typ = c("Minimum", "Minimum", "Average", "Average"),
+    score_num = c(0.05, 0.05, 7, 8),
     score_str = c(
-      "Poor", "Poor", "Poor", "No Threshold Established",
-      "No Threshold Established", "No Data Available"
+      "Poor", "Poor", "No Threshold Established", "No Threshold Established"
     ),
-    Latitude = c(41.83, 41.83, 41.83, 42.28, 42.28, 42.28),
-    Longitude = c(-71.41, -71.41, -71.41, -71.77, -71.77, -71.77),
+    Latitude = c(41.83, 41.83, 42.28, 42.28),
+    Longitude = c(-71.41, -71.41, -71.77, -71.77),
     popup_loc = c(
       "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
       "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
       "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
       "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater"
     ),
     popup_score = c(
       "<br>Minimum: 0.05 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
-      "<br>Minimum: 3 mg/L<br>Score: Poor", "<br>Average: 6.5 mg/L",
-      "<br>Average: 8.5 mg/L", "<br><i>No data</i>"
+      "<br>Minimum: 0.05 mg/L<br>Score: Poor", "<br>Average: 7 mg/L",
+      "<br>Average: 8 mg/L"
     ),
     alt = c(
-      "Site1, Poor", "Site1, Poor", "Site1, Poor", "Site2, 6.5 mg/L",
-      "Site2, 8.5 mg/L", "Site2, No data"
+      "Site1, Poor", "Site1, Poor", "Site2, 7 mg/L", "Site2, 8 mg/L"
     )
   )
 
@@ -300,21 +289,5 @@ test_that("sidebar_var works", {
   expect_equal(
     sidebar_var(df_sites, tst$data_final, tst$data_score),
     list_out
-  )
-})
-
-test_that("sidebar_var warning message", {
-  sites_in <- tst$sites_final
-  sites_in[3, 1:2] <- c("003", "Site3")
-  sites_in[4, 1:2] <- c("004", "Site4")
-
-  expect_warning(
-    sidebar_var(
-      sites_in,
-      tst$data_final,
-      tst$data_score,
-      df_cat = tst$cat_qaqc
-    ),
-    regexp = "df_sites includes 2 sites with no result data: 003, 004"
   )
 })
