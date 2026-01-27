@@ -12,6 +12,7 @@
 #' @importFrom shiny h2
 #' @importFrom shiny h3
 #' @importFrom shiny h4
+#' @importFrom shiny includeScript
 #' @importFrom shiny isTruthy
 #' @importFrom shiny moduleServer
 #' @importFrom shiny NS

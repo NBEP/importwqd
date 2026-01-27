@@ -9,7 +9,9 @@
 #' @export
 mod_map_ui <- function(id) {
   ns <- NS(id)
+
   tagList(
+    add_js(),
     bslib::navset_card_tab(
       id = ns("tabset"),
       title = h2(textOutput(ns("title"))),
@@ -37,12 +39,11 @@ mod_map_ui <- function(id) {
 #' @param map_bounds Numeric list. Map boundaries. Should be ordered minimum
 #' longitude, minimum latitude, maximum longitude, maximum latitude.
 #' @param df_raw Dataframe. Default map data.
-#' @param map_tab Reactive boolean. If map tab is selected and data should be
-#' updated, set to `TRUE`. Else, set to `FALSE`.
+#' @param selected_tab Reactive string. Name of selected tab.
 #' @param shp_watershed Shapefile. Watershed polygons. Set to `NULL` if
 #' no shapefile available. Default `NULL`.
 #' @param shp_river Shapefile. River polylines. Set to `NULL` if no
-#' shapefile available. Default `NULL`
+#' shapefile available. Default `NULL`.
 #'
 #' @returns Reactive list containing two items.
 #' * graph_link: Button press for "View Trends"
@@ -50,11 +51,12 @@ mod_map_ui <- function(id) {
 #'
 #' @export
 mod_map_server <- function(
-  id, in_var, map_bounds, df_raw, map_tab, shp_watershed = NULL,
-  shp_river = NULL
+    id, in_var, map_bounds, df_raw, selected_tab, shp_watershed = NULL,
+    shp_river = NULL
 ) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+
     # Set title ----
     output$title <- renderText({
       paste0(in_var$param_n(), " (", in_var$year(), ")")
@@ -80,6 +82,7 @@ mod_map_server <- function(
 
     # * Most variables ----
     observe({
+      req(in_var$param_n())
       req(in_var$df_map())
 
       dat <- in_var$df_map() %>%
@@ -107,7 +110,7 @@ mod_map_server <- function(
 
       val$score_range <- c(score_min, score_max)
       val$score_str <- score_str
-      val$legend <- trimws(paste(in_var$param_n, par_unit))
+      val$legend <- trimws(paste(in_var$param_n(), par_unit))
       val$dynamic_col <- trimws(paste(col_title, par_unit))
     }) %>%
       bindEvent(in_var$df_map())
@@ -117,7 +120,7 @@ mod_map_server <- function(
       req(in_var$sites_all())
       req(in_var$df_map())
 
-      if (map_tab()) {
+      if (selected_tab() == "map") {
         sites <- in_var$sites_all()
 
         val$df_map <- in_var$df_map() %>%
@@ -125,7 +128,7 @@ mod_map_server <- function(
       }
     }) %>%
       bindEvent(
-        map_tab(),
+        selected_tab(),
         in_var$df_map(),
         in_var$sites_all()
       )
@@ -158,7 +161,12 @@ mod_map_server <- function(
       layer_list <- NA
 
       map <- leaflet::leaflet() %>%
-        leaflet::fitBounds(map_bounds) %>%
+        leaflet::fitBounds(
+          map_bounds$lng1,
+          map_bounds$lat1,
+          map_bounds$lng2,
+          map_bounds$lat2
+        ) %>%
         leaflet::addProviderTiles(leaflet::providers$Esri.WorldTopoMap) %>%
         leaflet::addScaleBar(position = "bottomleft")
 
@@ -285,7 +293,7 @@ mod_map_server <- function(
             layerId = ~Site_ID,
             # Icons
             icon = ~ leaflet::icons(
-              iconUrl = cat_pal(val$score_str())[score_str],
+              iconUrl = cat_pal(val$score_str)[score_str],
               iconWidth = 20,
               iconHeight = 20
             ),
@@ -384,14 +392,14 @@ mod_map_server <- function(
     }) %>%
       bindEvent(val$df_map, val$dynamic_col)
 
-    # observe({
-    #   if (map_type() == "score_str") {
-    #     hideCols(ns("table"), as.list(""))
-    #   } else {
-    #     hideCols(ns("table"), as.list("score_str"))
-    #   }
-    # }) %>%
-    #   bindEvent(map_type())
+    observe({
+      if (map_type() == "score_str") {
+        hideCols(ns("table"), as.list(""))
+      } else {
+        hideCols(ns("table"), as.list("score_str"))
+      }
+    }) %>%
+      bindEvent(map_type())
 
     # Return data ----
     selected_site <- reactive({

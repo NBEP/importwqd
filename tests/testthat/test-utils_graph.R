@@ -7,7 +7,7 @@ test_that("prep_graph_table works", {
       c("2021-06-30", "2021-08-05", "2023-05-25", "2023-07-12")
     ),
     "Dissolved oxygen (DO) mg/L" = c(0.05, 3, 0.05, 4),
-    "Depth, Secchi disk depth m" = c("", "", "", 8),
+    "Depth, Secchi disk depth m" = c(NA, NA, NA, 8),
     check.names = FALSE
   )
 
@@ -44,8 +44,8 @@ test_that("prep_graph_table works", {
     Date = as.Date(
       c("2021-06-30", "2021-08-05", "2023-05-25", "2023-07-12")
     ),
-    Surface = c(0.05, 3, 0.05, ""),
-    Midwater = c("", "", "", 4)
+    Surface = c(0.05, 3, 0.05, NA),
+    Midwater = c(NA, NA, NA, 4)
   )
 
   expect_equal(
