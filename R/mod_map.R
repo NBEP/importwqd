@@ -70,14 +70,14 @@ mod_map_server <- function(
 
     # Reactive variables ----
     val <- reactiveValues(
+      df_filter = df_raw,
       df_map = df_raw,
       score_range = c(0, 1),
       score_str = "No Data Available",
       legend = "",
       df_table = dplyr::select(df_raw, !dplyr::any_of(drop_col)),
       show_score = TRUE,
-      static_col = "Average",
-      dynamic_col = "Average"
+      col_title = "Average"
     )
 
     # * Most variables ----
@@ -111,11 +111,11 @@ mod_map_server <- function(
       val$score_range <- c(score_min, score_max)
       val$score_str <- score_str
       val$legend <- trimws(paste(in_var$param_n(), par_unit))
-      val$dynamic_col <- trimws(paste(col_title, par_unit))
+      val$col_title <- trimws(paste(col_title, par_unit))
     }) %>%
       bindEvent(in_var$df_map())
 
-    # * df_map ----
+    # * Dataframes ----
     observe({
       req(in_var$sites_all())
       req(in_var$df_map())
@@ -123,7 +123,7 @@ mod_map_server <- function(
       if (selected_tab() == "map") {
         sites <- in_var$sites_all()
 
-        val$df_map <- in_var$df_map() %>%
+        val$df_filter <- in_var$df_map() %>%
           dplyr::filter(.data$Site_ID %in% !!sites)
       }
     }) %>%
@@ -132,6 +132,15 @@ mod_map_server <- function(
         in_var$df_map(),
         in_var$sites_all()
       )
+
+    observe({
+      if (input$tabset == "Map") {
+        val$df_map <- val$df_filter
+      } else {
+        val$df_table <- dplyr::select(val$df_filter, !dplyr::any_of(drop_col))
+      }
+    }) %>%
+      bindEvent(input$tabset, val$df_filter)
 
     # * Map type ----
     map_type <- reactive({
@@ -143,18 +152,6 @@ mod_map_server <- function(
       }
     }) %>%
       bindEvent(val$score_str)
-
-    # * Default table ----
-    observe({
-      val$df_table <- dplyr::select(val$df_map, !dplyr::any_of(drop_col))
-      val$static_col <- val$dynamic_col
-      if (map_type() == "score_str") {
-        val$show_score <- TRUE
-      } else {
-        val$show_score <- FALSE
-      }
-    }) %>%
-      bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
 
     # Map ----
     output$map <- leaflet::renderLeaflet({
@@ -374,32 +371,42 @@ mod_map_server <- function(
       )
 
     # Table -----
+    observe({
+      if (map_type() == "score_str") {
+        val$show_score <- TRUE
+      } else {
+        val$show_score <- FALSE
+      }
+    }) %>%
+      bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
+
     output$table <- reactable::renderReactable({
       report_table(
         val$df_table,
         show_score = val$show_score,
         col_title = val$col_title
       )
-    })
+    }) %>%
+      bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
 
     # * Update table ----
     observe({
       reactable::updateReactable(
         "table",
-        data = dplyr::select(val$df_map, !dplyr::any_of(drop_col)),
-        meta = list(col_title = val$dynamic_col)
+        data = val$df_table,
+        meta = list(col_title = val$col_title)
       )
     }) %>%
-      bindEvent(val$df_map, val$dynamic_col)
+      bindEvent(val$df_table, val$col_title)
 
     observe({
-      if (map_type() == "score_str") {
+      if (input$tabset == "Table" && map_type() == "score_str") {
         hideCols(ns("table"), as.list(""))
-      } else {
+      } else if (input$tabset == "Table") {
         hideCols(ns("table"), as.list("score_str"))
       }
     }) %>%
-      bindEvent(map_type())
+      bindEvent(input$tabset, map_type())
 
     # Return data ----
     selected_site <- reactive({
