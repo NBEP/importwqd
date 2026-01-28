@@ -412,6 +412,8 @@ mod_map_server <- function(
 
     # * Update table ----
     observe({
+      req(input$tabset == "Table")
+
       print("map updateReactable")
 
       reactable::updateReactable(
@@ -420,7 +422,10 @@ mod_map_server <- function(
         meta = list(col_title = val$dynamic_col)
       )
     }) |>
-      bindEvent(val$dynamic_table, val$dynamic_col)
+      bindEvent(
+        input$tabset, val$dynamic_table, val$dynamic_col,
+        ignoreInit = TRUE
+      )
 
     observe({
       if (map_type() == "score_str" & input$tabset == "Table") {

@@ -264,6 +264,51 @@ mod_sidebar_server <- function(
         input$select_depth_n
       )
 
+    # * Report data ----
+    drop_report <- c(
+      "Year", "Site_ID", "Unit", "score_typ", "score_num", "Latitude",
+      "Longitude", "popup_loc", "popup_score", "alt"
+    )
+
+    observe({
+      req(selected_tab() == "report_card")
+      req(df_score_filter())
+      req(input$select_param_score)
+      req(loc_server$sites_all())
+
+      param <- c(input$select_param_score, NA)
+      sites <- loc_server$sites_all()
+
+      df <- df_score_filter() |>
+        dplyr::filter(
+          "Parameter" %in% !!param,
+          "Site_ID" %in% !!sites
+        )
+
+      if ("Depth" %in% colnames(df)) {
+        depth_list <- c(NA, input$select_depth_all)
+        df <- dplyr::filter(df, .data$Depth %in% !!depth_list)
+      }
+
+      keep_col <- c(
+        "Site_Name", "State", "Town", "Watershed", "Group", "Depth",
+        "Parameter", "score_str"
+      )
+
+      val$df_report <- df |>
+        dplyr::select(dplyr::any_of(keep_col)) |>
+        dplyr::mutate(
+          dplyr::across(
+            dplyr::everything(),
+            ~tidyr::replace_na(.x, "-")  # necessary for PDF
+          )
+        )
+    }) |>
+      bindEvent(
+        selected_tab(), df_score_filter(), input$select_param_score,
+        loc_server$sites_all(), input$select_depth_all
+      )
+
     # Return data ----
     return(
       list(
@@ -308,6 +353,9 @@ mod_sidebar_server <- function(
         }),
         df_map = reactive({
           val$df_map
+        }),
+        df_report = reactive({
+          val$df_report
         })
       )
     )
