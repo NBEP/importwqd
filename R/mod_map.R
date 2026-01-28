@@ -51,8 +51,8 @@ mod_map_ui <- function(id) {
 #'
 #' @export
 mod_map_server <- function(
-    id, in_var, map_bounds, df_raw, selected_tab, shp_watershed = NULL,
-    shp_river = NULL
+  id, in_var, map_bounds, df_raw, selected_tab, shp_watershed = NULL,
+  shp_river = NULL
 ) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -68,6 +68,8 @@ mod_map_server <- function(
       "Latitude", "Longitude", "popup_loc", "popup_score", "alt"
     )
 
+    df_table <- dplyr::select(df_raw, !dplyr::any_of(drop_col))
+
     # Reactive variables ----
     val <- reactiveValues(
       df_filter = df_raw,
@@ -75,10 +77,21 @@ mod_map_server <- function(
       score_range = c(0, 1),
       score_str = "No Data Available",
       legend = "",
-      df_table = dplyr::select(df_raw, !dplyr::any_of(drop_col)),
+      dynamic_table = df_table,
+      static_table = df_table,
       show_score = TRUE,
-      col_title = "Average"
+      dynamic_col = "Average",
+      static_tile = "Average"
     )
+
+    # * Active tab ----
+    map_tab <- reactive({
+      if (selected_tab() == "map") {
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    })
 
     # * Most variables ----
     observe({
@@ -99,7 +112,11 @@ mod_map_server <- function(
         score_max <- max(dat$score_num, na.rm = TRUE)
         score_str <- unique(dat$score_str)
         par_unit <- dat$Unit[1]
-        col_title <- dat$score_typ[1]
+        col_title <- unique_na(dat$score_typ)
+      }
+
+      if (length(col_title) > 1 || is.na(col_title)) {
+        col_title <- in_var$param_n()
       }
 
       if (par_unit %in% c(NA, "None", "")) {
@@ -111,24 +128,23 @@ mod_map_server <- function(
       val$score_range <- c(score_min, score_max)
       val$score_str <- score_str
       val$legend <- trimws(paste(in_var$param_n(), par_unit))
-      val$col_title <- trimws(paste(col_title, par_unit))
+      val$dynamic_col <- trimws(paste(col_title, par_unit))
     }) %>%
-      bindEvent(in_var$df_map())
+      bindEvent(in_var$df_map(), in_var$param_n())
 
     # * Dataframes ----
     observe({
+      req(map_tab())
       req(in_var$sites_all())
       req(in_var$df_map())
 
-      if (selected_tab() == "map") {
-        sites <- in_var$sites_all()
+      sites <- in_var$sites_all()
 
-        val$df_filter <- in_var$df_map() %>%
-          dplyr::filter(.data$Site_ID %in% !!sites)
-      }
+      val$df_filter <- in_var$df_map() %>%
+        dplyr::filter(.data$Site_ID %in% !!sites)
     }) %>%
       bindEvent(
-        selected_tab(),
+        map_tab(),
         in_var$df_map(),
         in_var$sites_all()
       )
@@ -137,7 +153,8 @@ mod_map_server <- function(
       if (input$tabset == "Map") {
         val$df_map <- val$df_filter
       } else {
-        val$df_table <- dplyr::select(val$df_filter, !dplyr::any_of(drop_col))
+        val$dynamic_table <- val$df_filter %>%
+          dplyr::select(!dplyr::any_of(drop_col))
       }
     }) %>%
       bindEvent(input$tabset, val$df_filter)
@@ -377,32 +394,38 @@ mod_map_server <- function(
       } else {
         val$show_score <- FALSE
       }
+
+      val$static_table <- val$dynamic_table
+      val$static_col <- val$dynamic_col
     }) %>%
       bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
 
     output$table <- reactable::renderReactable({
       report_table(
-        val$df_table,
+        val$static_table,
         show_score = val$show_score,
-        col_title = val$col_title
+        col_title = val$static_col
       )
-    }) %>%
-      bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
+    })
 
     # * Update table ----
     observe({
       reactable::updateReactable(
         "table",
-        data = val$df_table,
-        meta = list(col_title = val$col_title)
+        data = val$dynamic_table,
+        meta = list(col_title = val$dynamic_col)
       )
     }) %>%
-      bindEvent(val$df_table, val$col_title)
+      bindEvent(val$dynamic_table, val$dynamic_col)
 
     observe({
-      if (input$tabset == "Table" && map_type() == "score_str") {
+      req(input$tabset == "Table")
+
+      print("this should only trigger when input$tabset == 'Table'")
+
+      if (map_type() == "score_str") {
         hideCols(ns("table"), as.list(""))
-      } else if (input$tabset == "Table") {
+      } else {
         hideCols(ns("table"), as.list("score_str"))
       }
     }) %>%

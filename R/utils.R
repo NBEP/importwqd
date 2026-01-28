@@ -15,3 +15,24 @@ pretty_number <- function(x) {
     round(x, 2)
   )
 }
+
+#' Find unique values and drop NA
+#'
+#' @description `unique_na()` find unique values in a list and removes `NA`
+#' values. If all values are `NA`, returns `NA`.
+#'
+#' @param x List
+#'
+#' @return Unique values in a list, with `NA` values removed. If all values are
+#' `NA`, returns `NA`
+#'
+#' @noRd
+unique_na <- function(x) {
+  x <- unique(x)
+
+  if (length(x) > 1) {
+    x <- x[!is.na(x)]
+  }
+
+  x
+}

@@ -8,3 +8,15 @@ test_that("pretty_number works", {
     0.000023
   )
 })
+
+test_that("unique_na works", {
+  expect_equal(
+    unique_na(c("foo", "bar", "foo", NA, "foo")),
+    c("foo", "bar")
+  )
+  expect_equal(
+    unique_na(c(NA, NA)),
+    NA
+  )
+})
+
