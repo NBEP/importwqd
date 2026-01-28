@@ -218,6 +218,8 @@ mod_sidebar_server <- function(
     df_score_filter <- reactive({
       req(input$select_year_n)
 
+      print("sidebar df_score_filter")
+
       dat <- dplyr::filter(df_score, .data$Year == input$select_year_n)
 
       if (!input$chk_nascore) {
@@ -237,6 +239,8 @@ mod_sidebar_server <- function(
       req(selected_tab() == "map")
       req(input$select_param_n)
       req(df_score_filter())
+
+      print("sidebar val$df_map")
 
       param <- input$select_param_n
       depth <- input$select_depth_n
