@@ -389,7 +389,7 @@ mod_map_server <- function(
 
     # Table -----
     observe({
-      print("map val$show_score")
+      print("map val$show_score val$static_table val$static_col")
 
       if (map_type() == "score_str") {
         val$show_score <- TRUE
@@ -397,22 +397,23 @@ mod_map_server <- function(
         val$show_score <- FALSE
       }
 
-      # val$static_table <- val$dynamic_table
-      # val$static_col <- val$dynamic_col
+      val$static_table <- val$dynamic_table
+      val$static_col <- val$dynamic_col
     }) |>
       bindEvent(val$dynamic_table, ignoreInit = TRUE, once = TRUE)
 
     output$table <- reactable::renderReactable({
       report_table(
-        val$dynamic_table,
+        val$static_table,
         show_score = val$show_score,
-        col_title = val$dynamic_col
+        col_title = val$static_col
       )
-    }) |>
-      bindEvent(val$dynamic_table, ignoreInit = TRUE, once = TRUE)
+    })
 
     # * Update table ----
     observe({
+      print("map updateReactable")
+
       reactable::updateReactable(
         "table",
         data = val$dynamic_table,
