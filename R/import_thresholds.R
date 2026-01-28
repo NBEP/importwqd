@@ -11,8 +11,8 @@
 prep_thresholds <- function(.data, df_param, df_unit) {
   message("Preparing thresholds...")
 
-  .data %>%
-    try_rename("Parameter", df_param) %>%
+  .data |>
+    try_rename("Parameter", df_param) |>
     try_rename("Unit", df_unit)
 }
 
@@ -60,16 +60,16 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
   missing_col <- setdiff(field_all, colnames(.data))
   .data[missing_col] <- NA
 
-  dat <- .data %>%
-    wqformat::update_param("Parameter", in_format, "wqdashboard") %>%
-    wqformat::update_unit("Unit", in_format, "wqdashboard") %>%
-    wqformat::state_to_abb("State") %>%
-    wqformat::col_to_numeric("Threshold_Min", silent = FALSE) %>%
-    wqformat::col_to_numeric("Threshold_Max", silent = FALSE) %>%
-    wqformat::col_to_numeric("Excellent", silent = FALSE) %>%
-    wqformat::col_to_numeric("Good", silent = FALSE) %>%
-    wqformat::col_to_numeric("Fair", silent = FALSE) %>%
-    dplyr::mutate("Calculation" = tolower(.data$Calculation)) %>%
+  dat <- .data |>
+    wqformat::update_param("Parameter", in_format, "wqdashboard") |>
+    wqformat::update_unit("Unit", in_format, "wqdashboard") |>
+    wqformat::state_to_abb("State") |>
+    wqformat::col_to_numeric("Threshold_Min", silent = FALSE) |>
+    wqformat::col_to_numeric("Threshold_Max", silent = FALSE) |>
+    wqformat::col_to_numeric("Excellent", silent = FALSE) |>
+    wqformat::col_to_numeric("Good", silent = FALSE) |>
+    wqformat::col_to_numeric("Fair", silent = FALSE) |>
+    dplyr::mutate("Calculation" = tolower(.data$Calculation)) |>
     dplyr::select(dplyr::all_of(field_all))
 
   # Check - bad data (error)
@@ -148,14 +148,14 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
 format_thresholds <- function(.data) {
   message("Formatting thresholds...")
 
-  .data %>%
+  .data |>
     dplyr::rename(
       "Site" = "Site_ID",
       "Depth" = "Depth_Category",
       "Min" = "Threshold_Min",
       "Max" = "Threshold_Max"
-    ) %>%
-    dplyr::arrange_at(c("Site", "State", "Group", "Depth")) %>%
+    ) |>
+    dplyr::arrange_at(c("Site", "State", "Group", "Depth")) |>
     dplyr::mutate(
       "Calculation" = dplyr::case_when(
         .data$Calculation %in% c(NA, "average") ~ "mean",
@@ -163,7 +163,7 @@ format_thresholds <- function(.data) {
         .data$Calculation == "maximum" ~ "max",
         TRUE ~ .data$Calculation
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "Best" = dplyr::case_when(
         is.na(.data$Excellent) | is.na(.data$Good) | is.na(.data$Fair) ~ NA,

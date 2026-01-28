@@ -9,7 +9,7 @@ test_that("check_col_missing works", {
   )
 
   expect_error(
-    df %>% check_col_missing(c("Col1", "Col3")),
+    df |> check_col_missing(c("Col1", "Col3")),
     regexp = "The following columns are missing: Col3"
   )
 })
@@ -82,9 +82,9 @@ test_that("drop_empty_col works", {
 
   expect_equal(
     suppressMessages(
-      df_in %>%
-        drop_empty_col("Col1") %>%
-        drop_empty_col("Col2") %>%
+      df_in |>
+        drop_empty_col("Col1") |>
+        drop_empty_col("Col2") |>
         drop_empty_col("Col3")
     ),
     df_out
@@ -100,9 +100,9 @@ test_that("drop_uniform_col works", {
 
   expect_equal(
     suppressMessages(
-      df_in %>%
-        drop_uniform_col("Col1") %>%
-        drop_uniform_col("Col2") %>%
+      df_in |>
+        drop_uniform_col("Col1") |>
+        drop_uniform_col("Col2") |>
         drop_uniform_col("Col3")
     ),
     data.frame(
@@ -113,9 +113,9 @@ test_that("drop_uniform_col works", {
 
   expect_equal(
     suppressMessages(
-      df_in %>%
-        drop_uniform_col("Col1", include_na = FALSE) %>%
-        drop_uniform_col("Col2", include_na = FALSE) %>%
+      df_in |>
+        drop_uniform_col("Col1", include_na = FALSE) |>
+        drop_uniform_col("Col2", include_na = FALSE) |>
         drop_uniform_col("Col3", include_na = FALSE)
     ),
     data.frame(

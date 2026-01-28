@@ -122,7 +122,7 @@ mod_sidebar_location_server <- function(
         inputId = "tabset_loc",
         selected = input$loc_type
       )
-    }) %>%
+    }) |>
       bindEvent(input$loc_type)
 
     observe({
@@ -131,7 +131,7 @@ mod_sidebar_location_server <- function(
       } else {
         updateTabsetPanel(inputId = "tabset_sites", selected = "sites_all")
       }
-    }) %>%
+    }) |>
       bindEvent(selected_tab())
 
     # Set sites ----
@@ -159,7 +159,7 @@ mod_sidebar_location_server <- function(
           selected = choices
         )
       }
-    }) %>%
+    }) |>
       bindEvent(input$select_state)
 
     # * Update by town ----
@@ -169,7 +169,7 @@ mod_sidebar_location_server <- function(
         "Town",
         input$select_town
       )
-    }) %>%
+    }) |>
       bindEvent(input$select_town)
 
     # * Update by watershed ----
@@ -179,7 +179,7 @@ mod_sidebar_location_server <- function(
         "Watershed",
         input$select_watershed
       )
-    }) %>%
+    }) |>
       bindEvent(input$select_watershed)
 
     # * Update dropdowns ----
@@ -189,7 +189,7 @@ mod_sidebar_location_server <- function(
       } else {
         return(locval$watershed_sites)
       }
-    }) %>%
+    }) |>
       bindEvent(c(locval$town_sites, locval$watershed_sites, input$loc_type))
 
     observe({
@@ -205,7 +205,7 @@ mod_sidebar_location_server <- function(
         choices = site_list(),
         selected = site_list()[1]
       )
-    }) %>%
+    }) |>
       bindEvent(site_list())
 
     # Update sites_n on map click ------
@@ -215,7 +215,7 @@ mod_sidebar_location_server <- function(
         inputId = "select_sites_n",
         selected = selected_site()
       )
-    }) %>%
+    }) |>
       bindEvent(selected_site())
 
     # Return data ----

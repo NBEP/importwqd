@@ -200,7 +200,7 @@ mod_sidebar_server <- function(
         updateTabsetPanel(inputId = "tabset_score", selected = "hide_score")
         updateTabsetPanel(inputId = "tabset_dates", selected = "year_all")
       }
-    }) %>%
+    }) |>
       bindEvent(selected_tab())
 
     observe({
@@ -211,7 +211,7 @@ mod_sidebar_server <- function(
       } else {
         updateTabsetPanel(inputId = "tabset_depth", selected = "depth_all")
       }
-    }) %>%
+    }) |>
       bindEvent(selected_tab())
 
     # Filter data ----
@@ -232,27 +232,27 @@ mod_sidebar_server <- function(
       df_report = df_score[0, ]
     )
 
+    # * Map data ----
     observe({
+      req(selected_tab() == "map")
       req(input$select_param_n)
       req(df_score_filter())
 
-      if (selected_tab() == "map") {
-        param <- input$select_param_n
-        depth <- input$select_depth_n
+      param <- input$select_param_n
+      depth <- input$select_depth_n
 
-        dat <- df_score_filter() %>%
-          dplyr::filter(
-            .data$Parameter == !!param | is.na(.data$Parameter)
-          )
+      dat <- df_score_filter() |>
+        dplyr::filter(
+          .data$Parameter == !!param | is.na(.data$Parameter)
+        )
 
-        chk <- "Depth" %in% colnames(dat) & !grepl("depth", tolower(param))
-        if (chk) {
-          dat <- dplyr::filter(dat, .data$Depth %in% !!depth)
-        }
-
-        val$df_map <- dat
+      chk <- isTruthy(depth) & !grepl("depth|height", tolower(param))
+      if (chk) {
+        dat <- dplyr::filter(dat, .data$Depth %in% !!depth)
       }
-    }) %>%
+
+      val$df_map <- dat
+    }) |>
       bindEvent(
         selected_tab(),
         df_score_filter(),

@@ -17,7 +17,7 @@ test_that("prep_graph_table works", {
   )
 
   # Test - group by Site_Name
-  df_in <- tst$data_final %>%
+  df_in <- tst$data_final |>
     dplyr::filter(.data$Parameter == "Dissolved oxygen (DO)")
 
   df_out <- data.frame(
@@ -34,7 +34,7 @@ test_that("prep_graph_table works", {
   )
 
   # Test - group by Depth
-  df_in <- tst$data_final %>%
+  df_in <- tst$data_final |>
     dplyr::filter(
       .data$Site_ID == "001",
       .data$Parameter == "Dissolved oxygen (DO)"
@@ -54,7 +54,7 @@ test_that("prep_graph_table works", {
   )
 
   # Test edge case - only 1 var
-  df_in <- tst$data_final %>%
+  df_in <- tst$data_final |>
     dplyr::filter(
       .data$Site_ID == "001",
       .data$Parameter == "Dissolved oxygen (DO)",

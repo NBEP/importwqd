@@ -32,11 +32,11 @@ prep_graph_table <- function(.data, group) {
   if (length(var_list) == 1) {
     var_name <- dat[[group]][1]
 
-    df_wide <- dat %>%
-      dplyr::select("Date", "Result") %>%
+    df_wide <- dat |>
+      dplyr::select("Date", "Result") |>
       dplyr::rename({{ var_name }} := "Result")
   } else {
-    df_wide <- dat %>%
+    df_wide <- dat |>
       tidyr::pivot_wider(
         names_from = {{ group }},
         values_from = "Result",
@@ -44,10 +44,10 @@ prep_graph_table <- function(.data, group) {
       )
 
     for (var in var_list) {
-      df_wide <- df_wide %>%
-        dplyr::rowwise() %>%
-        dplyr::mutate({{ var }} := paste(.data[[var]], collapse = ", ")) %>%
-        dplyr::ungroup() %>%
+      df_wide <- df_wide |>
+        dplyr::rowwise() |>
+        dplyr::mutate({{ var }} := paste(.data[[var]], collapse = ", ")) |>
+        dplyr::ungroup() |>
         wqformat::col_to_numeric(var)
     }
 

@@ -23,22 +23,22 @@ prep_results <- function(
 ) {
   message("Preparing data...")
 
-  df_colnames <- df_colnames %>%
+  df_colnames <- df_colnames |>
     dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
 
   if (nrow(df_colnames) == 0) {
     message("Did not update column names")
     dat <- .data
   } else {
-    dat <- .data %>%
+    dat <- .data |>
       wqformat::rename_col(df_colnames$Custom, df_colnames$wqdashboard)
   }
 
-  dat %>%
-    try_rename("Parameter", df_param) %>%
-    try_rename("Result_Unit", df_unit) %>%
-    try_rename("Detection_Limit_Unit", df_unit) %>%
-    try_rename("Qualifier", df_qual) %>%
+  dat |>
+    try_rename("Parameter", df_param) |>
+    try_rename("Result_Unit", df_unit) |>
+    try_rename("Detection_Limit_Unit", df_unit) |>
+    try_rename("Qualifier", df_qual) |>
     try_rename("Activity_Type", df_activity)
 }
 
@@ -104,18 +104,18 @@ qaqc_results <- function(.data, sites) {
   }
 
   # Format data
-  .data %>%
-    wqformat::col_to_numeric("Result", silent = FALSE) %>%
-    wqformat::col_to_numeric("Lower_Detection_Limit", silent = FALSE) %>%
-    wqformat::col_to_numeric("Upper_Detection_Limit", silent = FALSE) %>%
-    add_depth_category(sites) %>%
-    dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y"))) %>%
+  .data |>
+    wqformat::col_to_numeric("Result", silent = FALSE) |>
+    wqformat::col_to_numeric("Lower_Detection_Limit", silent = FALSE) |>
+    wqformat::col_to_numeric("Upper_Detection_Limit", silent = FALSE) |>
+    add_depth_category(sites) |>
+    dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y"))) |>
     wqformat::standardize_units(
       "Parameter",
       "Result",
       "Result_Unit",
       warn_only = FALSE
-    ) %>%
+    ) |>
     wqformat::standardize_units_across(
       "Result_Unit",
       "Detection_Limit_Unit",
@@ -169,8 +169,8 @@ qaqc_cat_results <- function(.data, sites) {
   }
 
   # Final adjustments
-  .data %>%
-    add_depth_category(sites) %>%
+  .data |>
+    add_depth_category(sites) |>
     dplyr::mutate("Year" = as.numeric(strftime(.data$Date, "%Y")))
 }
 
@@ -197,8 +197,8 @@ format_results <- function(.data, sites, thresholds) {
   q_over <- c("GT", "E", "EE")
   keep_qual <- c(NA, q_under, q_over)
 
-  dat <- .data %>%
-    dplyr::filter(.data$Qualifier %in% keep_qual) %>%
+  dat <- .data |>
+    dplyr::filter(.data$Qualifier %in% keep_qual) |>
     dplyr::filter(
       !grepl("quality control", .data$Activity_Type, ignore.case = TRUE)
     )
@@ -208,7 +208,7 @@ format_results <- function(.data, sites, thresholds) {
   if (any(!chk)) {
     message("\tSetting nondetect, overdetect values")
 
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::mutate(
         "Result" = dplyr::case_when(
           !is.na(.data$Result) | is.na(.data$Qualifier) ~ .data$Result,
@@ -226,18 +226,18 @@ format_results <- function(.data, sites, thresholds) {
 
   # Adding threshold data
   message("\tAdding threshold values")
-  df_sites <- sites %>%
+  df_sites <- sites |>
     dplyr::select("Site_ID", "Site_Name", "State", "Group")
 
-  df_temp <- dat %>%
-    dplyr::select("Site_ID", "Depth_Category", "Parameter") %>%
+  df_temp <- dat |>
+    dplyr::select("Site_ID", "Depth_Category", "Parameter") |>
     unique()
   df_temp <- dplyr::left_join(df_temp, df_sites)
 
   df_thresh <- update_threshold_units(thresholds, dat)
 
   if (nrow(df_thresh) > 0) {
-    df_temp <- df_temp %>%
+    df_temp <- df_temp |>
       dplyr::mutate(
         "thresh_temp" = mapply(
           function(id, group, state, depth, par) {
@@ -247,8 +247,8 @@ format_results <- function(.data, sites, thresholds) {
           .data$Parameter,
           SIMPLIFY = FALSE
         )
-      ) %>%
-      tidyr::unnest_wider("thresh_temp") %>%
+      ) |>
+      tidyr::unnest_wider("thresh_temp") |>
       dplyr::select(!c("State", "Group"))
   } else {
     df_temp$Calculation <- "mean"
@@ -269,12 +269,12 @@ format_results <- function(.data, sites, thresholds) {
     "Good", "Fair", "Best"
   )
 
-  dat <- dat %>%
-    dplyr::select(dplyr::any_of(field_keep)) %>%
-    drop_uniform_col("Depth_Category", include_na = FALSE) %>%
-    drop_uniform_col("Group") %>%
-    dplyr::rename("Unit" = "Result_Unit") %>%
-    dplyr::mutate("Month" = strftime(.data$Date, "%B")) %>%
+  dat <- dat |>
+    dplyr::select(dplyr::any_of(field_keep)) |>
+    drop_uniform_col("Depth_Category", include_na = FALSE) |>
+    drop_uniform_col("Group") |>
+    dplyr::rename("Unit" = "Result_Unit") |>
+    dplyr::mutate("Month" = strftime(.data$Date, "%B")) |>
     dplyr::mutate(
       "Description" = paste0(
         "<b>", .data$Site_Name, "</b><br>Date: ",
@@ -283,8 +283,8 @@ format_results <- function(.data, sites, thresholds) {
     )
 
   if ("Depth_Category" %in% colnames(dat)) {
-    dat <- dat %>%
-      dplyr::rename("Depth" = "Depth_Category") %>%
+    dat <- dat |>
+      dplyr::rename("Depth" = "Depth_Category") |>
       dplyr::mutate(
         "Description" = dplyr::case_when(
           grepl("depth|height", .data$Parameter) ~ .data$Description,
@@ -294,13 +294,13 @@ format_results <- function(.data, sites, thresholds) {
       )
   }
 
-  dat %>%
+  dat |>
     dplyr::mutate(
       "Description" = paste0(
         .data$Description, "<br>", .data$Parameter, ": ",
         pretty_number(.data$Result)
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "Description" = dplyr::if_else(
         .data$Unit %in% c(NA, "None"),
@@ -328,8 +328,8 @@ score_results <- function(.data, sites) {
   group_col <- c("Site_ID", "Parameter", "Depth", "Year")
   group_col <- intersect(colnames(.data), group_col)
 
-  dat <- .data %>%
-    dplyr::group_by_at(group_col) %>%
+  dat <- .data |>
+    dplyr::group_by_at(group_col) |>
     dplyr::summarise(
       "score_max" = max(.data$Result),
       "score_min" = min(.data$Result),
@@ -344,11 +344,11 @@ score_results <- function(.data, sites) {
       "Fair" = dplyr::last(.data$Fair),
       "Best" = dplyr::last(.data$Best),
       .groups = "drop"
-    ) %>%
+    ) |>
     data.frame() # fix test error
 
   message("\tCalculating score")
-  dat <- dat %>%
+  dat <- dat |>
     dplyr::mutate(
       "score_num" = dplyr::case_when(
         is.na(.data$score_typ) | .data$score_typ == "mean" ~
@@ -358,7 +358,7 @@ score_results <- function(.data, sites) {
         .data$score_typ == "median" ~ .data$score_median,
         TRUE ~ .data$score_mean
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "score_str" = dplyr::case_when(
         is.na(.data$Best) ~ NA,
@@ -372,7 +372,7 @@ score_results <- function(.data, sites) {
         .data$Best == "low" ~ "Poor",
         TRUE ~ NA
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "score_str" = dplyr::case_when(
         !is.na(.data$score_str) ~ .data$score_str,
@@ -383,7 +383,7 @@ score_results <- function(.data, sites) {
           "Does Not Meet Criteria",
         TRUE ~ "Meets Criteria"
       )
-    ) %>%
+    ) |>
     dplyr::select(
       dplyr::any_of(
         c(
@@ -397,8 +397,8 @@ score_results <- function(.data, sites) {
 
   # Generate dataframe of site/year/parameter/depth combinations
   if ("Depth" %in% colnames(dat)) {
-    df_temp <- dat %>%
-      dplyr::select("Site_ID", "Year", "Parameter", "Depth") %>%
+    df_temp <- dat |>
+      dplyr::select("Site_ID", "Year", "Parameter", "Depth") |>
       unique()
 
     depth <- unique(dat$Depth)
@@ -409,18 +409,18 @@ score_results <- function(.data, sites) {
       Year = unique(dat$Year),
       Parameter = unique(dat$Parameter),
       Depth = depth
-    ) %>%
+    ) |>
       dplyr::mutate(
         "Depth" = dplyr::if_else(
           grepl("depth|height", tolower(.data$Parameter)),
           NA,
           .data$Depth
         )
-      ) %>%
+      ) |>
       unique()
   } else {
-    df_temp <- dat %>%
-      dplyr::select("Site_ID", "Year", "Parameter") %>%
+    df_temp <- dat |>
+      dplyr::select("Site_ID", "Year", "Parameter") |>
       unique()
 
     df_all <- expand.grid(
@@ -445,7 +445,7 @@ score_results <- function(.data, sites) {
   df_sites <- dplyr::select(sites, dplyr::any_of(site_col))
 
   if ("Town" %in% colnames(df_sites)) {
-    df_sites <- df_sites %>%
+    df_sites <- df_sites |>
       dplyr::select(!dplyr::any_of("State"))
   }
 
@@ -458,9 +458,9 @@ score_results <- function(.data, sites) {
     "Latitude", "Longitude"
   )
 
-  dat <- dat %>%
-    dplyr::select(dplyr::any_of(col_order)) %>%
-    dplyr::mutate("score_num" = pretty_number(.data$score_num)) %>%
+  dat <- dat |>
+    dplyr::select(dplyr::any_of(col_order)) |>
+    dplyr::mutate("score_num" = pretty_number(.data$score_num)) |>
     dplyr::mutate(
       "score_typ" = dplyr::case_when(
         .data$score_typ == "min" ~ "Minimum",
@@ -469,24 +469,24 @@ score_results <- function(.data, sites) {
         .data$score_typ == "mean" ~ "Average",
         TRUE ~ .data$score_typ
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "score_str" = dplyr::case_when(
         !is.na(.data$score_str) ~ .data$score_str,
         !is.na(.data$score_num) ~ "No Threshold Established",
         TRUE ~ "No Data Available"
       )
-    ) %>%
+    ) |>
     # dplyr::mutate(
     #   "Parameter" = dplyr::if_else(
     #     is.na(.data$Parameter), "-", .data$Parameter
     #   )
-    # ) %>%
-    dplyr::arrange(.data$Site_Name, .data$Parameter) %>%
+    # ) |>
+    dplyr::arrange(.data$Site_Name, .data$Parameter) |>
     dplyr::mutate("popup_loc" = paste0("<b>", .data$Site_Name, "</b>"))
 
   if ("Town" %in% colnames(dat)) {
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$Town),
@@ -495,8 +495,8 @@ score_results <- function(.data, sites) {
         )
       )
   } else if ("State" %in% colnames(dat)) {
-    dat <- dat %>%
-      wqformat::abb_to_state("State") %>%
+    dat <- dat |>
+      wqformat::abb_to_state("State") |>
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$State),
@@ -507,7 +507,7 @@ score_results <- function(.data, sites) {
   }
 
   if ("Watershed" %in% colnames(dat)) {
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$Watershed),
@@ -518,7 +518,7 @@ score_results <- function(.data, sites) {
   }
 
   if ("Group" %in% colnames(dat)) {
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$Group),
@@ -529,7 +529,7 @@ score_results <- function(.data, sites) {
   }
 
   if ("Depth" %in% colnames(dat)) {
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::mutate(
         "popup_loc" = dplyr::case_when(
           grepl("depth|height", tolower(.data$Parameter)) ~ .data$popup_loc,
@@ -539,7 +539,7 @@ score_results <- function(.data, sites) {
       )
   }
 
-  dat %>%
+  dat |>
     dplyr::mutate(
       "popup_score" = dplyr::case_when(
         is.na(.data$score_num) ~ "<i>No data</i>",
@@ -547,14 +547,14 @@ score_results <- function(.data, sites) {
           paste0(.data$score_typ, ": ", .data$score_num),
         TRUE ~ paste0(.data$score_typ, ": ", .data$score_num, " ", .data$Unit)
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "popup_score" = dplyr::if_else(
         is.na(.data$score_num) | .data$score_str == "No Threshold Established",
         paste0("<br>", .data$popup_score),
         paste0("<br>", .data$popup_score, "<br>Score: ", .data$score_str)
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "alt" = dplyr::case_when(
         is.na(.data$score_num) ~ paste0(.data$Site_Name, ", No data"),
@@ -596,7 +596,7 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
   # Filter df_sites by sites listed in df_data, df_cat
   data_sites <- unique(df_data$Site_ID)
   if (!is.null(df_cat)) {
-    data_sites <- c(data_sites, df_cat$Site_ID) %>%
+    data_sites <- c(data_sites, df_cat$Site_ID) |>
       unique()
   }
 
@@ -636,7 +636,7 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
   }
 
   # Define paramater variables
-  param_short <- df_score %>%
+  param_short <- df_score |>
     dplyr::filter(
       !.data$score_str %in% c("No Data Available", "No Threshold Established")
     )

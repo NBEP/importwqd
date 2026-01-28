@@ -38,17 +38,17 @@ check_col_missing <- function(df, col_list) {
 #'
 #' @noRd
 check_val_duplicate <- function(df, col_list, is_stop = TRUE) {
-  dup1 <- df %>%
-    dplyr::select(dplyr::all_of(col_list)) %>%
+  dup1 <- df |>
+    dplyr::select(dplyr::all_of(col_list)) |>
     duplicated()
 
   if (any(dup1)) {
-    dup2 <- df %>%
-      dplyr::select(dplyr::all_of(col_list)) %>%
+    dup2 <- df |>
+      dplyr::select(dplyr::all_of(col_list)) |>
       duplicated(fromLast = TRUE)
 
-    dup_rws <- c(which(dup1), which(dup2)) %>%
-      unique() %>%
+    dup_rws <- c(which(dup1), which(dup2)) |>
+      unique() |>
       sort()
 
     msg <- paste0(
@@ -170,8 +170,8 @@ drop_uniform_col <- function(.data, col_name, include_na = TRUE) {
 #'
 #' @noRd
 update_threshold_units <- function(.data, result_data) {
-  result_units <- result_data %>%
-    dplyr::group_by(.data$Parameter) %>%
+  result_units <- result_data |>
+    dplyr::group_by(.data$Parameter) |>
     dplyr::summarize("temp_unit" = dplyr::last(.data$Result_Unit))
 
   dat <- dplyr::inner_join(.data, result_units, by = "Parameter")
@@ -227,7 +227,7 @@ update_threshold_units <- function(.data, result_data) {
 add_thresholds <- function(
   thresholds, site_id, group, state, depth, parameter
 ) {
-  dat <- thresholds %>%
+  dat <- thresholds |>
     dplyr::filter(
       .data$Parameter == parameter,
       is.na(.data$State) | .data$State == state,
@@ -285,8 +285,8 @@ add_depth_category <- function(.data, df_sites) {
     return(.data)
   }
 
-  dat <- .data %>%
-    wqformat::col_to_numeric("Depth", silent = FALSE) %>%
+  dat <- .data |>
+    wqformat::col_to_numeric("Depth", silent = FALSE) |>
     wqformat::set_units("Depth", "Depth_Unit", "m", unit_format = "wqdashboard")
 
   depth_cat <- c("Surface", "Midwater", "Near Bottom", "Bottom")
@@ -298,7 +298,7 @@ add_depth_category <- function(.data, df_sites) {
 
   df_sites <- dplyr::select(df_sites, dplyr::any_of(c("Site_ID", depth_col)))
 
-  dplyr::left_join(dat, df_sites, by = "Site_ID", keep = FALSE) %>%
+  dplyr::left_join(dat, df_sites, by = "Site_ID", keep = FALSE) |>
     dplyr::mutate(
       "Depth_Category" = dplyr::case_when(
         grepl("depth|height", tolower(.data$Parameter)) ~ NA,
@@ -314,7 +314,7 @@ add_depth_category <- function(.data, df_sites) {
           .data$Depth > .data$Max_Surface_Depth_m ~ "Midwater",
         TRUE ~ "Surface"
       )
-    ) %>%
+    ) |>
     dplyr::select(!dplyr::any_of(depth_col))
 }
 
@@ -334,7 +334,7 @@ add_depth_category <- function(.data, df_sites) {
 #'
 #' @noRd
 try_rename <- function(.data, col_name, df_var) {
-  df_var <- df_var %>%
+  df_var <- df_var |>
     dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
 
   if (!col_name %in% colnames(.data)) {
@@ -345,6 +345,6 @@ try_rename <- function(.data, col_name, df_var) {
     return(.data)
   }
 
-  .data %>%
+  .data |>
     wqformat::update_var(col_name, df_var$Custom, df_var$wqdashboard)
 }

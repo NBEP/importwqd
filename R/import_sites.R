@@ -11,7 +11,7 @@
 prep_sites <- function(.data, df_colnames) {
   message("Preparing site metadata...")
 
-  df_colnames <- df_colnames %>%
+  df_colnames <- df_colnames |>
     dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
 
   if (nrow(df_colnames) == 0) {
@@ -19,7 +19,7 @@ prep_sites <- function(.data, df_colnames) {
     return(.data)
   }
 
-  .data %>%
+  .data |>
     wqformat::rename_col(df_colnames$Custom, df_colnames$wqdashboard)
 }
 
@@ -81,20 +81,20 @@ qaqc_sites <- function(.data, state = NA) {
   missing_col <- setdiff(field_optional, colnames(.data))
   .data[missing_col] <- NA
 
-  dat <- .data %>%
-    wqformat::col_to_numeric("Latitude", silent = FALSE) %>%
-    wqformat::col_to_numeric("Longitude", silent = FALSE) %>%
-    wqformat::col_to_numeric("Max_Surface_Depth_m", silent = FALSE) %>%
-    wqformat::col_to_numeric("Max_Midwater_Depth_m", silent = FALSE) %>%
-    wqformat::col_to_numeric("Max_Depth_m", silent = FALSE) %>%
+  dat <- .data |>
+    wqformat::col_to_numeric("Latitude", silent = FALSE) |>
+    wqformat::col_to_numeric("Longitude", silent = FALSE) |>
+    wqformat::col_to_numeric("Max_Surface_Depth_m", silent = FALSE) |>
+    wqformat::col_to_numeric("Max_Midwater_Depth_m", silent = FALSE) |>
+    wqformat::col_to_numeric("Max_Depth_m", silent = FALSE) |>
     dplyr::mutate(
       "State" = dplyr::if_else(
         is.na(.data$State),
         state,
         .data$State
       )
-    ) %>%
-    wqformat::state_to_abb("State") %>%
+    ) |>
+    wqformat::state_to_abb("State") |>
     dplyr::mutate("Site_Name" = make.unique(.data$Site_Name, sep = " "))
 
   # Check - illogical values
@@ -113,7 +113,7 @@ qaqc_sites <- function(.data, state = NA) {
   }
 
   message("\tAdding depth thresholds")
-  dat %>%
+  dat |>
     dplyr::mutate(
       "Max_Surface_Depth_m" = dplyr::case_when(
         !is.na(.data$Max_Surface_Depth_m) ~ .data$Max_Surface_Depth_m,
@@ -122,7 +122,7 @@ qaqc_sites <- function(.data, state = NA) {
         !is.na(.data$Max_Depth_m) & .data$Max_Depth_m <= 2 ~ NA,
         TRUE ~ 1
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       "Max_Midwater_Depth_m" = dplyr::case_when(
         !is.na(.data$Max_Midwater_Depth_m) ~ .data$Max_Midwater_Depth_m,
@@ -153,7 +153,7 @@ format_sites <- function(.data, site_list = NULL) {
 
   # Drop surplus sites
   if (!is.null(site_list)) {
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::filter(.data$Site_ID %in% site_list)
 
     chk <- setdiff(.data$Site_ID, dat$Site_ID)
@@ -169,21 +169,21 @@ format_sites <- function(.data, site_list = NULL) {
   )
 
   message("\tDropping extra columns")
-  dat <- dat %>%
-    dplyr::select(dplyr::all_of(field_all)) %>%
-    drop_uniform_col("Watershed") %>%
-    drop_uniform_col("State") %>%
+  dat <- dat |>
+    dplyr::select(dplyr::all_of(field_all)) |>
+    drop_uniform_col("Watershed") |>
+    drop_uniform_col("State") |>
     drop_empty_col("Town")
 
   if (!"State" %in% colnames(dat)) {
     dat$State <- NA
-    dat <- dat %>%
+    dat <- dat |>
       drop_uniform_col("Town")
   }
 
   if ("Town" %in% colnames(dat)) {
     message("\tUpdating town names")
-    dat <- dat %>%
+    dat <- dat |>
       dplyr::mutate(
         "Town" = dplyr::if_else(
           is.na(.data$State),

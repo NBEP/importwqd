@@ -62,8 +62,7 @@ filter_towns <- function(sites, states) {
     return(towns)
   }
 
-  sites <- sites %>%
-    dplyr::filter(.data$State %in% states)
+  sites <- dplyr::filter(sites, .data$State %in% states)
 
   if (nrow(sites) == 0) {
     return(NULL)

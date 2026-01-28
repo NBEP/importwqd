@@ -80,6 +80,7 @@ mod_map_server <- function(
       dynamic_table = df_table,
       static_table = df_table,
       show_score = TRUE,
+      count = 0,
       dynamic_col = "Average",
       static_tile = "Average"
     )
@@ -98,7 +99,7 @@ mod_map_server <- function(
       req(in_var$param_n())
       req(in_var$df_map())
 
-      dat <- in_var$df_map() %>%
+      dat <- in_var$df_map() |>
         dplyr::filter(!is.na(.data$score_num))
 
       score_min <- 0
@@ -129,7 +130,7 @@ mod_map_server <- function(
       val$score_str <- score_str
       val$legend <- trimws(paste(in_var$param_n(), par_unit))
       val$dynamic_col <- trimws(paste(col_title, par_unit))
-    }) %>%
+    }) |>
       bindEvent(in_var$df_map(), in_var$param_n())
 
     # * Dataframes ----
@@ -140,9 +141,9 @@ mod_map_server <- function(
 
       sites <- in_var$sites_all()
 
-      val$df_filter <- in_var$df_map() %>%
+      val$df_filter <- in_var$df_map() |>
         dplyr::filter(.data$Site_ID %in% !!sites)
-    }) %>%
+    }) |>
       bindEvent(
         map_tab(),
         in_var$df_map(),
@@ -153,10 +154,10 @@ mod_map_server <- function(
       if (input$tabset == "Map") {
         val$df_map <- val$df_filter
       } else {
-        val$dynamic_table <- val$df_filter %>%
+        val$dynamic_table <- val$df_filter |>
           dplyr::select(!dplyr::any_of(drop_col))
       }
-    }) %>%
+    }) |>
       bindEvent(input$tabset, val$df_filter)
 
     # * Map type ----
@@ -167,26 +168,26 @@ mod_map_server <- function(
       } else {
         return("score_str")
       }
-    }) %>%
+    }) |>
       bindEvent(val$score_str)
 
     # Map ----
     output$map <- leaflet::renderLeaflet({
       layer_list <- NA
 
-      map <- leaflet::leaflet() %>%
+      map <- leaflet::leaflet() |>
         leaflet::fitBounds(
           map_bounds$lng1,
           map_bounds$lat1,
           map_bounds$lng2,
           map_bounds$lat2
-        ) %>%
-        leaflet::addProviderTiles(leaflet::providers$Esri.WorldTopoMap) %>%
+        ) |>
+        leaflet::addProviderTiles(leaflet::providers$Esri.WorldTopoMap) |>
         leaflet::addScaleBar(position = "bottomleft")
 
       # * Add watershed ----
       if (!is.null(shp_watershed)) {
-        map <- map %>%
+        map <- map |>
           leaflet::addPolygons(
             data = shp_watershed,
             layerId = shp_watershed,
@@ -215,8 +216,8 @@ mod_map_server <- function(
 
       # * Add rivers ----
       if (!is.null(shp_river)) {
-        map <- map %>%
-          leaflet::addMapPane("river_pane", zIndex = 420) %>%
+        map <- map |>
+          leaflet::addMapPane("river_pane", zIndex = 420) |>
           leaflet::addPolylines(
             data = shp_river,
             layerId = shp_river,
@@ -245,7 +246,7 @@ mod_map_server <- function(
 
       # * Add layer toggle ----
       if (!all(is.na(layer_list))) {
-        map <- map %>%
+        map <- map |>
           leaflet::addLayersControl(
             overlayGroups = layer_list,
             position = "topleft"
@@ -258,11 +259,11 @@ mod_map_server <- function(
     # * Add sites ----
     observe({
       if (nrow(val$df_map) == 0) {
-        leaflet::leafletProxy("map") %>%
+        leaflet::leafletProxy("map") |>
           leaflet::clearMarkers()
       } else if (map_type() == "score_num") {
-        leaflet::leafletProxy("map") %>%
-          leaflet::clearMarkers() %>%
+        leaflet::leafletProxy("map") |>
+          leaflet::clearMarkers() |>
           leaflet::addMarkers(
             data = val$df_map,
             lng = ~Longitude,
@@ -298,8 +299,8 @@ mod_map_server <- function(
             )
           )
       } else {
-        leaflet::leafletProxy("map") %>%
-          leaflet::clearMarkers() %>%
+        leaflet::leafletProxy("map") |>
+          leaflet::clearMarkers() |>
           leaflet::addMarkers(
             data = val$df_map,
             lng = ~Longitude,
@@ -335,7 +336,7 @@ mod_map_server <- function(
             )
           )
       }
-    }) %>%
+    }) |>
       bindEvent(
         val$df_map,
         map_type()
@@ -344,8 +345,8 @@ mod_map_server <- function(
     # * Add legend ----
     observe({
       if (map_type() == "score_num") {
-        leaflet::leafletProxy("map") %>%
-          leaflet::clearControls() %>%
+        leaflet::leafletProxy("map") |>
+          leaflet::clearControls() |>
           leaflegend::addLegendNumeric(
             pal = num_pal(val$score_range),
             values = val$score_range,
@@ -362,8 +363,8 @@ mod_map_server <- function(
             group = "Legend"
           )
       } else {
-        leaflet::leafletProxy("map") %>%
-          leaflet::clearControls() %>%
+        leaflet::leafletProxy("map") |>
+          leaflet::clearControls() |>
           leaflegend::addLegendImage(
             images = cat_pal(val$score_str, TRUE),
             labels = cat_labels(val$score_str),
@@ -379,7 +380,7 @@ mod_map_server <- function(
             group = "Legend"
           )
       }
-    }) %>%
+    }) |>
       bindEvent(
         map_type(),
         val$score_range,
@@ -389,16 +390,21 @@ mod_map_server <- function(
 
     # Table -----
     observe({
-      if (map_type() == "score_str") {
-        val$show_score <- TRUE
-      } else {
-        val$show_score <- FALSE
-      }
+      if (val$count < 2) {
+        print("val$count < 2")
 
-      val$static_table <- val$dynamic_table
-      val$static_col <- val$dynamic_col
-    }) %>%
-      bindEvent(input$tabset, ignoreInit = TRUE, once = TRUE)
+        if (map_type() == "score_str") {
+          val$show_score <- TRUE
+        } else {
+          val$show_score <- FALSE
+        }
+
+        val$count <- val$count + 1
+        val$static_table <- val$dynamic_table
+        val$static_col <- val$dynamic_col
+      }
+    }) |>
+      bindEvent(input$tabset)
 
     output$table <- reactable::renderReactable({
       report_table(
@@ -415,26 +421,24 @@ mod_map_server <- function(
         data = val$dynamic_table,
         meta = list(col_title = val$dynamic_col)
       )
-    }) %>%
+    }) |>
       bindEvent(val$dynamic_table, val$dynamic_col)
 
     observe({
-      req(input$tabset == "Table")
-
-      print("this should only trigger when input$tabset == 'Table'")
-
-      if (map_type() == "score_str") {
+      if (map_type() == "score_str" & input$tabset == "Table") {
+        print("show columns")
         hideCols(ns("table"), as.list(""))
-      } else {
+      } else if (input$tabset == "Table") {
+        print("hide columns")
         hideCols(ns("table"), as.list("score_str"))
       }
-    }) %>%
+    }) |>
       bindEvent(input$tabset, map_type())
 
     # Return data ----
     selected_site <- reactive({
       input$map_marker_click$id
-    }) %>%
+    }) |>
       bindEvent(input$graph_link)
 
     return(
