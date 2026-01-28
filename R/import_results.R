@@ -490,7 +490,7 @@ score_results <- function(.data, sites) {
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$Town),
-          paste(.data$popup_loc, "<br>Town: -"),
+          .data$popup_loc,
           paste(.data$popup_loc, "<br>Town:", .data$Town)
         )
       )
@@ -500,7 +500,7 @@ score_results <- function(.data, sites) {
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$State),
-          paste(.data$popup_loc, "<br>State: -"),
+          .data$popup_loc,
           paste(.data$popup_loc, "<br>State:", .data$State)
         )
       )
@@ -511,7 +511,7 @@ score_results <- function(.data, sites) {
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$Watershed),
-          paste(.data$popup_loc, "<br>Watershed: -"),
+          .data$popup_loc,
           paste(.data$popup_loc, "<br>Watershed:", .data$Watershed)
         )
       )
@@ -522,8 +522,8 @@ score_results <- function(.data, sites) {
       dplyr::mutate(
         "popup_loc" = dplyr::if_else(
           is.na(.data$Group),
-          paste(.data$popup_loc, "<br>Group: -"),
-          paste(.data$popup_loc, "<br>Group:", .data$Group)
+          .data$popup_loc,
+          paste(.data$popup_loc, "<br>Category:", .data$Group)
         )
       )
   }
@@ -531,10 +531,10 @@ score_results <- function(.data, sites) {
   if ("Depth" %in% colnames(dat)) {
     dat <- dat |>
       dplyr::mutate(
-        "popup_loc" = dplyr::case_when(
-          grepl("depth|height", tolower(.data$Parameter)) ~ .data$popup_loc,
-          is.na(.data$Depth) ~ paste(.data$popup_loc, "<br>Depth: -"),
-          TRUE ~ paste(.data$popup_loc, "<br>Depth:", .data$Depth)
+        "popup_loc" = dplyr::if_else(
+          is.na(.data$Depth),
+          .data$popup_loc,
+          paste(.data$popup_loc, "<br>Depth:", .data$Depth)
         )
       )
   }

@@ -389,8 +389,6 @@ mod_map_server <- function(
 
     # Table -----
     observe({
-      print("map val$show_score val$static_table val$static_col")
-
       if (map_type() == "score_str") {
         val$show_score <- TRUE
       } else {
@@ -414,8 +412,6 @@ mod_map_server <- function(
     observe({
       req(input$tabset == "Table")
 
-      print("map updateReactable")
-
       reactable::updateReactable(
         "table",
         data = val$dynamic_table,
@@ -429,10 +425,8 @@ mod_map_server <- function(
 
     observe({
       if (map_type() == "score_str" & input$tabset == "Table") {
-        print("show columns")
         hideCols(ns("table"), as.list(""))
       } else if (input$tabset == "Table") {
-        print("hide columns")
         hideCols(ns("table"), as.list("score_str"))
       }
     }) |>

@@ -218,15 +218,7 @@ mod_sidebar_server <- function(
     df_score_filter <- reactive({
       req(input$select_year_n)
 
-      print("sidebar df_score_filter")
-
-      dat <- dplyr::filter(df_score, .data$Year == input$select_year_n)
-
-      if (!input$chk_nascore) {
-        dat <- dplyr::filter(dat, !is.na(.data$score_num))
-      }
-
-      dat
+      dplyr::filter(df_score, .data$Year == input$select_year_n)
     })
 
     val <- reactiveValues(
@@ -240,8 +232,6 @@ mod_sidebar_server <- function(
       req(input$select_param_n)
       req(df_score_filter())
 
-      print("sidebar val$df_map")
-
       param <- input$select_param_n
       depth <- input$select_depth_n
 
@@ -249,6 +239,10 @@ mod_sidebar_server <- function(
         dplyr::filter(
           .data$Parameter == !!param | is.na(.data$Parameter)
         )
+
+      if (!input$chk_nascore) {
+        dat <- dplyr::filter(dat, !is.na(.data$score_num))
+      }
 
       chk <- isTruthy(depth) & !grepl("depth|height", tolower(param))
       if (chk) {
@@ -260,6 +254,7 @@ mod_sidebar_server <- function(
       bindEvent(
         selected_tab(),
         df_score_filter(),
+        input$chk_nascore,
         input$select_param_n,
         input$select_depth_n
       )
@@ -276,20 +271,23 @@ mod_sidebar_server <- function(
       req(input$select_param_score)
       req(loc_server$sites_all())
 
-      print("sidebar val$df_report")
-
       param <- c(input$select_param_score, NA)
       sites <- loc_server$sites_all()
 
-      df <- df_score_filter() |>
+      dat <- df_score_filter() |>
         dplyr::filter(
           .data$Parameter %in% !!param,
           .data$Site_ID %in% !!sites
         )
 
-      if ("Depth" %in% colnames(df)) {
+      if (!input$chk_nascore) {
+        null_score <- c("No Data Available", "No Threshold Established")
+        dat <- dplyr::filter(dat, !.data$score_str %in% null_score)
+      }
+
+      if ("Depth" %in% colnames(dat)) {
         depth_list <- c(NA, input$select_depth_all)
-        df <- dplyr::filter(df, .data$Depth %in% !!depth_list)
+        dat <- dplyr::filter(dat, .data$Depth %in% !!depth_list)
       }
 
       keep_col <- c(
@@ -297,7 +295,7 @@ mod_sidebar_server <- function(
         "Parameter", "score_str"
       )
 
-      val$df_report <- df |>
+      val$df_report <- dat |>
         dplyr::select(dplyr::any_of(keep_col)) |>
         dplyr::mutate(
           dplyr::across(
@@ -307,8 +305,8 @@ mod_sidebar_server <- function(
         )
     }) |>
       bindEvent(
-        selected_tab(), df_score_filter(), input$select_param_score,
-        loc_server$sites_all(), input$select_depth_all
+        selected_tab(), df_score_filter(), input$chk_nascore,
+        input$select_param_score, loc_server$sites_all(), input$select_depth_all
       )
 
     # Return data ----
@@ -329,12 +327,6 @@ mod_sidebar_server <- function(
         param_n = reactive({
           input$select_param_n
         }), # used for map, graph
-        param_short = reactive({
-          input$select_param_score
-        }), # used for report card
-        score = reactive({
-          input$chk_nascore
-        }),
         depth_n = reactive({
           input$select_depth_n
         }),
@@ -349,9 +341,6 @@ mod_sidebar_server <- function(
         }),
         month_range = reactive({
           input$select_month
-        }),
-        df_score_f = reactive({
-          df_score_filter()
         }),
         df_map = reactive({
           val$df_map

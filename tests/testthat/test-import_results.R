@@ -212,10 +212,10 @@ test_that("score_results works", {
     Latitude = c(41.83, 41.83, 42.28, 42.28),
     Longitude = c(-71.41, -71.41, -71.77, -71.77),
     popup_loc = c(
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Group: Coldwater",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Group: Warmwater"
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Category: Coldwater",
+      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Category: Coldwater",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Category: Warmwater",
+      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Category: Warmwater"
     ),
     popup_score = c(
       "<br>Minimum: 0.05 mg/L<br>Score: Poor",

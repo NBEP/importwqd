@@ -236,18 +236,18 @@ tst <- list(
       -71.77, -71.77, -71.77
     ),
     popup_loc = c(
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Midwater",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Surface",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Group: Coldwater <br>Depth: Midwater",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Midwater",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Surface",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Group: Warmwater <br>Depth: Midwater"
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Surface",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Midwater",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Surface",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Midwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Surface",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Midwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Surface",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Midwater"
     ),
     popup_score = c(
       "<br>Average: 8 m",

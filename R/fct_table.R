@@ -11,8 +11,6 @@
 #'
 #' @noRd
 report_table <- function(df, show_score = TRUE, col_title = "Average") {
-  print("fct report_table()")
-
   reactable::reactable(
     df,
     highlight = TRUE,
