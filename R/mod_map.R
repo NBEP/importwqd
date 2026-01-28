@@ -162,8 +162,7 @@ mod_map_server <- function(
 
     # * Map type ----
     map_type <- reactive({
-      chk <- "No Threshold Established" %in% val$score_str
-      if (chk) {
+      if ("No Threshold Established" %in% val$score_str) {
         return("score_num")
       } else {
         return("score_str")
@@ -390,29 +389,27 @@ mod_map_server <- function(
 
     # Table -----
     observe({
-      if (val$count < 2) {
-        print("val$count < 2")
+      print("map val$show_score")
 
-        if (map_type() == "score_str") {
-          val$show_score <- TRUE
-        } else {
-          val$show_score <- FALSE
-        }
-
-        val$count <- val$count + 1
-        val$static_table <- val$dynamic_table
-        val$static_col <- val$dynamic_col
+      if (map_type() == "score_str") {
+        val$show_score <- TRUE
+      } else {
+        val$show_score <- FALSE
       }
+
+      # val$static_table <- val$dynamic_table
+      # val$static_col <- val$dynamic_col
     }) |>
-      bindEvent(input$tabset)
+      bindEvent(val$dynamic_table, ignoreInit = TRUE, once = TRUE)
 
     output$table <- reactable::renderReactable({
       report_table(
-        val$static_table,
+        val$dynamic_table,
         show_score = val$show_score,
-        col_title = val$static_col
+        col_title = val$dynamic_col
       )
-    })
+    }) |>
+      bindEvent(val$dynamic_table, ignoreInit = TRUE, once = TRUE)
 
     # * Update table ----
     observe({
