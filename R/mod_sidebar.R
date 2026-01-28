@@ -276,13 +276,15 @@ mod_sidebar_server <- function(
       req(input$select_param_score)
       req(loc_server$sites_all())
 
+      print("sidebar val$df_report")
+
       param <- c(input$select_param_score, NA)
       sites <- loc_server$sites_all()
 
       df <- df_score_filter() |>
         dplyr::filter(
-          "Parameter" %in% !!param,
-          "Site_ID" %in% !!sites
+          .data$Parameter %in% !!param,
+          .data$Site_ID %in% !!sites
         )
 
       if ("Depth" %in% colnames(df)) {
