@@ -295,8 +295,7 @@ mod_sidebar_server <- function(
         "Parameter", "score_str"
       )
 
-      val$df_report <- dat |>
-        dplyr::select(dat, dplyr::any_of(keep_col))
+      val$df_report <- dplyr::select(dat, dplyr::any_of(keep_col))
     }) |>
       bindEvent(
         selected_tab(), df_score_filter(), input$chk_nascore,
