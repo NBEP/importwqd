@@ -19,4 +19,3 @@ test_that("unique_na works", {
     NA
   )
 })
-

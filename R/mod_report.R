@@ -36,8 +36,8 @@ mod_report_card_ui <- function(id) {
 #'
 #' @noRd
 mod_report_card_server <- function(
-    id, in_var, df_raw, selected_tab, org_name=NULL
-  ) {
+  id, in_var, df_raw, selected_tab, org_name = NULL
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -87,7 +87,8 @@ mod_report_card_server <- function(
       content = function(file) {
         src <- normalizePath(
           system.file(
-            "rmd", "report_card.Rmd", package = "importwqd"
+            "rmd", "report_card.Rmd",
+            package = "importwqd"
           )
         )
 

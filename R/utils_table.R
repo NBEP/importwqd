@@ -65,3 +65,32 @@ column_styles <- function(df, show_score = TRUE) {
 
   col_style
 }
+
+#' Prepare PDF table
+#'
+#' @description `prep_pdf()` formats dataframes for use in a PDF by dropping
+#' empty columns and replacing all `NA` values.
+#'
+#' @param .data Dataframe
+#' @param na_sub String. Value used to replace `NA` values. Default `-`.
+#'
+#' @return Updated dataframe
+#'
+#' @noRd
+prep_pdf <- function(.data, na_sub = "-") {
+  colnames(.data) <- gsub("[_]", " ", colnames(.data))
+
+  Filter(function(x) !all(is.na(x)), .data) |>
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::everything(),
+        as.character
+      )
+    ) |>
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::everything(),
+        ~ tidyr::replace_na(.x, na_sub)
+      )
+    )
+}

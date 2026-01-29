@@ -296,13 +296,7 @@ mod_sidebar_server <- function(
       )
 
       val$df_report <- dat |>
-        dplyr::select(dplyr::any_of(keep_col)) |>
-        dplyr::mutate(
-          dplyr::across(
-            dplyr::everything(),
-            ~tidyr::replace_na(.x, "-")  # necessary for PDF
-          )
-        )
+        dplyr::select(dat, dplyr::any_of(keep_col))
     }) |>
       bindEvent(
         selected_tab(), df_score_filter(), input$chk_nascore,

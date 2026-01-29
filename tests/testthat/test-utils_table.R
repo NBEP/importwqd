@@ -47,3 +47,32 @@ test_that("column_styles works", {
     list_out
   )
 })
+
+test_that("prep_pdf works", {
+  df_in <- tst$data_score[, c(2, 4:8, 12)]
+
+  df_out <- df_in
+  colnames(df_out)[1] <- "Site Name"
+  colnames(df_out)[7] <- "score str"
+  df_out$Depth <- c(
+    "-", "-", "Surface", "Midwater", "Surface", "Midwater", "-", "-", "Surface",
+    "Midwater", "Surface", "Midwater"
+  )
+
+  expect_equal(
+    prep_pdf(df_in),
+    df_out
+  )
+
+  # Test edge case - empty columns
+  df_in$Watershed <- NA
+  df_in$Depth <- NA
+
+  df_out$Watershed <- NULL
+  df_out$Depth <- NULL
+
+  expect_equal(
+    prep_pdf(df_in),
+    df_out
+  )
+})
