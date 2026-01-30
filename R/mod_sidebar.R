@@ -189,7 +189,7 @@ mod_sidebar_server <- function(
         updateTabsetPanel(inputId = "tabset_dates", selected = "year_n")
       } else if (selected_tab() == "report_card") {
         updateTabsetPanel(inputId = "tabset_param", selected = "param_score")
-        updateTabsetPanel(inputId = "tabset_score", selected = "show_score")
+        updateTabsetPanel(inputId = "tabset_score", selected = "hide_score")
         updateTabsetPanel(inputId = "tabset_dates", selected = "year_n")
       } else if (selected_tab() == "graphs") {
         updateTabsetPanel(inputId = "tabset_param", selected = "param_n")
@@ -273,17 +273,14 @@ mod_sidebar_server <- function(
 
       param <- c(input$select_param_score, NA)
       sites <- loc_server$sites_all()
+      null_score <- c("No Data Available", "No Threshold Established")
 
       dat <- df_score_filter() |>
         dplyr::filter(
           .data$Parameter %in% !!param,
-          .data$Site_ID %in% !!sites
+          .data$Site_ID %in% !!sites,
+          !.data$score_str %in% !!null_score
         )
-
-      if (!input$chk_nascore) {
-        null_score <- c("No Data Available", "No Threshold Established")
-        dat <- dplyr::filter(dat, !.data$score_str %in% null_score)
-      }
 
       if ("Depth" %in% colnames(dat)) {
         depth_list <- c(NA, input$select_depth_all)
@@ -298,8 +295,8 @@ mod_sidebar_server <- function(
       val$df_report <- dplyr::select(dat, dplyr::any_of(keep_col))
     }) |>
       bindEvent(
-        selected_tab(), df_score_filter(), input$chk_nascore,
-        input$select_param_score, loc_server$sites_all(), input$select_depth_all
+        selected_tab(), df_score_filter(), input$select_param_score,
+        loc_server$sites_all(), input$select_depth_all
       )
 
     # Return data ----
