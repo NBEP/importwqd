@@ -271,7 +271,7 @@ mod_sidebar_server <- function(
       req(input$select_param_score)
       req(loc_server$sites_all())
 
-      param <- c(input$select_param_score, NA)
+      param <- input$select_param_score
       sites <- loc_server$sites_all()
       null_score <- c("No Data Available", "No Threshold Established")
 
@@ -308,12 +308,12 @@ mod_sidebar_server <- function(
       year_max <- input$select_year_range[2]
       months <- sort_months(input$select_month)
 
-      df_data %>%
+      df_data |>
         dplyr::filter(
           .data$Year >= !!year_min,
           .data$Year <= !!year_max,
           .data$Month %in% !!months
-        ) %>%
+        ) |>
         dplyr::select(!"Month")
     })
 
