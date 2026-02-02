@@ -120,16 +120,10 @@ mod_map_server <- function(
         col_title <- in_var$param_n()
       }
 
-      if (par_unit %in% c(NA, "None", "")) {
-        par_unit <- ""
-      } else {
-        par_unit <- paste0("(", par_unit, ")")
-      }
-
       val$score_range <- c(score_min, score_max)
       val$score_str <- score_str
-      val$legend <- trimws(paste(in_var$param_n(), par_unit))
-      val$dynamic_col <- trimws(paste(col_title, par_unit))
+      val$legend <- pretty_unit(in_var$param_n(), par_unit)
+      val$dynamic_col <- pretty_unit(col_title, par_unit)
     }) |>
       bindEvent(in_var$df_map(), in_var$param_n())
 

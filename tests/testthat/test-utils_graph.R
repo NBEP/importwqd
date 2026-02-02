@@ -71,3 +71,47 @@ test_that("prep_graph_table works", {
     df_out
   )
 })
+
+test_that("thresh_text works", {
+  # Test1 - Min, Best == "high"
+  df_in <- tst$data_final
+  txt_out <- "<b>Acceptable:</b> &gt; 5 mg/L<br><b>Excellent:</b> &gt; 8 mg/L"
+
+  expect_equal(
+    thresh_text(tst$data_final),
+    txt_out
+  )
+
+  # Test2 - Max, Best == "low"
+  df_in$Min <- NA
+  df_in$Max <- 20
+  df_in$Best <- "low"
+
+  txt_out <- "<b>Acceptable:</b> &lt; 20 mg/L<br><b>Excellent:</b> &lt; 8 mg/L"
+
+  expect_equal(
+    thresh_text(df_in),
+    txt_out
+  )
+
+  # Test3 - Min, Max, is.na(Best)
+  df_in$Min <- 5
+  df_in$Best <- NA
+
+  txt_out <- "<b>Acceptable:</b> 5 - 20 mg/L"
+
+  expect_equal(
+    thresh_text(df_in),
+    txt_out
+  )
+
+
+  # Test4 - no thresholds
+  df_in$Min <- NA
+  df_in$Max <- NA
+
+  expect_equal(
+    thresh_text(df_in),
+    NULL
+  )
+})

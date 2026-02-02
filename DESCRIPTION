@@ -22,6 +22,8 @@ Imports:
     htmlwidgets,
     leaflegend,
     leaflet,
+    lubridate,
+    plotly,
     quarto,
     reactable,
     rlang,

@@ -9,6 +9,17 @@ test_that("pretty_number works", {
   )
 })
 
+test_that("pretty_unit works", {
+  expect_equal(
+    pretty_unit("pH", "None"),
+    "pH"
+  )
+  expect_equal(
+    pretty_unit("Temperature", "deg C"),
+    "Temperature (deg C)"
+  )
+})
+
 test_that("unique_na works", {
   expect_equal(
     unique_na(c("foo", "bar", "foo", NA, "foo")),

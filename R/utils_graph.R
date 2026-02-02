@@ -1,9 +1,9 @@
 #' Format graph data for table
 #'
 #' @description `prep_graph_table()` formats graph data for use in a table.
-#' Helper function for _____.
+#' Helper function for `graph_table()`.
 #'
-#' @param .data Input dataframe.
+#' @param .data Dataframe
 #' @param group String. Name of column used to divide the data in to groups.
 #'
 #' @return Updated data frame that has been pivoted wide with "Date" and unique
@@ -17,9 +17,9 @@ prep_graph_table <- function(.data, group) {
     dat <- dplyr::mutate(
       dat,
       "Parameter" = dplyr::if_else(
-        .data$Unit %in% c(NA, "", "None"),
+        .data$Unit %in% c(NA, "None"),
         .data$Parameter,
-        paste(.data$Parameter, .data$Unit)
+        trimws(paste(.data$Parameter, .data$Unit))
       )
     )
   }
@@ -55,4 +55,335 @@ prep_graph_table <- function(.data, group) {
   }
 
   df_wide
+}
+
+#' Set graph style
+#'
+#' @description `graph_style()` sets standard style options for all graphs.
+#'
+#' @param fig `Plotly` object.
+#' @param fig_title String. Figure title.
+#' @param y_title String. Y-axis title.
+#' @param y_range Numeric list with two variables. Range for y-axis.
+#'
+#' @return Updated `plotly` object
+#'
+#' @noRd
+graph_style <- function(fig, fig_title, y_title, y_range) {
+  fig |>
+    plotly::config(
+      displaylogo = FALSE,
+      modeBarButtonsToRemove = c(
+        "sendDataToCloud",
+        "zoom2d",
+        "pan2d",
+        "select2d",
+        "lasso2d",
+        "autoScale2d",
+        "resetScale2d",
+        "zoomIn2d",
+        "zoomOut2d",
+        "hoverClosestCartesian",
+        "hoverCompareCartesian"
+      ),
+      toImageButtonOptions = list(height = 400, width = 800)
+    ) |>
+    plotly::layout(
+      title = fig_title,
+      yaxis = list(
+        title = y_title,
+        rangemode = "tozero",
+        fixedrange = TRUE,
+        range = y_range,
+        titlefont = list(size = 16),
+        tickfont = list(size = 16),
+        linecolor = "black",
+        showgrid = FALSE,
+        tickcolor = "black"
+      ),
+      xaxis = list(
+        title = "Date",
+        rangemode = "tozero",
+        fixedrange = TRUE,
+        titlefont = list(size = 16),
+        tickfont = list(size = 16),
+        linecolor = "black",
+        showgrid = FALSE,
+        tickcolor = "black"
+      ),
+      showlegend = TRUE,
+      hoverlabel = list(bgcolor = "white"),
+      margin = list(
+        l = 50, r = 20,
+        b = 20, t = 55,
+        pad = 0
+      )
+    )
+}
+
+#' Format scatterplot lines
+#'
+#' @description `prep_scatter_lines()` formats data as scatterplot lines by
+#' averaging values found across the same day and adding `NULL` values on
+#' January 1 of each year.
+#'
+#' @param .data Dataframe
+#'
+#' @return Updated data frame that has been pivoted wide with "Date" and unique
+#' values from `group` as column headers and "Result" used as values.
+#'
+#' @noRd
+prep_scatter_lines <- function(.data) {
+  if ("Depth" %in% colnames(.data)) {
+    df_null <- expand.grid(
+      Site_Name = unique(.data$Site_Name),
+      Parameter = unique(.data$Parameter),
+      Year = unique(.data$Year),
+      Depth = unique(.data$Depth)
+    )
+  } else {
+    df_null <- expand.grid(
+      Site_Name = unique(.data$Site_Name),
+      Parameter = unique(.data$Parameter),
+      Year = unique(.data$Year)
+    )
+  }
+
+  df_null <- df_null |>
+    dplyr::mutate("Date" = as.Date(paste0(.data$Year, "-1-1")))
+
+  dplyr::bind_rows(.data, df_null) |>
+    dplyr::arrange(.data$Date)
+}
+
+#' #' Add thresholds
+#' #'
+#' #' @description Add colored bars to plot to indicate threshold values.
+#' #'
+#' #' @param fig Graph.
+#' #' @param thresh Dataframe with threshold values.
+#' #' @param date_range Minimum, maximum dates for x-axis.
+#' #' @param y_range Minimum, maximum values for y-axis.
+#' #' @param unit Unit used for y-axis.
+#' #'
+#' #' @return Updated graph.
+#' #'
+#' #' @noRd
+#' add_thresholds <- function(thresh, visible = TRUE, date_range, y_range,
+#'                            unit) {
+#'   min_date <- date_range[1]
+#'   max_date <- date_range[2]
+#'   min_val <- y_range[1]
+#'   max_val <- y_range[2]
+#'
+#'   thresh_min <- thresh$thresh_min
+#'   thresh_max <- thresh$thresh_max
+#'   thresh_excellent <- thresh$thresh_excellent
+#'   thresh_best <- thresh$thresh_best
+#'
+#'   fig <- plotly::plot_ly()
+#'
+#'   if (!is.na(thresh_min) & min_val < thresh_min) {
+#'     fig <- fig |>
+#'       plotly::add_polygons(
+#'         x = c(min_date, max_date, max_date, min_date),
+#'         y = c(thresh_min, thresh_min, min_val, min_val),
+#'         line = list(width = 0),
+#'         fillcolor = "#f6c0c0",
+#'         visible = visible,
+#'         hoverinfo = "text",
+#'         hovertext = "Does Not Meet Criteria",
+#'         inherit = FALSE,
+#'         name = "Does Not Meet\nCriteria",
+#'         legendrank = 1003
+#'       )
+#'   }
+#'
+#'   if (!is.na(thresh_max) & max_val > thresh_max) {
+#'     fig <- fig |>
+#'       plotly::add_polygons(
+#'         x = c(min_date, max_date, max_date, min_date),
+#'         y = c(thresh_max, thresh_max, max_val, max_val),
+#'         line = list(width = 0),
+#'         fillcolor = "#f6c0c0",
+#'         visible = visible,
+#'         hoverinfo = "text",
+#'         hovertext = "Does Not Meet Criteria",
+#'         inherit = FALSE,
+#'         name = "Does Not\nMeet Criteria",
+#'         legendrank = 1002
+#'       )
+#'   }
+#'
+#'   chk <- !is.na(thresh_excellent) & !is.na(thresh_best)
+#'   if (chk & thresh_best == "low" & thresh_excellent > min_val) {
+#'     fig <- fig |>
+#'       plotly::add_polygons(
+#'         x = c(min_date, max_date, max_date, min_date),
+#'         y = c(thresh_excellent, thresh_excellent, min_val, min_val),
+#'         line = list(width = 0),
+#'         fillcolor = "#dde8fe",
+#'         visible = visible,
+#'         hoverinfo = "text",
+#'         hovertext = "Excellent",
+#'         inherit = FALSE,
+#'         name = "Excellent",
+#'         legendrank = 1001
+#'       )
+#'   } else if (chk & thresh_best == "high" & thresh_excellent < max_val) {
+#'     fig <- fig |>
+#'       plotly::add_polygons(
+#'         x = c(min_date, max_date, max_date, min_date),
+#'         y = c(thresh_excellent, thresh_excellent, max_val, max_val),
+#'         line = list(width = 0),
+#'         fillcolor = "#dde8fe",
+#'         visible = visible,
+#'         hoverinfo = "text",
+#'         hovertext = "Excellent",
+#'         inherit = FALSE,
+#'         name = "Excellent",
+#'         legendrank = 1001
+#'       )
+#'   }
+#'
+#'   return(fig)
+#' }
+
+#' #' Add Trend Line (GAM)
+#' #'
+#' #' @description Calculates GAM and adds smooth trend line with 95% confidence
+#' #'   interval.
+#' #'
+#' #' @param fig Plotly graph.
+#' #' @param df Dataframe.
+#' #'
+#' #' @return Updated plotly graph.
+#' #'
+#' #' @noRd
+#' add_gam <- function(fig, df, visible = TRUE) {
+#'   df <- dplyr::mutate(df, Dec_Date = lubridate::decimal_date(Date))
+#'
+#'   # Code from Carmen Chan
+#'   # https://www.displayr.com/how-to-add-trend-lines-in-r-using-plotly/
+#'
+#'   df_gam <- mgcv::gam(df$Result ~ s(df$Dec_Date))
+#'   df_pred <- predict(df_gam, type = "response", se.fit = TRUE)
+#'   df_new <- data.frame(
+#'     x = df_gam$model[, 2],
+#'     y = df_pred$fit,
+#'     lb = as.numeric(df_pred$fit - (1.96 * df_pred$se.fit)),
+#'     ub = as.numeric(df_pred$fit + (1.96 * df_pred$se.fit))
+#'   ) |>
+#'     dplyr::mutate(x = lubridate::date_decimal(x))
+#'   df_new <- df_new[order(df_new$x), ]
+#'
+#'   fig <- fig |>
+#'     plotly::add_trace(
+#'       data = df_new,
+#'       x = ~x,
+#'       y = ~y,
+#'       type = "scatter",
+#'       mode = "lines",
+#'       line = list(
+#'         color = "#2c2c2c",
+#'         width = 2,
+#'         dash = "dash"
+#'       ),
+#'       visible = visible,
+#'       inherit = FALSE,
+#'       name = "Trend Line (GAM)"
+#'     ) |>
+#'     plotly::add_ribbons(
+#'       data = df_new,
+#'       x = ~x,
+#'       ymin = ~lb,
+#'       ymax = ~ub,
+#'       line = list(
+#'         color = "#818181",
+#'         opacity = 0.4,
+#'         width = 0
+#'       ),
+#'       fillcolor = list(
+#'         color = "#818181",
+#'         opacity = 0.4
+#'       ),
+#'       visible = visible,
+#'       inherit = FALSE,
+#'       name = "95% Confidence\nInterval"
+#'     )
+#'
+#'   return(fig)
+#' }
+
+#' Threshold text
+#'
+#' @description `thresh_text()` is a helper function for
+#' `mod_graph_trend_server()` that lists the thresholds used for the selected
+#' parameter.
+#'
+#' @param .data Dataframe. Must include the columns Unit, Min, Max,
+#' Excellent, and Best.
+#'
+#' @return List of threshold values.
+#'
+#' @noRd
+thresh_text <- function(.data) {
+  thresh_min <- .data$Min[1]
+  thresh_max <- .data$Max[1]
+  thresh_best <- .data$Best[1]
+
+  chk <- is.na(c(thresh_min, thresh_max, thresh_best))
+  if (all(chk)) {
+    return(NULL)
+  }
+
+  thresh_excellent <- .data$Excellent[1]
+  unit <- .data$Unit[1]
+
+  if (unit %in% c(NA, "None")) {
+    unit <- ""
+  }
+
+  thresh_text <- ""
+
+  if (!is.na(thresh_min) & !is.na(thresh_max)) {
+    thresh_text <- paste0(
+      thresh_text, "<b>Acceptable:</b> ", pretty_number(thresh_min), " - ",
+      pretty_number(thresh_max), " ", unit
+    )
+  } else if (!is.na(thresh_min)) {
+    thresh_text <- paste0(
+      thresh_text, "<b>Acceptable:</b> &gt; ", pretty_number(thresh_min),
+      " ", unit
+    )
+  } else if (!is.na(thresh_max)) {
+    thresh_text <- paste0(
+      thresh_text, "<b>Acceptable:</b> &lt; ", pretty_number(thresh_max),
+      " ", unit
+    )
+  }
+
+  thresh_text <- trimws(thresh_text)
+
+  if (is.na(thresh_best)) {
+    return(thresh_text)
+  }
+
+  if (thresh_text != "") {
+    thresh_text <- paste0(trimws(thresh_text), "<br>")
+  }
+
+  if (thresh_best == "low") {
+    thresh_text <- paste0(
+      thresh_text, "<b>Excellent:</b> &lt; ", pretty_number(thresh_excellent),
+      " ", unit
+    )
+  } else if (thresh_best == "high") {
+    thresh_text <- paste0(
+      thresh_text, "<b>Excellent:</b> &gt; ", pretty_number(thresh_excellent),
+      " ", unit
+    )
+  }
+
+  trimws(thresh_text)
 }

@@ -16,6 +16,26 @@ pretty_number <- function(x) {
   )
 }
 
+#' Concatentate paramter, unit
+#'
+#' @description `pretty_unit()` concatenates parameter and unit as
+#' "parameter (unit)". If `unit` is `NA`, "", " ", or "None", formats string as
+#' "parameter".
+#'
+#' @param parameter String. Parameter.
+#' @param unit String. Unit.
+#'
+#' @return String containing parameter and unit.
+#'
+#' @noRd
+pretty_unit <- function(parameter, unit) {
+  if (unit %in% c(NA, "", " ", "None")) {
+    return(parameter)
+  }
+
+  paste0(parameter, " (", unit, ")")
+}
+
 #' Find unique values and drop NA
 #'
 #' @description `unique_na()` find unique values in a list and removes `NA`
