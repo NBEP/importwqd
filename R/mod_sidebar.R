@@ -150,7 +150,7 @@ mod_sidebar_ui <- function(id, varlist) {
 #' Sidebar server
 #'
 #' @description `mod_sidebar_server()` produces the sidebar server for the
-#' companion app`wqdashboard`.
+#' companion app `wqdashboard`.
 #'
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_sidebar_ui()`.
@@ -299,6 +299,24 @@ mod_sidebar_server <- function(
         loc_server$sites_all(), input$select_depth_all
       )
 
+    # * Graph ----
+    df_graph <- reactive({
+      req(input$select_year_range)
+      req(input$select_month)
+
+      year_min <- input$select_year_range[1]
+      year_max <- input$select_year_range[2]
+      months <- sort_months(input$select_month)
+
+      df_data %>%
+        dplyr::filter(
+          .data$Year >= !!year_min,
+          .data$Year <= !!year_max,
+          .data$Month %in% !!months
+        ) %>%
+        dplyr::select(!"Month")
+    })
+
     # Return data ----
     return(
       list(
@@ -337,6 +355,9 @@ mod_sidebar_server <- function(
         }),
         df_report = reactive({
           val$df_report
+        }),
+        df_graph = reactive({
+          df_graph()
         })
       )
     )

@@ -36,5 +36,5 @@ TO DO.
 }
 \description{
 `mod_sidebar_server()` produces the sidebar server for the
-companion app`wqdashboard`.
+companion app `wqdashboard`.
 }
