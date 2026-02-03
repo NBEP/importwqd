@@ -11,9 +11,8 @@
 #' @return Scatterplot.
 #'
 #' @noRd
-
 graph_trends <- function(
-    .data, fig_title, thresholds = NULL, show_thresh = TRUE, create_trend = TRUE,
+    .data, thresholds, show_thresh = TRUE, create_trend = TRUE,
     show_trend = TRUE
   ) {
 
@@ -21,11 +20,11 @@ graph_trends <- function(
     return(NULL)
   }
 
-  # Set variables ----
-  dat <- .data
-  param <- dat$Parameter[1]
+  # Set variables
+  param <- .data$Parameter[1]
+  unit <- .data$Unit[1]
 
-  min_val <- min(dat$Result) * .8
+  min_val <- min(.data$Result) * .8
   if (min_val > 0 & param != "pH") {
     min_val <- 0
   }
@@ -49,56 +48,49 @@ graph_trends <- function(
   min_date <- min_date - date_diff
   max_date <- max_date + date_diff
 
-  df_new <- add_line_breaks(.data)
+  df_new <- prep_scatter_lines(.data)
 
-  # Create plot ----
-  if (is.null(thresholds)) {
-    fig <- plotly::plot_ly(
+  # Create plot
+  fig <- plot_thresholds(
+    .data,
+    thresh = thresholds,
+    date_range = c(min_date, max_date),
+    y_range = c(min_val, max_val),
+    visible = show_thresh
+  ) |>
+    plotly::add_trace(
       data = df_new,
       x = ~Date,
       y = ~Result,
       type = "scatter",
-      mode = "lines+markers",
+      mode = "lines",
+      inherit = FALSE,
+      name = ~ wrap_text(Site_Name),
+      line = list(color = "#2daebe")
+    ) |>
+    plotly::add_trace(
+      data = .data,
+      x = ~Date,
+      y = ~Result,
+      type = "scatter",
+      mode = "markers",
+      inherit = FALSE,
       name = ~ wrap_text(Site_Name),
       marker = list(size = 7, color = "#2daebe"),
-      line = list(color = "#2daebe"),
       hoverinfo = "text",
       hovertext = ~Description
     )
-  } else {
-    # Add thresholds ----
-    fig <- add_thresholds(
-      thresh = thresholds,
-      visible = show_thresh,
-      date_range = c(min_date, max_date),
-      y_range = c(min_val, max_val),
-      unit = df$Unit[1]
-    ) |>
-      plotly::add_trace(
-        data = df_new,
-        x = ~Date,
-        y = ~Result,
-        type = "scatter",
-        mode = "lines+markers",
-        inherit = FALSE,
-        name = ~ wrap_text(Site_Name),
-        marker = list(size = 7, color = "#2daebe"),
-        line = list(color = "#2daebe"),
-        hoverinfo = "text",
-        hovertext = ~Description
-      )
-  }
 
-  # Add trendlines ----
+  # Add trendlines
   if (create_trend) {
     fig <- add_gam(fig, .data, show_trend)
   }
 
-  # Style plot ----
+  # Style plot
   graph_style(
     fig,
-    fig_title = fig_title,
-    y_title = pretty_unit(.data$Parameter[1], .data$Unit[1]),
+    fig_title = param,
+    y_title = pretty_unit(param, unit),
     y_range = list(min_val, max_val)
   ) |>
     plotly::layout(

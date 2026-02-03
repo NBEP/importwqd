@@ -1,13 +1,13 @@
-#' graphs_trends UI Function
+#' Graph trends UI
 #'
-#' @description A shiny Module.
+#' @description `mod_graph_trend_ui()` produces the UI code for a graph and
+#' table showing long term trends for a single site, parameter, and depth.
 #'
-#' @param id,input,output,session Internal parameters for {shiny}.
+#' @param id Namespace ID for module. Should match ID used by
+#' `mod_graph_trend_server()`.
 #'
-#' @noRd
-#'
-#' @importFrom shiny NS tagList
-mod_graphs_trends_ui <- function(id) {
+#' @export
+mod_graph_trend_ui <- function(id) {
   ns <- NS(id)
   tagList(
     # Enable javascript ----
@@ -61,10 +61,17 @@ mod_graphs_trends_ui <- function(id) {
   )
 }
 
-#' graphs_trends Server Functions
+#' Graph trends server
 #'
-#' @noRd
-mod_graphs_trends_server <- function(id, df) {
+#' `mod_graph_trend_server()` produces the server code for a graph and
+#' table showing long term trends for a single site, parameter, and depth.
+#'
+#' @param id Namespace ID for module. Should match ID used by
+#' `mod_graph_trend_ui()`.
+#' @param df Dataframe. Data to graph.
+#'
+#' @export
+mod_graph_trend_server <- function(id, df) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -136,37 +143,39 @@ mod_graphs_trends_server <- function(id, df) {
     thresh <- reactive({
       thresh_min = df()$Min[1]
       thresh_max = df()$Max[1]
-      thresh_excellent = df()$Excellent[1]
       thresh_best = df()$Best[1]
 
-      chk <- is.na(thresh_min) & is.na(thresh_max) & is.na(thresh_excellent) &
-        is.na(thresh_best)
-      if (chk) {
+      chk <- is.na(c(thresh_min, thresh_max, thresh_best))
+      if (all(chk)) {
         return(NULL)
       }
 
-      thresh <- list(
+      unit <- df()$Unit[1]
+      if (is.na(unit)) {
+        unit <- ""
+      }
+
+      list(
         thresh_min = thresh_min,
         thresh_max = thresh_max,
-        thresh_excellent = thresh_excellent,
-        thresh_best = thresh_best
+        thresh_exc = df()$Excellent[1],
+        thresh_best = thresh_best,
+        unit = unit
       )
-
-      return(thresh)
     })
 
     # Trend line ----
     # * Check if valid ----
-    len_years <- reactive({
-      length(unique(df()$Year))
-    })
     show_fit <- reactive({
-      if (len_years() < 10) {
-        FALSE
+      len_years <- length(unique(df()$Year))
+
+      if (len_years < 10) {
+        return(FALSE)
       } else {
-        TRUE
+        return(TRUE)
       }
     })
+
     output$hide_error <- renderText({
       paste(show_fit())
     })
@@ -224,8 +233,7 @@ mod_graphs_trends_server <- function(id, df) {
     # Graph ----
     output$plot <- plotly::renderPlotly({
       graph_trends(
-        df = df(),
-        fig_title = df()$Parameter[1],
+        df(),
         thresholds = thresh(),
         show_thresh = val$threshold,
         create_trend = show_fit(),
@@ -235,14 +243,14 @@ mod_graphs_trends_server <- function(id, df) {
 
     # Caption ----
     thresh_desc <- reactive({
-      desc <- thresh_text(df())
-
-      if (is.null(desc)) {
-        return(desc)
+      if (is.null(thresh())) {
+        return(NULL)
       }
 
-      paste("<h3>Thresholds</h3>", desc)
-    })
+      thresh <- thresh_text(thresh())
+      paste("<h3>Thresholds</h3>", thresh)
+    }) |>
+      bindEvent(thresh())
 
     output$caption <- renderUI({
       HTML(thresh_desc())
@@ -265,9 +273,3 @@ mod_graphs_trends_server <- function(id, df) {
     })
   })
 }
-
-## To be copied in the UI
-# mod_graphs_trends_ui("graphs_graph_1")
-
-## To be copied in the server
-# mod_graphs_trends_server("graphs_graph_1")

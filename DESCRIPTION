@@ -23,6 +23,7 @@ Imports:
     leaflegend,
     leaflet,
     lubridate,
+    mgcv,
     plotly,
     quarto,
     reactable,

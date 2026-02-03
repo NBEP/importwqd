@@ -17,9 +17,9 @@ prep_graph_table <- function(.data, group) {
     dat <- dplyr::mutate(
       dat,
       "Parameter" = dplyr::if_else(
-        .data$Unit %in% c(NA, "None"),
+        is.na(.data$Unit),
         .data$Parameter,
-        trimws(paste(.data$Parameter, .data$Unit))
+        paste(.data$Parameter, .data$Unit)
       )
     )
   }
@@ -55,6 +55,55 @@ prep_graph_table <- function(.data, group) {
   }
 
   df_wide
+}
+
+#' Format scatterplot lines
+#'
+#' @description `prep_scatter_lines()` formats data as scatterplot lines by
+#' averaging values found across the same day and adding `NULL` values on
+#' January 1 of each year.
+#'
+#' @param .data Dataframe
+#'
+#' @return Updated data frame that has been pivoted wide with "Date" and unique
+#' values from `group` as column headers and "Result" used as values.
+#'
+#' @noRd
+prep_scatter_lines <- function(.data) {
+  if ("Depth" %in% colnames(.data)) {
+    dat <- .data |>
+      dplyr::group_by(
+        .data$Site_Name, .data$Date, .data$Parameter, .data$Unit, .data$Depth
+      ) |>
+      dplyr::summarise("Result" = mean(.data$Result))
+
+    df_null <- expand.grid(
+      Site_Name = unique(.data$Site_Name),
+      Parameter = unique(.data$Parameter),
+      Year = unique(.data$Year),
+      Depth = unique(.data$Depth)
+    )
+  } else {
+    dat <- .data |>
+      dplyr::group_by(
+        .data$Site_Name, .data$Date, .data$Parameter, .data$Unit
+      ) |>
+      dplyr::summarise("Result" = mean(.data$Result))
+
+    df_null <- expand.grid(
+      Site_Name = unique(.data$Site_Name),
+      Parameter = unique(.data$Parameter),
+      Year = unique(.data$Year)
+    )
+  }
+
+  df_null <- df_null |>
+    dplyr::mutate("Date" = as.Date(paste0(.data$Year, "-1-1")))
+
+  dplyr::bind_rows(dat, df_null) |>
+    data.frame() |>
+    dplyr::arrange(.data$Date) |>
+    dplyr::select(!"Year")
 }
 
 #' Set graph style
@@ -121,199 +170,173 @@ graph_style <- function(fig, fig_title, y_title, y_range) {
     )
 }
 
-#' Format scatterplot lines
+#' Plot thresholds
 #'
-#' @description `prep_scatter_lines()` formats data as scatterplot lines by
-#' averaging values found across the same day and adding `NULL` values on
-#' January 1 of each year.
+#' @description `plot_thresholds` generates a `plotly` object with
+#' colored bars indicating the thresholds for "Does Not Meet Criteria" and
+#' "Excellent".
 #'
 #' @param .data Dataframe
+#' @param thresh List of thresholds.
+#' @param date_range List. Minimum, maximum dates for x-axis.
+#' @param y_range List. Minimum, maximum values for y-axis.
+#' @param visible Boolean. If `TRUE`, show thresholds. If `FALSE`, hide
+#' thresholds. Default `TRUE`.
 #'
-#' @return Updated data frame that has been pivoted wide with "Date" and unique
-#' values from `group` as column headers and "Result" used as values.
+#' @return Updated graph.
 #'
 #' @noRd
-prep_scatter_lines <- function(.data) {
-  if ("Depth" %in% colnames(.data)) {
-    df_null <- expand.grid(
-      Site_Name = unique(.data$Site_Name),
-      Parameter = unique(.data$Parameter),
-      Year = unique(.data$Year),
-      Depth = unique(.data$Depth)
-    )
-  } else {
-    df_null <- expand.grid(
-      Site_Name = unique(.data$Site_Name),
-      Parameter = unique(.data$Parameter),
-      Year = unique(.data$Year)
-    )
+plot_thresholds <- function(
+    .data, thresh, date_range, y_range, visible = TRUE
+  ) {
+  fig <- plotly::plot_ly()
+
+  if (is.null(thresh)) {
+    return(fig)
   }
 
-  df_null <- df_null |>
-    dplyr::mutate("Date" = as.Date(paste0(.data$Year, "-1-1")))
+  thresh_min <- thresh$thresh_min
+  thresh_max <- thresh$thresh_max
+  thresh_excellent <- thresh$thresh_exc
+  thresh_best <- thresh$thresh$best
 
-  dplyr::bind_rows(.data, df_null) |>
-    dplyr::arrange(.data$Date)
+  min_date <- date_range[1]
+  max_date <- date_range[2]
+  min_val <- y_range[1]
+  max_val <- y_range[2]
+
+  if (!is.na(thresh_min) & min_val < thresh_min) {
+    fig <- fig |>
+      plotly::add_polygons(
+        x = c(min_date, max_date, max_date, min_date),
+        y = c(thresh_min, thresh_min, min_val, min_val),
+        line = list(width = 0),
+        fillcolor = "#f6c0c0",
+        visible = visible,
+        hoverinfo = "text",
+        hovertext = "Does Not Meet Criteria",
+        inherit = FALSE,
+        name = "Does Not Meet\nCriteria",
+        legendrank = 1003
+      )
+  }
+
+  if (!is.na(thresh_max) & max_val > thresh_max) {
+    fig <- fig |>
+      plotly::add_polygons(
+        x = c(min_date, max_date, max_date, min_date),
+        y = c(thresh_max, thresh_max, max_val, max_val),
+        line = list(width = 0),
+        fillcolor = "#f6c0c0",
+        visible = visible,
+        hoverinfo = "text",
+        hovertext = "Does Not Meet Criteria",
+        inherit = FALSE,
+        name = "Does Not\nMeet Criteria",
+        legendrank = 1002
+      )
+  }
+
+  if (is.na(thresh_best)) {
+    return(fig)
+  }
+
+  if (thresh_best == "low" & thresh_excellent > min_val) {
+    fig <- fig |>
+      plotly::add_polygons(
+        x = c(min_date, max_date, max_date, min_date),
+        y = c(thresh_excellent, thresh_excellent, min_val, min_val),
+        line = list(width = 0),
+        fillcolor = "#dde8fe",
+        visible = visible,
+        hoverinfo = "text",
+        hovertext = "Excellent",
+        inherit = FALSE,
+        name = "Excellent",
+        legendrank = 1001
+      )
+  } else if (thresh_best == "high" & thresh_excellent < max_val) {
+    fig <- fig |>
+      plotly::add_polygons(
+        x = c(min_date, max_date, max_date, min_date),
+        y = c(thresh_excellent, thresh_excellent, max_val, max_val),
+        line = list(width = 0),
+        fillcolor = "#dde8fe",
+        visible = visible,
+        hoverinfo = "text",
+        hovertext = "Excellent",
+        inherit = FALSE,
+        name = "Excellent",
+        legendrank = 1001
+      )
+  }
 }
 
-#' #' Add thresholds
-#' #'
-#' #' @description Add colored bars to plot to indicate threshold values.
-#' #'
-#' #' @param fig Graph.
-#' #' @param thresh Dataframe with threshold values.
-#' #' @param date_range Minimum, maximum dates for x-axis.
-#' #' @param y_range Minimum, maximum values for y-axis.
-#' #' @param unit Unit used for y-axis.
-#' #'
-#' #' @return Updated graph.
-#' #'
-#' #' @noRd
-#' add_thresholds <- function(thresh, visible = TRUE, date_range, y_range,
-#'                            unit) {
-#'   min_date <- date_range[1]
-#'   max_date <- date_range[2]
-#'   min_val <- y_range[1]
-#'   max_val <- y_range[2]
+#' Add trend line (GAM)
 #'
-#'   thresh_min <- thresh$thresh_min
-#'   thresh_max <- thresh$thresh_max
-#'   thresh_excellent <- thresh$thresh_excellent
-#'   thresh_best <- thresh$thresh_best
+#' @description `add_gam()` calculates GAM and adds a smooth trend line with
+#' 95% confidence interval to a `plotly` graph.
 #'
-#'   fig <- plotly::plot_ly()
+#' @param fig Plotly graph.
+#' @param df Dataframe.
+#' @param visible Boolean. If `TRUE`, trendline is visible. Else, trendline is
+#' hidden. Default `TRUE`.
 #'
-#'   if (!is.na(thresh_min) & min_val < thresh_min) {
-#'     fig <- fig |>
-#'       plotly::add_polygons(
-#'         x = c(min_date, max_date, max_date, min_date),
-#'         y = c(thresh_min, thresh_min, min_val, min_val),
-#'         line = list(width = 0),
-#'         fillcolor = "#f6c0c0",
-#'         visible = visible,
-#'         hoverinfo = "text",
-#'         hovertext = "Does Not Meet Criteria",
-#'         inherit = FALSE,
-#'         name = "Does Not Meet\nCriteria",
-#'         legendrank = 1003
-#'       )
-#'   }
+#' @return Updated plotly graph with a trendline
 #'
-#'   if (!is.na(thresh_max) & max_val > thresh_max) {
-#'     fig <- fig |>
-#'       plotly::add_polygons(
-#'         x = c(min_date, max_date, max_date, min_date),
-#'         y = c(thresh_max, thresh_max, max_val, max_val),
-#'         line = list(width = 0),
-#'         fillcolor = "#f6c0c0",
-#'         visible = visible,
-#'         hoverinfo = "text",
-#'         hovertext = "Does Not Meet Criteria",
-#'         inherit = FALSE,
-#'         name = "Does Not\nMeet Criteria",
-#'         legendrank = 1002
-#'       )
-#'   }
-#'
-#'   chk <- !is.na(thresh_excellent) & !is.na(thresh_best)
-#'   if (chk & thresh_best == "low" & thresh_excellent > min_val) {
-#'     fig <- fig |>
-#'       plotly::add_polygons(
-#'         x = c(min_date, max_date, max_date, min_date),
-#'         y = c(thresh_excellent, thresh_excellent, min_val, min_val),
-#'         line = list(width = 0),
-#'         fillcolor = "#dde8fe",
-#'         visible = visible,
-#'         hoverinfo = "text",
-#'         hovertext = "Excellent",
-#'         inherit = FALSE,
-#'         name = "Excellent",
-#'         legendrank = 1001
-#'       )
-#'   } else if (chk & thresh_best == "high" & thresh_excellent < max_val) {
-#'     fig <- fig |>
-#'       plotly::add_polygons(
-#'         x = c(min_date, max_date, max_date, min_date),
-#'         y = c(thresh_excellent, thresh_excellent, max_val, max_val),
-#'         line = list(width = 0),
-#'         fillcolor = "#dde8fe",
-#'         visible = visible,
-#'         hoverinfo = "text",
-#'         hovertext = "Excellent",
-#'         inherit = FALSE,
-#'         name = "Excellent",
-#'         legendrank = 1001
-#'       )
-#'   }
-#'
-#'   return(fig)
-#' }
+#' @noRd
+add_gam <- function(fig, df, visible = TRUE) {
+  df <- dplyr::mutate(df, "Dec_Date" = lubridate::decimal_date(.data$Date))
 
-#' #' Add Trend Line (GAM)
-#' #'
-#' #' @description Calculates GAM and adds smooth trend line with 95% confidence
-#' #'   interval.
-#' #'
-#' #' @param fig Plotly graph.
-#' #' @param df Dataframe.
-#' #'
-#' #' @return Updated plotly graph.
-#' #'
-#' #' @noRd
-#' add_gam <- function(fig, df, visible = TRUE) {
-#'   df <- dplyr::mutate(df, Dec_Date = lubridate::decimal_date(Date))
-#'
-#'   # Code from Carmen Chan
-#'   # https://www.displayr.com/how-to-add-trend-lines-in-r-using-plotly/
-#'
-#'   df_gam <- mgcv::gam(df$Result ~ s(df$Dec_Date))
-#'   df_pred <- predict(df_gam, type = "response", se.fit = TRUE)
-#'   df_new <- data.frame(
-#'     x = df_gam$model[, 2],
-#'     y = df_pred$fit,
-#'     lb = as.numeric(df_pred$fit - (1.96 * df_pred$se.fit)),
-#'     ub = as.numeric(df_pred$fit + (1.96 * df_pred$se.fit))
-#'   ) |>
-#'     dplyr::mutate(x = lubridate::date_decimal(x))
-#'   df_new <- df_new[order(df_new$x), ]
-#'
-#'   fig <- fig |>
-#'     plotly::add_trace(
-#'       data = df_new,
-#'       x = ~x,
-#'       y = ~y,
-#'       type = "scatter",
-#'       mode = "lines",
-#'       line = list(
-#'         color = "#2c2c2c",
-#'         width = 2,
-#'         dash = "dash"
-#'       ),
-#'       visible = visible,
-#'       inherit = FALSE,
-#'       name = "Trend Line (GAM)"
-#'     ) |>
-#'     plotly::add_ribbons(
-#'       data = df_new,
-#'       x = ~x,
-#'       ymin = ~lb,
-#'       ymax = ~ub,
-#'       line = list(
-#'         color = "#818181",
-#'         opacity = 0.4,
-#'         width = 0
-#'       ),
-#'       fillcolor = list(
-#'         color = "#818181",
-#'         opacity = 0.4
-#'       ),
-#'       visible = visible,
-#'       inherit = FALSE,
-#'       name = "95% Confidence\nInterval"
-#'     )
-#'
-#'   return(fig)
-#' }
+  # Code from Carmen Chan
+  # https://www.displayr.com/how-to-add-trend-lines-in-r-using-plotly/
+
+  df_gam <- mgcv::gam(df$Result ~ s(df$Dec_Date))
+  df_pred <- stats::predict(df_gam, type = "response", se.fit = TRUE)
+  df_new <- data.frame(
+    x = df_gam$model[, 2],
+    y = df_pred$fit,
+    lb = as.numeric(df_pred$fit - (1.96 * df_pred$se.fit)),
+    ub = as.numeric(df_pred$fit + (1.96 * df_pred$se.fit))
+  ) |>
+    dplyr::mutate("x" = lubridate::date_decimal(.data$x)) |>
+    dplyr::arrange(.data$x)
+
+  fig |>
+    plotly::add_trace(
+      data = df_new,
+      x = ~x,
+      y = ~y,
+      type = "scatter",
+      mode = "lines",
+      line = list(
+        color = "#2c2c2c",
+        width = 2,
+        dash = "dash"
+      ),
+      visible = visible,
+      inherit = FALSE,
+      name = "Trend Line (GAM)"
+    ) |>
+    plotly::add_ribbons(
+      data = df_new,
+      x = ~x,
+      ymin = ~lb,
+      ymax = ~ub,
+      line = list(
+        color = "#818181",
+        opacity = 0.4,
+        width = 0
+      ),
+      fillcolor = list(
+        color = "#818181",
+        opacity = 0.4
+      ),
+      visible = visible,
+      inherit = FALSE,
+      name = "95% Confidence\nInterval"
+    )
+}
 
 #' Threshold text
 #'
@@ -321,28 +344,17 @@ prep_scatter_lines <- function(.data) {
 #' `mod_graph_trend_server()` that lists the thresholds used for the selected
 #' parameter.
 #'
-#' @param .data Dataframe. Must include the columns Unit, Min, Max,
-#' Excellent, and Best.
+#' @param thresh List of threshold values
 #'
 #' @return List of threshold values.
 #'
 #' @noRd
-thresh_text <- function(.data) {
-  thresh_min <- .data$Min[1]
-  thresh_max <- .data$Max[1]
-  thresh_best <- .data$Best[1]
-
-  chk <- is.na(c(thresh_min, thresh_max, thresh_best))
-  if (all(chk)) {
-    return(NULL)
-  }
-
-  thresh_excellent <- .data$Excellent[1]
-  unit <- .data$Unit[1]
-
-  if (unit %in% c(NA, "None")) {
-    unit <- ""
-  }
+thresh_text <- function(thresh) {
+  thresh_min <- thresh$thresh_min
+  thresh_max <- thresh$thresh_max
+  thresh_best <- thresh$thresh_best
+  thresh_excellent <- thresh$thresh_exc
+  unit <- thresh$unit
 
   thresh_text <- ""
 

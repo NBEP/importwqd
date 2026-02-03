@@ -22,14 +22,17 @@ prep_results <- function(
   .data, df_colnames, df_param, df_unit, df_qual, df_activity
 ) {
   message("Preparing data...")
-
   df_colnames <- df_colnames |>
-    dplyr::filter(!is.na(.data$wqdashboard) & !is.na(.data$Custom))
+    dplyr::filter(
+      !is.na(.data$wqdashboard),
+      !is.na(.data$Custom),
+      .data$wqdashboard != .data$Custom
+    )
 
   if (nrow(df_colnames) == 0) {
-    message("Did not update column names")
     dat <- .data
   } else {
+    message("\tRenaming columns")
     dat <- .data |>
       wqformat::rename_col(df_colnames$Custom, df_colnames$wqdashboard)
   }
@@ -274,6 +277,13 @@ format_results <- function(.data, sites, thresholds) {
     drop_uniform_col("Depth_Category", include_na = FALSE) |>
     drop_uniform_col("Group") |>
     dplyr::rename("Unit" = "Result_Unit") |>
+    dplyr::mutate(
+      "Unit" = dplyr::if_else(
+        .data$Unit == "None",
+        NA,
+        .data$Unit
+      )
+    ) |>
     dplyr::mutate("Month" = strftime(.data$Date, "%B")) |>
     dplyr::mutate(
       "Description" = paste0(
@@ -303,7 +313,7 @@ format_results <- function(.data, sites, thresholds) {
     ) |>
     dplyr::mutate(
       "Description" = dplyr::if_else(
-        .data$Unit %in% c(NA, "None"),
+        is.na(.data$Unit),
         .data$Description,
         paste(.data$Description, .data$Unit)
       )
@@ -543,8 +553,7 @@ score_results <- function(.data, sites) {
     dplyr::mutate(
       "popup_score" = dplyr::case_when(
         is.na(.data$score_num) ~ "<i>No data</i>",
-        .data$Unit %in% c(NA, "None") ~
-          paste0(.data$score_typ, ": ", .data$score_num),
+        is.na(.data$Unit) ~ paste0(.data$score_typ, ": ", .data$score_num),
         TRUE ~ paste0(.data$score_typ, ": ", .data$score_num, " ", .data$Unit)
       )
     ) |>
@@ -560,8 +569,7 @@ score_results <- function(.data, sites) {
         is.na(.data$score_num) ~ paste0(.data$Site_Name, ", No data"),
         .data$score_str != "No Threshold Established" ~
           paste0(.data$Site_Name, ", ", .data$score_str),
-        .data$Unit %in% c(NA, "None") ~
-          paste0(.data$Site_Name, ", ", .data$score_num),
+        is.na(.data$Unit) ~ paste0(.data$Site_Name, ", ", .data$score_num),
         TRUE ~ paste0(.data$Site_Name, ", ", .data$score_num, " ", .data$Unit)
       )
     )

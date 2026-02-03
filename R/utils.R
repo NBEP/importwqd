@@ -19,7 +19,7 @@ pretty_number <- function(x) {
 #' Concatentate paramter, unit
 #'
 #' @description `pretty_unit()` concatenates parameter and unit as
-#' "parameter (unit)". If `unit` is `NA`, "", " ", or "None", formats string as
+#' "parameter (unit)". If `unit` is `NA`, formats string as
 #' "parameter".
 #'
 #' @param parameter String. Parameter.
@@ -29,7 +29,7 @@ pretty_number <- function(x) {
 #'
 #' @noRd
 pretty_unit <- function(parameter, unit) {
-  if (unit %in% c(NA, "", " ", "None")) {
+  if (is.na(unit)) {
     return(parameter)
   }
 

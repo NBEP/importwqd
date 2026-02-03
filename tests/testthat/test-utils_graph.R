@@ -72,46 +72,85 @@ test_that("prep_graph_table works", {
   )
 })
 
+test_that("prep_scatter_lines works", {
+  df_in <- data.frame(
+    Site_ID = "001",
+    Site_Name = "Site1",
+    Date = as.Date(c("2021-06-30", "2021-06-30", "2023-07-12")),
+    Year = c(2021, 2021, 2023),
+    Parameter = "Dissolved oxygen (DO)",
+    Unit = "mg/L",
+    Depth = "Surface",
+    Result = c(2, 3, 5)
+  )
+
+  df_out <- data.frame(
+    Site_Name = "Site1",
+    Date = as.Date(c("2021-01-01", "2021-06-30", "2023-01-01", "2023-07-12")),
+    Parameter = "Dissolved oxygen (DO)",
+    Unit = c(NA, "mg/L", NA, "mg/L"),
+    Depth = "Surface",
+    Result = c(NA, 2.5, NA, 5)
+  )
+
+  expect_equal(
+    prep_scatter_lines(df_in),
+    df_out
+  )
+
+  # Edge case - no depth
+  df_in$Depth <- NULL
+  df_out$Depth <- NULL
+
+  expect_equal(
+    prep_scatter_lines(df_in),
+    df_out
+  )
+})
+
 test_that("thresh_text works", {
-  # Test1 - Min, Best == "high"
-  df_in <- tst$data_final
+  # Test1
+  thresh <- list(
+    thresh_min = 5,
+    thresh_max = NA,
+    thresh_exc = 8,
+    thresh_best = "high",
+    unit = "mg/L"
+  )
   txt_out <- "<b>Acceptable:</b> &gt; 5 mg/L<br><b>Excellent:</b> &gt; 8 mg/L"
 
   expect_equal(
-    thresh_text(tst$data_final),
+    thresh_text(thresh),
     txt_out
   )
 
-  # Test2 - Max, Best == "low"
-  df_in$Min <- NA
-  df_in$Max <- 20
-  df_in$Best <- "low"
-
+  # Test2
+  thresh <- list(
+    thresh_min = NA,
+    thresh_max = 20,
+    thresh_exc = 8,
+    thresh_best = "low",
+    unit = "mg/L"
+  )
   txt_out <- "<b>Acceptable:</b> &lt; 20 mg/L<br><b>Excellent:</b> &lt; 8 mg/L"
 
   expect_equal(
-    thresh_text(df_in),
+    thresh_text(thresh),
     txt_out
   )
 
-  # Test3 - Min, Max, is.na(Best)
-  df_in$Min <- 5
-  df_in$Best <- NA
-
+  # Test3
+  thresh <- list(
+    thresh_min = 5,
+    thresh_max = 20,
+    thresh_exc = NA,
+    thresh_best = NA,
+    unit = "mg/L"
+  )
   txt_out <- "<b>Acceptable:</b> 5 - 20 mg/L"
 
   expect_equal(
-    thresh_text(df_in),
+    thresh_text(thresh),
     txt_out
-  )
-
-
-  # Test4 - no thresholds
-  df_in$Min <- NA
-  df_in$Max <- NA
-
-  expect_equal(
-    thresh_text(df_in),
-    NULL
   )
 })

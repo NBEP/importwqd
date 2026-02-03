@@ -11,7 +11,7 @@ test_that("pretty_number works", {
 
 test_that("pretty_unit works", {
   expect_equal(
-    pretty_unit("pH", "None"),
+    pretty_unit("pH", NA),
     "pH"
   )
   expect_equal(
