@@ -141,9 +141,9 @@ mod_graph_trend_server <- function(id, df) {
 
     # * Calc thresholds ----
     thresh <- reactive({
-      thresh_min = df()$Min[1]
-      thresh_max = df()$Max[1]
-      thresh_best = df()$Best[1]
+      thresh_min <- df()$Min[1]
+      thresh_max <- df()$Max[1]
+      thresh_best <- df()$Best[1]
 
       chk <- is.na(c(thresh_min, thresh_max, thresh_best))
       if (all(chk)) {
@@ -239,7 +239,8 @@ mod_graph_trend_server <- function(id, df) {
         create_trend = show_fit(),
         show_trend = val$trendline
       )
-    })
+    }) |>
+      bindEvent(df(), thresh(), show_fit())
 
     # Caption ----
     thresh_desc <- reactive({

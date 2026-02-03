@@ -96,7 +96,7 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
       loc_col <- intersect(loc_col, colnames(dat))
 
       if (length(loc_col) < 2) {
-        return(dat[0,])
+        return(dat[0, ])
       }
 
       dat <- in_var$df_report() |>
@@ -105,7 +105,7 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
         prep_pdf(na_sub = "")
 
       if (ncol(dat) < 2) {
-        return(dat[0,])
+        return(dat[0, ])
       }
 
       dat
@@ -147,7 +147,7 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
 
         # Copy file to temporary directory
         src <- normalizePath(
-          system.file("reports/report_card.qmd", package="importwqd")
+          system.file("reports/report_card.qmd", package = "importwqd")
         )
 
         temp_report <- file.path(tempdir(), "report_card.qmd")
@@ -172,7 +172,7 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
         )
 
         # Copy quarto document to `file` argument
-        file.copy(file.path(tempdir(),"report_card.pdf"), file)
+        file.copy(file.path(tempdir(), "report_card.pdf"), file)
       }
     )
   })

@@ -40,6 +40,30 @@ test_that("num_shape works", {
   )
 })
 
+test_that("num_symbols works", {
+  df_in <- tst$data_score[c(3:5, 9:12), ]
+  range <- c(0.05, 9)
+
+  expect_snapshot(
+    num_symbols(df_in, range)
+  )
+})
+
+test_that("cat_pal works", {
+  expect_snapshot(
+    cat_pal("Excellent")
+  )
+  expect_snapshot(
+    cat_pal("Meets Criteria")
+  )
+  expect_snapshot(
+    cat_pal(c("Excellent", "Meets Criteria"))
+  )
+  expect_snapshot(
+    cat_pal("No Data Available", TRUE)
+  )
+})
+
 test_that("cat_labels works", {
   expect_equal(
     cat_labels("Excellent"),

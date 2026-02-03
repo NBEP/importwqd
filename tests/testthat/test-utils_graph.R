@@ -108,6 +108,66 @@ test_that("prep_scatter_lines works", {
   )
 })
 
+test_that("graph_style works", {
+  fig_in <- plotly::plot_ly()
+
+  expect_snapshot(
+    suppressMessages(
+      graph_style(fig_in, "title", "y-axis label", c(0, 1))
+    )
+  )
+})
+
+test_that("plot_thresholds works", {
+  df_in <- tst$data_final[1:3, ]
+  date_range <- as.Date(c("2021-06-30", "2023-05-25"))
+  y_range <- c(0, 10)
+
+  thresh <- list(
+    thresh_min = 5,
+    thresh_max = NA,
+    thresh_exc = 8,
+    thresh_best = "high",
+    unit = "mg/L"
+  )
+
+  # Test - thresh_min, thresh_best is "high"
+  expect_snapshot(
+    plot_thresholds(df_in, thresh, date_range, y_range)
+  )
+
+  # Test - thresh_max
+  thresh <- list(
+    thresh_min = NA,
+    thresh_max = 8,
+    thresh_exc = NA,
+    thresh_best = NA,
+    unit = "mg/L"
+  )
+  expect_snapshot(
+    plot_thresholds(df_in, thresh, date_range, y_range)
+  )
+
+  # Test - thresh_best is "low"
+  thresh <- list(
+    thresh_min = NA,
+    thresh_max = NA,
+    thresh_exc = 4,
+    thresh_best = "low",
+    unit = "mg/L"
+  )
+  expect_snapshot(
+    plot_thresholds(df_in, thresh, date_range, y_range)
+  )
+
+  # Test - NO thresh
+  expect_snapshot(
+    suppressMessages(
+      plot_thresholds(df_in, NULL, date_range, y_range)
+    )
+  )
+})
+
 test_that("thresh_text works", {
   # Test1
   thresh <- list(

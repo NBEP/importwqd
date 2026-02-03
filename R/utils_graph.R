@@ -187,8 +187,8 @@ graph_style <- function(fig, fig_title, y_title, y_range) {
 #'
 #' @noRd
 plot_thresholds <- function(
-    .data, thresh, date_range, y_range, visible = TRUE
-  ) {
+  .data, thresh, date_range, y_range, visible = TRUE
+) {
   fig <- plotly::plot_ly()
 
   if (is.null(thresh)) {
@@ -198,7 +198,7 @@ plot_thresholds <- function(
   thresh_min <- thresh$thresh_min
   thresh_max <- thresh$thresh_max
   thresh_excellent <- thresh$thresh_exc
-  thresh_best <- thresh$thresh$best
+  thresh_best <- thresh$thresh_best
 
   min_date <- date_range[1]
   max_date <- date_range[2]
@@ -270,6 +270,8 @@ plot_thresholds <- function(
         legendrank = 1001
       )
   }
+
+  fig
 }
 
 #' Add trend line (GAM)

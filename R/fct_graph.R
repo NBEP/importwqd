@@ -12,10 +12,9 @@
 #'
 #' @noRd
 graph_trends <- function(
-    .data, thresholds, show_thresh = TRUE, create_trend = TRUE,
-    show_trend = TRUE
-  ) {
-
+  .data, thresholds, show_thresh = TRUE, create_trend = TRUE,
+  show_trend = TRUE
+) {
   if (nrow(.data) == 0) {
     return(NULL)
   }
@@ -65,7 +64,7 @@ graph_trends <- function(
       type = "scatter",
       mode = "lines",
       inherit = FALSE,
-      name = ~ wrap_text(Site_Name),
+      name = ~ stringr::str_wrap(Site_Name, 20),
       line = list(color = "#2daebe")
     ) |>
     plotly::add_trace(
@@ -75,7 +74,7 @@ graph_trends <- function(
       type = "scatter",
       mode = "markers",
       inherit = FALSE,
-      name = ~ wrap_text(Site_Name),
+      name = ~ stringr::str_wrap(Site_Name, 20),
       marker = list(size = 7, color = "#2daebe"),
       hoverinfo = "text",
       hovertext = ~Description
@@ -138,7 +137,7 @@ graph_trends <- function(
 #'   # Create plot ----
 #'   fig <- plotly::plot_ly(
 #'     data = df_new,
-#'     name = ~ wrap_text(Group),
+#'     name = ~ stringr::str_wrap(Group, 20),
 #'     x = ~Date,
 #'     y = ~Result,
 #'     type = "scatter",
@@ -193,7 +192,7 @@ graph_trends <- function(
 #'   # Create graph with first parameter
 #'   fig <- plotly::plot_ly(
 #'     data = df1,
-#'     name = wrap_text(par1),
+#'     name = stringr::str_wrap(par1, 20),
 #'     type = "scatter",
 #'     mode = "lines+markers",
 #'     x = ~Date,
@@ -216,7 +215,7 @@ graph_trends <- function(
 #'     fig <- fig |>
 #'       plotly::add_trace(
 #'         data = df2,
-#'         name = wrap_text(par2),
+#'         name = stringr::str_wrap(par2, 20),
 #'         type = "scatter",
 #'         mode = "lines+markers",
 #'         yaxis = "y2",

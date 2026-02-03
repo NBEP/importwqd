@@ -32,6 +32,7 @@ Imports:
     shinyjs,
     shinyWidgets,
     stats,
+    stringr,
     tidyr,
     wqformat (>= 0.1.0.9000)
 Remotes: 
