@@ -65,7 +65,7 @@ mod_graph_trend_ui <- function(id) {
 #'
 #' @export
 mod_graph_trend_server <- function(
-  id, df, in_var = list(style = "lines+markers", trend = TRUE, tresh = TRUE)
+  id, df, in_var = list(lines = TRUE, trend = TRUE, tresh = TRUE)
 ) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns

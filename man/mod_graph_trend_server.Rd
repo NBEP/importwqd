@@ -7,7 +7,7 @@
 mod_graph_trend_server(
   id,
   df,
-  in_var = list(style = "lines+markers", trend = TRUE, tresh = TRUE)
+  in_var = list(lines = TRUE, trend = TRUE, tresh = TRUE)
 )
 }
 \arguments{
