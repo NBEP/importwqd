@@ -9,7 +9,7 @@ test_that("graph_trends works", {
   )
 
   expect_snapshot(
-    graph_trends(df_in, thresh, create_trend = FALSE)
+    graph_trends(df_in, thresh, trendline = FALSE)
   )
 
   # Edge cases

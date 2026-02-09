@@ -24,19 +24,6 @@ mod_graph_trend_ui <- function(id) {
           tabPanel(
             "Graph",
             plotly::plotlyOutput(outputId = ns("plot")),
-            div(
-              style = "text-align:center;margin:1rem;display:inline-block;",
-              actionButton(
-                ns("toggle_trends"),
-                label = "Hide Trendline",
-                width = "fit-content"
-              ),
-              actionButton(
-                ns("toggle_thresh"),
-                label = "Hide Thresholds",
-                width = "fit-content"
-              )
-            ),
             conditionalPanel(
               condition = paste0('output["', ns("hide_error"), '"] == "FALSE"'),
               style = "text-align:center; font-style:italic",
@@ -69,9 +56,17 @@ mod_graph_trend_ui <- function(id) {
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_graph_trend_ui()`.
 #' @param df Dataframe. Data to graph.
+#' @param in_var List with three items: style, trend, thresh
+#' * `style`: String. Sets mode for scatterplot.
+#' * `trend`: Boolean. If `TRUE`, adds trendline.
+#' * `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
+#' acceptable range and a blue bar to indicate excellent values. Default
+#' `FALSE`. description
 #'
 #' @export
-mod_graph_trend_server <- function(id, df) {
+mod_graph_trend_server <- function(
+  id, df, in_var = list(style = "lines+markers", trend = TRUE, tresh = TRUE)
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -94,52 +89,7 @@ mod_graph_trend_server <- function(id, df) {
     }) |>
       bindEvent(hide_graph())
 
-    # Graph options ----
-    val <- reactiveValues(
-      threshold = TRUE,
-      trendline = TRUE
-    )
-
     # Thresholds ----
-    # * Toggle visibility ----
-    observe({
-      if (val$threshold == TRUE) {
-        val$threshold <- FALSE
-        updateActionButton(
-          session, "toggle_thresh",
-          label = "Show Thresholds"
-        )
-        plotly::plotlyProxy("plot", session) |>
-          plotly::plotlyProxyInvoke(
-            "restyle",
-            list(visible = FALSE),
-            c(
-              "Does Not Meet Criteria",
-              "Lowest Acceptable Value",
-              "Highest Acceptable Value"
-            )
-          )
-      } else {
-        val$threshold <- TRUE
-        updateActionButton(
-          session, "toggle_thresh",
-          label = "Hide Thresholds"
-        )
-        plotly::plotlyProxy("plot", session) |>
-          plotly::plotlyProxyInvoke(
-            "restyle",
-            list(visible = TRUE),
-            c(
-              "Does Not Meet Criteria",
-              "Lowest Acceptable Value",
-              "Highest Acceptable Value"
-            )
-          )
-      }
-    }) |>
-      bindEvent(input$toggle_thresh)
-
-    # * Calc thresholds ----
     thresh <- reactive({
       thresh_min <- df()$Min[1]
       thresh_max <- df()$Max[1]
@@ -165,7 +115,6 @@ mod_graph_trend_server <- function(id, df) {
     })
 
     # Trend line ----
-    # * Check if valid ----
     show_fit <- reactive({
       len_years <- length(unique(df()$Year))
 
@@ -183,64 +132,15 @@ mod_graph_trend_server <- function(id, df) {
 
     shinyjs::disable("toggle_trends")
 
-    observe({
-      if (show_fit()) {
-        updateTabsetPanel(inputId = "tabset_trends", selected = "trend_desc")
-        shinyjs::enable("toggle_trends")
-      } else {
-        updateTabsetPanel(inputId = "tabset_trends", selected = "trend_error")
-        shinyjs::disable("toggle_trends")
-      }
-    }) |>
-      bindEvent(show_fit())
-
-    # * Toggle visibility ----
-    observe({
-      if (val$trendline == TRUE) {
-        val$trendline <- FALSE
-        updateActionButton(
-          session, "toggle_trends",
-          label = "Show Trendline"
-        )
-        plotly::plotlyProxy("plot", session) |>
-          plotly::plotlyProxyInvoke(
-            "restyle",
-            list(visible = FALSE),
-            c(
-              "Trend Line (GAM)",
-              "95% Confidence Interval"
-            )
-          )
-      } else {
-        val$trendline <- TRUE
-        updateActionButton(
-          session, "toggle_trends",
-          label = "Hide Trendline"
-        )
-        plotly::plotlyProxy("plot", session) |>
-          plotly::plotlyProxyInvoke(
-            "restyle",
-            list(visible = TRUE),
-            c(
-              "Trend Line (GAM)",
-              "95% Confidence Interval"
-            )
-          )
-      }
-    }) |>
-      bindEvent(input$toggle_trends)
-
     # Graph ----
     output$plot <- plotly::renderPlotly({
       graph_trends(
         df(),
         thresholds = thresh(),
-        show_thresh = val$threshold,
-        create_trend = show_fit(),
-        show_trend = val$trendline
+        trendline = show_fit(),
+        display = in_var()
       )
-    }) |>
-      bindEvent(df(), thresh(), show_fit())
+    })
 
     # Caption ----
     thresh_desc <- reactive({

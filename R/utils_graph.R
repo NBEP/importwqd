@@ -60,23 +60,15 @@ prep_graph_table <- function(.data, group) {
 #' Format scatterplot lines
 #'
 #' @description `prep_scatter_lines()` formats data as scatterplot lines by
-#' averaging values found across the same day and adding `NULL` values on
-#' January 1 of each year.
+#' adding `NA` values on January 1 of each year.
 #'
 #' @param .data Dataframe
 #'
-#' @return Updated data frame that has been pivoted wide with "Date" and unique
-#' values from `group` as column headers and "Result" used as values.
+#' @return Updated data frame
 #'
 #' @noRd
 prep_scatter_lines <- function(.data) {
   if ("Depth" %in% colnames(.data)) {
-    dat <- .data |>
-      dplyr::group_by(
-        .data$Site_Name, .data$Date, .data$Parameter, .data$Unit, .data$Depth
-      ) |>
-      dplyr::summarise("Result" = mean(.data$Result))
-
     df_null <- expand.grid(
       Site_Name = unique(.data$Site_Name),
       Parameter = unique(.data$Parameter),
@@ -84,12 +76,6 @@ prep_scatter_lines <- function(.data) {
       Depth = unique(.data$Depth)
     )
   } else {
-    dat <- .data |>
-      dplyr::group_by(
-        .data$Site_Name, .data$Date, .data$Parameter, .data$Unit
-      ) |>
-      dplyr::summarise("Result" = mean(.data$Result))
-
     df_null <- expand.grid(
       Site_Name = unique(.data$Site_Name),
       Parameter = unique(.data$Parameter),
@@ -100,7 +86,7 @@ prep_scatter_lines <- function(.data) {
   df_null <- df_null |>
     dplyr::mutate("Date" = as.Date(paste0(.data$Year, "-1-1")))
 
-  dplyr::bind_rows(dat, df_null) |>
+  dplyr::bind_rows(.data, df_null) |>
     data.frame() |>
     dplyr::arrange(.data$Date) |>
     dplyr::select(!"Year")
@@ -110,7 +96,7 @@ prep_scatter_lines <- function(.data) {
 #'
 #' @description `graph_style()` sets standard style options for all graphs.
 #'
-#' @param fig `Plotly` object.
+#' @param .data `Plotly` object.
 #' @param fig_title String. Figure title.
 #' @param y_title String. Y-axis title.
 #' @param y_range Numeric list with two variables. Range for y-axis.
@@ -118,8 +104,8 @@ prep_scatter_lines <- function(.data) {
 #' @return Updated `plotly` object
 #'
 #' @noRd
-graph_style <- function(fig, fig_title, y_title, y_range) {
-  fig |>
+graph_style <- function(.data, fig_title, y_title, y_range) {
+  .data |>
     plotly::config(
       displaylogo = FALSE,
       modeBarButtonsToRemove = c(
@@ -191,7 +177,7 @@ plot_thresholds <- function(
 ) {
   fig <- plotly::plot_ly()
 
-  if (is.null(thresh)) {
+  if (is.null(thresh) || !visible) {
     return(fig)
   }
 
@@ -281,13 +267,11 @@ plot_thresholds <- function(
 #'
 #' @param fig Plotly graph.
 #' @param df Dataframe.
-#' @param visible Boolean. If `TRUE`, trendline is visible. Else, trendline is
-#' hidden. Default `TRUE`.
 #'
 #' @return Updated plotly graph with a trendline
 #'
 #' @noRd
-add_gam <- function(fig, df, visible = TRUE) {
+add_gam <- function(fig, df) {
   df <- dplyr::mutate(df, "Dec_Date" = lubridate::decimal_date(.data$Date))
 
   # Code from Carmen Chan
@@ -316,7 +300,7 @@ add_gam <- function(fig, df, visible = TRUE) {
         width = 2,
         dash = "dash"
       ),
-      visible = visible,
+      visible = TRUE,
       inherit = FALSE,
       name = "Trend Line (GAM)"
     ) |>
@@ -334,7 +318,7 @@ add_gam <- function(fig, df, visible = TRUE) {
         color = "#818181",
         opacity = 0.4
       ),
-      visible = visible,
+      visible = TRUE,
       inherit = FALSE,
       name = "95% Confidence\nInterval"
     )

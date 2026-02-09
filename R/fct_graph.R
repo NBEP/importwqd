@@ -3,20 +3,30 @@
 #' @description `graph_trends()` creates a scatterplot that includes thresholds
 #' and trendlines.
 #'
-#' @param .data Dataframe.
-#' @param fig_title Title of graph.
-#' @param thresholds Boolean. If TRUE, adds red bar to indicate values outside
-#'  acceptable range. Default FALSE.
+#' @param .data Dataframe with raw data.
+#' @param thresholds Dataframe with threshold values.
+#' @param trendline Boolean. If `TRUE`, adds trendline. If `FALSE`,
+#' overrides `display$trend` and does not add trendline. Default `TRUE`.
+#' @param display List with three items: style, trend, thresh
+#' * `style`: String. Sets mode for scatterplot.
+#' * `trend`: Boolean. If `TRUE`, adds trendline.
+#' * `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
+#' acceptable range and a blue bar to indicate excellent values. Default
+#' `FALSE`.
 #'
-#' @return Scatterplot.
+#' @return Scatterplot
 #'
 #' @noRd
 graph_trends <- function(
-  .data, thresholds, show_thresh = TRUE, create_trend = TRUE,
-  show_trend = TRUE
+  .data, thresholds, trendline = TRUE,
+  display=list(style = "lines+markers", trend = TRUE, thresh = TRUE)
 ) {
   if (nrow(.data) == 0) {
     return(NULL)
+  }
+
+  if (!display$trend) {
+    trendline <- FALSE
   }
 
   # Set variables
@@ -55,43 +65,34 @@ graph_trends <- function(
     thresh = thresholds,
     date_range = c(min_date, max_date),
     y_range = c(min_val, max_val),
-    visible = show_thresh
+    visible = display$thresh
   ) |>
     plotly::add_trace(
       data = df_new,
       x = ~Date,
       y = ~Result,
       type = "scatter",
-      mode = "lines",
-      inherit = FALSE,
-      name = ~ stringr::str_wrap(Site_Name, 20),
-      line = list(color = "#2daebe")
-    ) |>
-    plotly::add_trace(
-      data = .data,
-      x = ~Date,
-      y = ~Result,
-      type = "scatter",
-      mode = "markers",
+      mode = display$style,
       inherit = FALSE,
       name = ~ stringr::str_wrap(Site_Name, 20),
       marker = list(size = 7, color = "#2daebe"),
+      line = list(color = "#2daebe"),
       hoverinfo = "text",
       hovertext = ~Description
     )
 
   # Add trendlines
-  if (create_trend) {
-    fig <- add_gam(fig, .data, show_trend)
+  if (trendline && display$trend) {
+    fig <- add_gam(fig, .data)
   }
 
   # Style plot
-  graph_style(
-    fig,
-    fig_title = param,
-    y_title = pretty_unit(param, unit),
-    y_range = list(min_val, max_val)
-  ) |>
+  fig |>
+    graph_style(
+      fig_title = param,
+      y_title = pretty_unit(param, unit),
+      y_range = list(min_val, max_val)
+    ) |>
     plotly::layout(
       xaxis = list(range = c(min_date, max_date))
     )

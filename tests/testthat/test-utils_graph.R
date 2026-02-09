@@ -85,12 +85,15 @@ test_that("prep_scatter_lines works", {
   )
 
   df_out <- data.frame(
+    Site_ID = c(NA, "001", "001", NA, "001"),
     Site_Name = "Site1",
-    Date = as.Date(c("2021-01-01", "2021-06-30", "2023-01-01", "2023-07-12")),
+    Date = as.Date(
+      c("2021-01-01", "2021-06-30", "2021-06-30", "2023-01-01", "2023-07-12")
+    ),
     Parameter = "Dissolved oxygen (DO)",
-    Unit = c(NA, "mg/L", NA, "mg/L"),
+    Unit = c(NA, "mg/L", "mg/L", NA, "mg/L"),
     Depth = "Surface",
-    Result = c(NA, 2.5, NA, 5)
+    Result = c(NA, 2, 3, NA, 5)
   )
 
   expect_equal(

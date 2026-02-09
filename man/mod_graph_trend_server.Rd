@@ -4,13 +4,24 @@
 \alias{mod_graph_trend_server}
 \title{Graph trends server}
 \usage{
-mod_graph_trend_server(id, df)
+mod_graph_trend_server(
+  id,
+  df,
+  in_var = list(style = "lines+markers", trend = TRUE, tresh = TRUE)
+)
 }
 \arguments{
 \item{id}{Namespace ID for module. Should match ID used by
 `mod_graph_trend_ui()`.}
 
 \item{df}{Dataframe. Data to graph.}
+
+\item{in_var}{List with three items: style, trend, thresh
+* `style`: String. Sets mode for scatterplot.
+* `trend`: Boolean. If `TRUE`, adds trendline.
+* `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
+acceptable range and a blue bar to indicate excellent values. Default
+`FALSE`. description}
 }
 \description{
 `mod_graph_trend_server()` produces the server code for a graph and
