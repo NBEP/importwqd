@@ -111,14 +111,14 @@ mod_graph_compare_server <- function(
         graph_param(
           df(),
           fig_title = fig_title()$graph_title,
-          add_lines = add_lines
+          add_lines = add_lines()
         )
       } else {
         graph_compare(
           df(),
           fig_title = fig_title()$graph_title,
           group = group,
-          add_lines = add_lines
+          add_lines = add_lines()
         )
       }
     })
