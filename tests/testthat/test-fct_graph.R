@@ -12,7 +12,7 @@ test_that("graph_trends works", {
     graph_trends(df_in, thresh, trendline = FALSE)
   )
 
-  display = list(lines = TRUE, trend = FALSE, thresh = TRUE)
+  display <- list(lines = TRUE, trend = FALSE, thresh = TRUE)
 
   expect_snapshot(
     graph_trends(df_in, thresh, trendline = FALSE, display = display)
@@ -26,7 +26,7 @@ test_that("graph_trends works", {
 })
 
 test_that("graph_compare works", {
-  df_in <- tst$data_final[c(1:3,6:8), ]
+  df_in <- tst$data_final[c(1:3, 6:8), ]
 
   expect_snapshot(
     graph_compare(df_in, "title")
@@ -44,7 +44,7 @@ test_that("graph_compare works", {
 })
 
 test_that("graph_param works", {
-  df_in <- tst$data_final[c(1:3,5), ]
+  df_in <- tst$data_final[c(1:3, 5), ]
 
   expect_snapshot(
     graph_param(df_in, "title")

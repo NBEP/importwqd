@@ -260,11 +260,6 @@ mod_sidebar_server <- function(
       )
 
     # * Report data ----
-    drop_report <- c(
-      "Year", "Site_ID", "Unit", "score_typ", "score_num", "Latitude",
-      "Longitude", "popup_loc", "popup_score", "alt"
-    )
-
     observe({
       req(selected_tab() == "report_card")
       req(df_score_filter())

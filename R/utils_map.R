@@ -24,7 +24,6 @@ num_pal <- function(pal_range) {
       "#417ea0", "#47638c", "#4e4876", "#55285d"
     ),
     domain = c(x, y),
-    # bins = 5,
     na.color = "#f4f4f4"
   )
 }

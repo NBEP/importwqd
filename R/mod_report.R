@@ -81,9 +81,11 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
 
     # Update table
     observe({
+      req(report_tab())
+
       reactable::updateReactable("table", data = in_var$df_report())
     }) |>
-      bindEvent(in_var$df_report())
+      bindEvent(in_var$df_report(), report_tab())
 
     # Download PDF ----
     # * Prep site data ----

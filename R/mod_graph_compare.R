@@ -1,13 +1,13 @@
-#' graphs_graph UI Function
+#' Comparison graph UI
 #'
-#' @description A shiny Module.
+#' @description `mod_graph_compare_ui()` produces the UI code for a graph and
+#' table comparing trends by group.
 #'
-#' @param id,input,output,session Internal parameters for {shiny}.
+#' @param id Namespace ID for module. Should match ID used by
+#' `mod_graph_compare_server()`.
 #'
-#' @noRd
-#'
-#' @importFrom shiny NS tagList
-mod_graphs_graph_ui <- function(id) {
+#' @export
+mod_graph_compare_ui <- function(id) {
   ns <- NS(id)
   tagList(
     # Enable javascript ----
@@ -41,10 +41,22 @@ mod_graphs_graph_ui <- function(id) {
   )
 }
 
-#' graphs_graph Server Functions
+#' Comparison graph server
 #'
-#' @noRd
-mod_graphs_graph_server <- function(id, df, group = "Site_Name") {
+#' @description `mod_graph_compare_server()` produces the server code for a
+#' graph and table comparing trends by group.
+#'
+#' @param id Namespace ID for module. Should match ID used by
+#' `mod_graph_compare_ui()`.
+#' @param df Dataframe. Data to graph.
+#' @param group String. Column used to group data.
+#' @param add_lines Boolean. If `TRUE`, displays scatter plot as lines +
+#' markers. If `FALSE`, displays scatter plot as markers only. Default `FALSE`.
+#'
+#' @export
+mod_graph_compare_server <- function(
+  id, df, group = "Site_Name", add_lines = FALSE
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -70,17 +82,18 @@ mod_graphs_graph_server <- function(id, df, group = "Site_Name") {
     # Figure Title ----
     fig_title <- reactive({
       df <- df()
+      param <- df$Parameter[1]
+      unit <- df$Unit[1]
+      site <- df$Site_Name[1]
 
       if (group == "Site_Name") {
-        graph_title <- df$Parameter[1]
-        table_title <- pretty_unit(df$Parameter[1], df$Unit[1])
+        graph_title <- param
+        table_title <- pretty_unit(param, unit)
       } else if (group == "Depth") {
-        graph_title <- paste(df$Parameter[1], "at", df$Site_Name[1])
-        table_title <- paste(
-          pretty_unit(df$Parameter[1], df$Unit[1]), "at", df$Site_Name[1]
-        )
+        graph_title <- paste(param, "at", site)
+        table_title <- paste(pretty_unit(param, unit), "at", site)
       } else {
-        graph_title <- df$Site_Name[1]
+        graph_title <- site
         table_title <- graph_title
       }
 
@@ -95,12 +108,17 @@ mod_graphs_graph_server <- function(id, df, group = "Site_Name") {
     # Graph ----
     output$plot <- plotly::renderPlotly({
       if (group == "Parameter") {
-        graph_two_var(df(), fig_title()$graph_title)
-      } else {
-        graph_one_var(
-          df = df(),
+        graph_param(
+          df(),
           fig_title = fig_title()$graph_title,
-          group = group
+          add_lines = add_lines
+        )
+      } else {
+        graph_compare(
+          df(),
+          fig_title = fig_title()$graph_title,
+          group = group,
+          add_lines = add_lines
         )
       }
     })

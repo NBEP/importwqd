@@ -153,7 +153,7 @@ drop_uniform_col <- function(.data, col_name, include_na = TRUE) {
     .data[col_name] <- NULL
   }
 
-  return(.data)
+  .data
 }
 
 #' Standardize threshold units

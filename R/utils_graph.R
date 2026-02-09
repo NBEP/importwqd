@@ -191,7 +191,7 @@ plot_thresholds <- function(
   min_val <- y_range[1]
   max_val <- y_range[2]
 
-  if (!is.na(thresh_min) & min_val < thresh_min) {
+  if (!is.na(thresh_min) && min_val < thresh_min) {
     fig <- fig |>
       plotly::add_polygons(
         x = c(min_date, max_date, max_date, min_date),
@@ -207,7 +207,7 @@ plot_thresholds <- function(
       )
   }
 
-  if (!is.na(thresh_max) & max_val > thresh_max) {
+  if (!is.na(thresh_max) && max_val > thresh_max) {
     fig <- fig |>
       plotly::add_polygons(
         x = c(min_date, max_date, max_date, min_date),
@@ -227,7 +227,7 @@ plot_thresholds <- function(
     return(fig)
   }
 
-  if (thresh_best == "low" & thresh_excellent > min_val) {
+  if (thresh_best == "low" && thresh_excellent > min_val) {
     fig <- fig |>
       plotly::add_polygons(
         x = c(min_date, max_date, max_date, min_date),
@@ -241,7 +241,7 @@ plot_thresholds <- function(
         name = "Excellent",
         legendrank = 1001
       )
-  } else if (thresh_best == "high" & thresh_excellent < max_val) {
+  } else if (thresh_best == "high" && thresh_excellent < max_val) {
     fig <- fig |>
       plotly::add_polygons(
         x = c(min_date, max_date, max_date, min_date),
@@ -344,7 +344,7 @@ thresh_text <- function(thresh) {
 
   thresh_text <- ""
 
-  if (!is.na(thresh_min) & !is.na(thresh_max)) {
+  if (!is.na(thresh_min) && !is.na(thresh_max)) {
     thresh_text <- paste0(
       thresh_text, "<b>Acceptable:</b> ", pretty_number(thresh_min), " - ",
       pretty_number(thresh_max), " ", unit

@@ -35,7 +35,7 @@ graph_trends <- function(
   unit <- .data$Unit[1]
 
   min_val <- min(.data$Result) * .8
-  if (min_val > 0 & param != "pH") {
+  if (min_val > 0 && param != "pH") {
     min_val <- 0
   }
 
@@ -133,8 +133,8 @@ graph_trends <- function(
 #'
 #' @noRd
 graph_compare <- function(
-    .data, fig_title, group = "Site_Name", add_lines = FALSE
-  ) {
+  .data, fig_title, group = "Site_Name", add_lines = FALSE
+) {
   if (nrow(.data) == 0) {
     return(NULL)
   }
@@ -145,7 +145,7 @@ graph_compare <- function(
   graph_mode <- "markers"
 
   min_val <- min(.data$Result) * .8
-  if (min_val > 0 & param != "pH") {
+  if (min_val > 0 && param != "pH") {
     min_val <- 0
   }
 

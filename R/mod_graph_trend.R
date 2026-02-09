@@ -57,7 +57,8 @@ mod_graph_trend_ui <- function(id) {
 #' `mod_graph_trend_ui()`.
 #' @param df Dataframe. Data to graph.
 #' @param in_var List with three items: style, trend, thresh
-#' * `style`: String. Sets mode for scatterplot.
+#' * `lines`: Boolean. If `TRUE`, displays scatter plot as lines +
+#' markers. If `FALSE`, displays scatter plot as markers only.
 #' * `trend`: Boolean. If `TRUE`, adds trendline.
 #' * `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
 #' acceptable range and a blue bar to indicate excellent values. Default
