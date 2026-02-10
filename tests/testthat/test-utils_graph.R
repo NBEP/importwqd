@@ -6,7 +6,7 @@ test_that("prep_graph_table works", {
     Date = as.Date(
       c("2021-06-30", "2021-08-05", "2023-05-25", "2023-07-12")
     ),
-    "Dissolved oxygen (DO) mg/L" = c(0.05, 3, 0.05, 4),
+    "Dissolved oxygen mg/L" = c(0.05, 3, 0.05, 4),
     "Depth, Secchi disk depth m" = c(NA, NA, NA, 8),
     check.names = FALSE
   )
@@ -18,7 +18,7 @@ test_that("prep_graph_table works", {
 
   # Test - group by Site_Name
   df_in <- tst$data_final |>
-    dplyr::filter(.data$Parameter == "Dissolved oxygen (DO)")
+    dplyr::filter(.data$Parameter == "Dissolved oxygen")
 
   df_out <- data.frame(
     Date = as.Date(
@@ -37,7 +37,7 @@ test_that("prep_graph_table works", {
   df_in <- tst$data_final |>
     dplyr::filter(
       .data$Site_ID == "001",
-      .data$Parameter == "Dissolved oxygen (DO)"
+      .data$Parameter == "Dissolved oxygen"
     )
 
   df_out <- data.frame(
@@ -57,7 +57,7 @@ test_that("prep_graph_table works", {
   df_in <- tst$data_final |>
     dplyr::filter(
       .data$Site_ID == "001",
-      .data$Parameter == "Dissolved oxygen (DO)",
+      .data$Parameter == "Dissolved oxygen",
       .data$Depth == "Surface"
     )
 
@@ -78,7 +78,7 @@ test_that("prep_scatter_lines works", {
     Site_Name = "Site1",
     Date = as.Date(c("2021-06-30", "2021-06-30", "2023-07-12")),
     Year = c(2021, 2021, 2023),
-    Parameter = "Dissolved oxygen (DO)",
+    Parameter = "Dissolved oxygen",
     Unit = "mg/L",
     Depth = "Surface",
     Result = c(2, 3, 5)
@@ -90,7 +90,7 @@ test_that("prep_scatter_lines works", {
     Date = as.Date(
       c("2021-01-01", "2021-06-30", "2021-06-30", "2023-01-01", "2023-07-12")
     ),
-    Parameter = "Dissolved oxygen (DO)",
+    Parameter = "Dissolved oxygen",
     Unit = c(NA, "mg/L", "mg/L", NA, "mg/L"),
     Depth = "Surface",
     Result = c(NA, 2, 3, NA, 5)
@@ -108,6 +108,19 @@ test_that("prep_scatter_lines works", {
   expect_equal(
     prep_scatter_lines(df_in),
     df_out
+  )
+})
+
+test_that("simple_graph works", {
+  fig <- plotly::plot_ly()
+  df_in <- tst$data_final[1:3, ]
+
+  expect_snapshot(
+    simple_graph(fig, df_in, "Site_Name")
+  )
+
+  expect_snapshot(
+    simple_graph(fig, df_in, "Site_Name", add_lines = TRUE)
   )
 })
 

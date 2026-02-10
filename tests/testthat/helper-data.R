@@ -43,7 +43,7 @@ tst <- list(
     Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA),
     Depth_Category = c(NA, "Surface", NA, NA, NA),
     Parameter = c(
-      "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
+      "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
       "pH", "Nitrate"
     ),
     Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L"),
@@ -61,7 +61,7 @@ tst <- list(
     Site_ID = NA,
     Depth_Category = c(NA, "Surface", NA, NA, NA),
     Parameter = c(
-      "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
+      "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
       "pH", "Nitrate"
     ),
     Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L"),
@@ -78,8 +78,8 @@ tst <- list(
     Site = NA,
     Depth = c(NA, NA, "Surface", NA, NA),
     Parameter = c(
-      "pH", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "Dissolved oxygen (DO)", "Nitrate"
+      "pH", "Dissolved oxygen", "Dissolved oxygen",
+      "Dissolved oxygen", "Nitrate"
     ),
     Unit = c("None", "mg/L", "mg/L", "mg/L", "mg/L"),
     Calculation = c("mean", "min", "min", "min", "max"),
@@ -103,8 +103,8 @@ tst <- list(
     Depth_Unit = "m",
     Depth_Category = NA,
     Parameter = c(
-      "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "Dissolved oxygen (DO)", "Depth, Secchi disk depth"
+      "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
+      "Dissolved oxygen", "Depth, Secchi disk depth"
     ),
     Result = c(NA, 3000, NA, 4000, 8, 6000, 8, 7, 9, 9.2),
     Result_Unit = c(
@@ -129,8 +129,8 @@ tst <- list(
     Depth_Unit = "m",
     Depth_Category = c("Surface", "Surface", "Surface", "Midwater", NA),
     Parameter = c(
-      "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "Dissolved oxygen (DO)", "Depth, Secchi disk depth"
+      "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
+      "Dissolved oxygen", "Depth, Secchi disk depth"
     ),
     Result = c(NA, 3, NA, 4, 8, 6, 8, 7, 9, 9.2),
     Result_Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "m"),
@@ -153,8 +153,8 @@ tst <- list(
     ),
     Year = c(2021, 2021, 2023, 2023, 2023),
     Parameter = c(
-      "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "Dissolved oxygen (DO)", "Depth, Secchi disk depth"
+      "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
+      "Dissolved oxygen", "Depth, Secchi disk depth"
     ),
     Result = c(0.05, 3, 0.05, 4, 8, 6, 8, 7, 9, 9.2),
     Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "m"),
@@ -170,15 +170,15 @@ tst <- list(
     Best = c("high", "high", "high", "high", NA, NA, NA, NA, NA, NA),
     Month = c("June", "August", "May", "July", "July"),
     Description = c(
-      "<b>Site1</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 0.05 mg/L",
-      "<b>Site1</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 3 mg/L",
-      "<b>Site1</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 0.05 mg/L",
-      "<b>Site1</b><br>Date: July 12, 2023<br>Depth: Midwater<br>Dissolved oxygen (DO): 4 mg/L",
+      "<b>Site1</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen: 0.05 mg/L",
+      "<b>Site1</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen: 3 mg/L",
+      "<b>Site1</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen: 0.05 mg/L",
+      "<b>Site1</b><br>Date: July 12, 2023<br>Depth: Midwater<br>Dissolved oxygen: 4 mg/L",
       "<b>Site1</b><br>Date: July 12, 2023<br>Depth, Secchi disk depth: 8 m",
-      "<b>Site2</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 6 mg/L",
-      "<b>Site2</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen (DO): 8 mg/L",
-      "<b>Site2</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen (DO): 7 mg/L",
-      "<b>Site2</b><br>Date: July 12, 2023<br>Depth: Midwater<br>Dissolved oxygen (DO): 9 mg/L",
+      "<b>Site2</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen: 6 mg/L",
+      "<b>Site2</b><br>Date: August 05, 2021<br>Depth: Surface<br>Dissolved oxygen: 8 mg/L",
+      "<b>Site2</b><br>Date: May 25, 2023<br>Depth: Surface<br>Dissolved oxygen: 7 mg/L",
+      "<b>Site2</b><br>Date: July 12, 2023<br>Depth: Midwater<br>Dissolved oxygen: 9 mg/L",
       "<b>Site2</b><br>Date: July 12, 2023<br>Depth, Secchi disk depth: 9.2 m"
     )
   ),
@@ -212,8 +212,8 @@ tst <- list(
     Depth = c(NA, NA, "Surface", "Midwater", "Surface", "Midwater"),
     Parameter = c(
       "Depth, Secchi disk depth", "Depth, Secchi disk depth",
-      "Dissolved oxygen (DO)", "Dissolved oxygen (DO)", "Dissolved oxygen (DO)",
-      "Dissolved oxygen (DO)"
+      "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
+      "Dissolved oxygen"
     ),
     Unit = c("m", NA, "mg/L", "mg/L", "mg/L", NA),
     score_typ = c(
@@ -320,8 +320,8 @@ tst <- list(
     site_name = c("Site1", "Site2"),
     loc_choices = c("By Town" = "town", "By Watershed" = "watershed"),
     loc_tab = "toggle",
-    param = c("Dissolved oxygen (DO)", "Depth, Secchi disk depth"),
-    param_score = "Dissolved oxygen (DO)",
+    param = c("Dissolved oxygen", "Depth, Secchi disk depth"),
+    param_score = "Dissolved oxygen",
     param_cat = "Wind force, Beaufort scale",
     depth = c("Surface", "Midwater"),
     year = c(2021, 2023),

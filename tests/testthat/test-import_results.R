@@ -26,7 +26,7 @@ test_that("prep_results works", {
     )
   )
   df_param <- data.frame(
-    wqdashboard = c("Dissolved oxygen (DO)", "Depth, Secchi disk depth"),
+    wqdashboard = c("Dissolved oxygen", "Depth, Secchi disk depth"),
     Custom = c("DO", "Secchi Depth")
   )
   df_unit <- data.frame(
@@ -202,7 +202,7 @@ test_that("score_results works", {
       "Upper Blackstone River"
     ),
     Group = c("Coldwater", "Coldwater", "Warmwater", "Warmwater"),
-    Parameter = "Dissolved oxygen (DO)",
+    Parameter = "Dissolved oxygen",
     Unit = "mg/L",
     score_typ = c("Minimum", "Minimum", "Average", "Average"),
     score_num = c(0.05, 0.05, 7, 8),

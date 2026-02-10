@@ -4,7 +4,7 @@ test_that("prep_thresholds works", {
   df_in$Unit <- c("mg/l", "mg/l", "mg/l", "None", "mg/l")
 
   df_param <- data.frame(
-    wqdashboard = c("Dissolved oxygen (DO)", "Dissolved oxygen saturation"),
+    wqdashboard = c("Dissolved oxygen", "Dissolved oxygen saturation"),
     Custom = c("DO", NA)
   )
   df_unit <- data.frame(

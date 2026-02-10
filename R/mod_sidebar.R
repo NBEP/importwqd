@@ -339,11 +339,8 @@ mod_sidebar_server <- function(
         year = reactive({
           input$select_year_n
         }),
-        year_range = reactive({
-          input$select_year_range
-        }),
-        month_range = reactive({
-          input$select_month
+        year_all = reactive({
+          input$select_year_all
         }),
         df_map = reactive({
           val$df_map

@@ -92,6 +92,62 @@ prep_scatter_lines <- function(.data) {
     dplyr::select(!"Year")
 }
 
+#' Simple graph
+#'
+#' @description `simple_graph()` add a single trace to a graph.
+#'
+#' @param .data `plotly` object
+#' @param df Dataframe.
+#' @param col_name description
+#' @param color String. Color used for lines, markers. Default `#2daebe`.
+#' @param add_lines Boolean. If `TRUE`, displays data as lines + markers. If
+#' `FALSE`, displays data as markers only. Default `FALSE`.
+#'
+#' @return Updated `plotly` object
+#'
+#' @noRd
+simple_graph <- function(
+  .data, df, col_name, color = "#2daebe", add_lines = FALSE
+) {
+  if (add_lines) {
+    df <- prep_scatter_lines(df) |>
+      dplyr::mutate("Name" = stringr::str_wrap(.data[[col_name]], 20))
+
+    fig <- .data |>
+      plotly::add_trace(
+        data = df,
+        x = ~Date,
+        y = ~Result,
+        type = "scatter",
+        mode = "lines+markers",
+        inherit = FALSE,
+        name = ~Name,
+        marker = list(size = 7, color = color),
+        line = list(color = color),
+        hoverinfo = "text",
+        hovertext = ~Description
+      )
+
+    return(fig)
+  }
+
+  df <- dplyr::mutate(df, "Name" = stringr::str_wrap(.data[[col_name]], 20))
+
+  .data |>
+    plotly::add_trace(
+      data = df,
+      x = ~Date,
+      y = ~Result,
+      type = "scatter",
+      mode = "markers",
+      inherit = FALSE,
+      name = ~Name,
+      marker = list(size = 7, color = color),
+      hoverinfo = "text",
+      hovertext = ~Description
+    )
+}
+
 #' Set graph style
 #'
 #' @description `graph_style()` sets standard style options for all graphs.
@@ -126,7 +182,7 @@ graph_style <- function(.data, fig_title, y_title, y_range) {
     plotly::layout(
       title = fig_title,
       yaxis = list(
-        title = y_title,
+        title = stringr::str_wrap(y_title, 20),
         rangemode = "tozero",
         fixedrange = TRUE,
         range = y_range,

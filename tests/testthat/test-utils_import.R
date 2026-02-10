@@ -129,7 +129,7 @@ test_that("add_thresholds works", {
 
   expect_equal(
     add_thresholds(
-      thresh, "001", "Coldwater", "RI", "Surface", "Dissolved oxygen (DO)"
+      thresh, "001", "Coldwater", "RI", "Surface", "Dissolved oxygen"
     ),
     list(
       Calculation = "min",
@@ -143,7 +143,7 @@ test_that("add_thresholds works", {
   )
   expect_equal(
     add_thresholds(
-      thresh, "002", "Warmwater", "MA", "Surface", "Dissolved oxygen (DO)"
+      thresh, "002", "Warmwater", "MA", "Surface", "Dissolved oxygen"
     ),
     list(
       Calculation = "mean",
@@ -160,7 +160,7 @@ test_that("add_thresholds works", {
 # Test standardize_threshold_units ----
 test_that("update_threshold_units works", {
   df_param <- data.frame(
-    "Parameter" = "Dissolved oxygen (DO)",
+    "Parameter" = "Dissolved oxygen",
     "Result_Unit" = "ug/L"
   )
 
@@ -197,7 +197,7 @@ test_that("update_threshold_units works", {
 
 test_that("update_threshold_units error messages", {
   df_results <- data.frame(
-    "Parameter" = "Dissolved oxygen (DO)",
+    "Parameter" = "Dissolved oxygen",
     "Result_Unit" = "deg C"
   )
 

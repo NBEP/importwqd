@@ -1,3 +1,13 @@
+# simple_graph works
+
+    Code
+      simple_graph(fig, df_in, "Site_Name")
+
+---
+
+    Code
+      simple_graph(fig, df_in, "Site_Name", add_lines = TRUE)
+
 # graph_style works
 
     Code
