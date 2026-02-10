@@ -6,7 +6,7 @@
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_graph_compare_server()`.
 #'
-#' @export
+#' @noRd
 mod_graph_compare_ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -53,7 +53,7 @@ mod_graph_compare_ui <- function(id) {
 #' @param add_lines Boolean. If `TRUE`, displays scatter plot as lines +
 #' markers. If `FALSE`, displays scatter plot as markers only. Default `FALSE`.
 #'
-#' @export
+#' @noRd
 mod_graph_compare_server <- function(
   id, df, group = "Site_Name", add_lines = FALSE
 ) {

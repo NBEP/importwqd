@@ -6,7 +6,7 @@
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_graph_trend_server()`.
 #'
-#' @export
+#' @noRd
 mod_graph_trend_ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -64,7 +64,7 @@ mod_graph_trend_ui <- function(id) {
 #' acceptable range and a blue bar to indicate excellent values. Default
 #' `FALSE`. description
 #'
-#' @export
+#' @noRd
 mod_graph_trend_server <- function(
   id, df, in_var = list(lines = TRUE, trend = TRUE, tresh = TRUE)
 ) {

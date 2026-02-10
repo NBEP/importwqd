@@ -36,7 +36,7 @@ if (nrow(dat) > 0) {
     kableExtra::kable_styling(
       latex_options = c("repeat_header", "striped")
     ) |>
-    kableExtra::column_spec(sec_len(ncol(dat)), width = col_width) |>
+    kableExtra::column_spec(seq_len(ncol(dat)), width = col_width) |>
     kableExtra::row_spec(0, bold = TRUE)
 }
 ```
