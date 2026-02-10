@@ -217,3 +217,25 @@ test_that("thresh_text works", {
     txt_out
   )
 })
+
+test_that("val_range works", {
+  df_in <- tst$data_final[c(1:4, 6:9), ]
+
+  expect_equal(
+    val_range(df_in),
+    c(0, 10.8)
+  )
+
+  # Test edge cases
+  df_in$Result <- 0
+  expect_equal(
+    val_range(df_in),
+    c(0, 1)
+  )
+
+  df_in$Result <- c(-1, -2)
+  expect_equal(
+    val_range(df_in),
+    c(-2.4, 0)
+  )
+})

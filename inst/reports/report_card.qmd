@@ -29,15 +29,15 @@ if (nrow(dat) > 0) {
 
   knitr::kable(
     dat, "latex",
-    longtable = T,
-    booktabs = T,
+    longtable = TRUE,
+    booktabs = TRUE,
     caption = "Site Metadata"
   ) |>
     kableExtra::kable_styling(
       latex_options = c("repeat_header", "striped")
     ) |>
-    kableExtra::column_spec(1:ncol(dat), width = col_width) |>
-    kableExtra::row_spec(0, bold = T)
+    kableExtra::column_spec(sec_len(ncol(dat)), width = col_width) |>
+    kableExtra::row_spec(0, bold = TRUE)
 }
 ```
 
@@ -60,8 +60,8 @@ for (param in param_list) {
   tab <- df_mini |>
     knitr::kable(
       "latex",
-      longtable = T,
-      booktabs = T,
+      longtable = TRUE,
+      booktabs = TRUE,
       caption = param
     ) |>
     kableExtra::kable_styling(

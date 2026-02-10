@@ -33,16 +33,7 @@ graph_trends <- function(
   # Set variables
   param <- .data$Parameter[1]
   unit <- .data$Unit[1]
-
-  min_val <- min(.data$Result) * .8
-  if (min_val > 0 && param != "pH") {
-    min_val <- 0
-  }
-
-  max_val <- max(.data$Result) * 1.2
-  if (max_val == min_val) {
-    max_val <- min_val + 1
-  }
+  y_range <- val_range(.data)
 
   min_date <- min(.data$Date)
   max_date <- max(.data$Date)
@@ -63,7 +54,7 @@ graph_trends <- function(
     .data,
     thresh = thresholds,
     date_range = c(min_date, max_date),
-    y_range = c(min_val, max_val),
+    y_range = y_range,
     visible = display$thresh
   )
 
@@ -111,7 +102,7 @@ graph_trends <- function(
     graph_style(
       fig_title = param,
       y_title = pretty_unit(param, unit),
-      y_range = list(min_val, max_val)
+      y_range = list(y_range)
     ) |>
     plotly::layout(
       xaxis = list(range = c(min_date, max_date))
@@ -144,15 +135,7 @@ graph_compare <- function(
   unit <- .data$Unit[1]
   graph_mode <- "markers"
 
-  min_val <- min(.data$Result) * .8
-  if (min_val > 0 && param != "pH") {
-    min_val <- 0
-  }
-
-  max_val <- max(.data$Result) * 1.2
-  if (max_val == min_val) {
-    max_val <- min_val + 1
-  }
+  y_range <- val_range(.data)
 
   # Set palette
   group_len <- length(unique(.data[[group]]))
@@ -186,7 +169,7 @@ graph_compare <- function(
     graph_style(
       fig_title = fig_title,
       y_title = pretty_unit(param, unit),
-      y_range = list(min_val, max_val)
+      y_range = list(y_range)
     )
 }
 

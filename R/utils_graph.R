@@ -385,3 +385,34 @@ thresh_text <- function(thresh) {
 
   trimws(thresh_text)
 }
+
+#' Value range
+#'
+#' @description `val_range()` calculates the minimum and maximum values for the
+#' y-axis of a graph.
+#'
+#' @param .data Dataframe. Must include column "Result"
+#'
+#' @return Minimum, maximum values
+#'
+#' @noRd
+val_range <- function(.data) {
+  min_val <- min(.data$Result)
+  max_val <- max(.data$Result)
+
+  if (min_val > 0) {
+    min_val <- 0
+  } else {
+    min_val <- min_val * 1.2
+  }
+
+  if (max_val == min_val) {
+    max_val <- min_val + 1
+  } else if (max_val > 0) {
+    max_val <- max_val * 1.2
+  } else {
+    max_val <- 0
+  }
+
+  c(min_val, max_val)
+}
