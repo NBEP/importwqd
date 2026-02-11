@@ -66,19 +66,23 @@ column_styles <- function(df, show_score = TRUE) {
   col_style
 }
 
-#' Prepare PDF table
+#' Prepare dataframe for download
 #'
-#' @description `prep_pdf()` formats dataframes for use in a PDF by dropping
+#' @description `prep_download()` formats dataframe for download by dropping
 #' empty columns and replacing all `NA` values.
 #'
 #' @param .data Dataframe
-#' @param na_sub String. Value used to replace `NA` values. Default `-`.
+#' @param na_sub String. Value used to replace `NA` values.
+#' @param pretty_col Boolean. If `TRUE`, replaces all underscores in column
+#' names with spaces. Default `TRUE`.
 #'
 #' @return Updated dataframe
 #'
 #' @noRd
-prep_pdf <- function(.data, na_sub = "-") {
-  colnames(.data) <- gsub("[_]", " ", colnames(.data))
+prep_download <- function(.data, na_sub = "", pretty_col = TRUE) {
+  if (pretty_col) {
+    colnames(.data) <- gsub("[_]", " ", colnames(.data))
+  }
 
   Filter(function(x) !all(is.na(x)), .data) |>
     dplyr::mutate(

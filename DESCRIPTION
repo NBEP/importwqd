@@ -27,6 +27,7 @@ Imports:
     plotly,
     quarto,
     reactable,
+    readr,
     rlang,
     shiny,
     shinyjs,
@@ -34,7 +35,8 @@ Imports:
     stats,
     stringr,
     tidyr,
-    wqformat (>= 0.1.0.9000)
+    wqformat (>= 0.1.0.9000),
+    zip
 Remotes: 
     massbays-tech/wqformat
 Suggests:

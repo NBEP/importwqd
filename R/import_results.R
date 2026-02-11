@@ -106,6 +106,18 @@ qaqc_results <- function(.data, sites) {
     stop("Invalid Site_ID: ", paste(chk, collapse = ", "), call. = FALSE)
   }
 
+  # Drop empty columns
+  keep_col <- c(
+    "Activity_Type", "Depth", "Depth_Unit", "Depth_Category", "Result",
+    "Result_Unit", "Lower_Detection_Limit", "Upper_Detection_Limit",
+    "Detection_Limit_Unit", "Qualifier"
+  )
+
+  chk <- apply(.data, 2, function(x) all(is.na(x)))
+  empty_col <- colnames(.data)[which(chk)]
+  drop_col <- setdiff(empty_col, keep_col)
+  .data[drop_col] <- NULL
+
   # Format data
   .data |>
     wqformat::col_to_numeric("Result", silent = FALSE) |>
@@ -170,6 +182,18 @@ qaqc_cat_results <- function(.data, sites) {
   if (length(chk) > 0) {
     stop("Invalid Site_ID: ", paste(chk, collapse = ", "), call. = FALSE)
   }
+
+  # Drop empty columns
+  keep_col <- c(
+    "Activity_Type", "Depth", "Depth_Unit", "Depth_Category", "Result",
+    "Result_Unit", "Lower_Detection_Limit", "Upper_Detection_Limit",
+    "Detection_Limit_Unit", "Qualifier"
+  )
+
+  chk <- apply(.data, 2, function(x) all(is.na(x)))
+  empty_col <- colnames(.data)[which(chk)]
+  drop_col <- setdiff(empty_col, keep_col)
+  .data[drop_col] <- NULL
 
   # Final adjustments
   .data |>

@@ -104,7 +104,7 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
       dat <- in_var$df_report() |>
         dplyr::select(dplyr::any_of(loc_col)) |>
         dplyr::distinct() |>
-        prep_pdf(na_sub = "")
+        prep_download()
 
       if (ncol(dat) < 2) {
         return(dat[0, ])
@@ -161,7 +161,7 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
             dplyr::any_of(c("Site_Name", "Depth", "Parameter", "score_str"))
           ) |>
           dplyr::rename("Score" = "score_str") |>
-          prep_pdf(na_sub = "")
+          prep_download()
 
         # Render Quarto
         quarto::quarto_render(

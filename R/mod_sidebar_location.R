@@ -21,7 +21,7 @@ mod_sidebar_location_ui <- function(id, varlist) {
         "toggle",
         radioButtons(
           ns("loc_type"),
-          label = h3("Select Location"),
+          label = h3("Filter Sites"),
           choices = varlist$loc_choices
         )
       ),

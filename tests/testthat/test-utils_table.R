@@ -48,19 +48,19 @@ test_that("column_styles works", {
   )
 })
 
-test_that("prep_pdf works", {
+test_that("prep_download works", {
   df_in <- tst$data_score[, c(2, 4:8, 12)]
 
   df_out <- df_in
   colnames(df_out)[1] <- "Site Name"
   colnames(df_out)[7] <- "score str"
   df_out$Depth <- c(
-    "-", "-", "Surface", "Midwater", "Surface", "Midwater", "-", "-", "Surface",
+    "", "", "Surface", "Midwater", "Surface", "Midwater", "", "", "Surface",
     "Midwater", "Surface", "Midwater"
   )
 
   expect_equal(
-    prep_pdf(df_in),
+    prep_download(df_in),
     df_out
   )
 
@@ -72,7 +72,7 @@ test_that("prep_pdf works", {
   df_out$Depth <- NULL
 
   expect_equal(
-    prep_pdf(df_in),
+    prep_download(df_in),
     df_out
   )
 })

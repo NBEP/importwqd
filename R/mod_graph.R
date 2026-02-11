@@ -15,7 +15,6 @@ mod_graph_ui <- function(id, varlist) {
     bslib::navset_card_tab(
       id = ns("tabset"),
       full_screen = FALSE,
-      # title = "Graphs",
       # Trends -----
       bslib::nav_panel(
         "Long Term Trends",

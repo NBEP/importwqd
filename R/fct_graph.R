@@ -177,7 +177,8 @@ graph_param <- function(.data, fig_title, add_lines = FALSE) {
     graph_style(
       fig_title = fig_title,
       y_title = pretty_unit(param, unit),
-      y_range = NA
+      y_range = NA,
+      y_wrap = 20
     )
 
   if (length(par_list) == 1) {
@@ -198,7 +199,8 @@ graph_param <- function(.data, fig_title, add_lines = FALSE) {
     graph_style(
       fig_title = fig_title,
       y_title = pretty_unit(param, unit),
-      y_range = NA
+      y_range = NA,
+      y_wrap = 20
     )
 
   plotly::subplot(fig1, fig2, nrows = 2, shareX = TRUE, titleY = TRUE)
