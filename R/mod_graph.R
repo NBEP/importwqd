@@ -47,8 +47,8 @@ mod_graph_ui <- function(id, varlist) {
             )
           ),
           choices = varlist$site_id,
-          choice_names = varlist$site_name,
-          max_options = 3
+          choice_names = varlist$site_name#,
+          # max_options = 3
         ),
         mod_graph_compare_ui(ns("graph_sites"))
       ),

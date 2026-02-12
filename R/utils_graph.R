@@ -156,12 +156,11 @@ simple_graph <- function(
 #' @param fig_title String. Figure title.
 #' @param y_title String. Y-axis title.
 #' @param y_range Numeric list with two variables. Range for y-axis.
-#' @param y_wrap Integer. Maximum length for `y_title` before wrapping text.
 #'
 #' @return Updated `plotly` object
 #'
 #' @noRd
-graph_style <- function(.data, fig_title, y_title, y_range, y_wrap = 100) {
+graph_style <- function(.data, fig_title, y_title, y_range) {
   .data |>
     plotly::config(
       displaylogo = FALSE,
@@ -183,7 +182,7 @@ graph_style <- function(.data, fig_title, y_title, y_range, y_wrap = 100) {
     plotly::layout(
       title = fig_title,
       yaxis = list(
-        title = stringr::str_wrap(y_title, y_wrap),
+        title = y_title,
         rangemode = "tozero",
         fixedrange = TRUE,
         range = y_range,

@@ -69,7 +69,7 @@ graph_trends <- function(
   fig |>
     graph_style(
       fig_title = param,
-      y_title = pretty_unit(param, unit),
+      y_title = unique_na(c(unit, param))[1],
       y_range = list(y_range)
     ) |>
     plotly::layout(
@@ -136,7 +136,7 @@ graph_compare <- function(
   ) |>
     graph_style(
       fig_title = fig_title,
-      y_title = pretty_unit(param, unit),
+      y_title = unique_na(c(unit, param))[1],
       y_range = list(y_range)
     )
 }
@@ -176,9 +176,8 @@ graph_param <- function(.data, fig_title, add_lines = FALSE) {
     ) |>
     graph_style(
       fig_title = fig_title,
-      y_title = pretty_unit(param, unit),
-      y_range = NA,
-      y_wrap = 20
+      y_title = unique_na(c(unit, param))[1],
+      y_range = NA
     )
 
   if (length(par_list) == 1) {
@@ -198,9 +197,8 @@ graph_param <- function(.data, fig_title, add_lines = FALSE) {
     ) |>
     graph_style(
       fig_title = fig_title,
-      y_title = pretty_unit(param, unit),
-      y_range = NA,
-      y_wrap = 20
+      y_title = unique_na(c(unit, param))[1],
+      y_range = NA
     )
 
   plotly::subplot(fig1, fig2, nrows = 2, shareX = TRUE, titleY = TRUE)
