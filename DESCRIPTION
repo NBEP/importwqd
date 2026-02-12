@@ -35,6 +35,7 @@ Imports:
     stats,
     stringr,
     tidyr,
+    viridisLite,
     wqformat (>= 0.1.0.9000),
     zip
 Remotes: 

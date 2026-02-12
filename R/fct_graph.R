@@ -112,6 +112,11 @@ graph_compare <- function(
   shapes <- c("circle", "square", "diamond", "triangle-up", "x")
   shapes <- shapes[1:group_len]
 
+  if (group_len > 5) {
+    pal <- viridisLite::viridis(group_len)
+    shapes <- "circle"
+  }
+
   # Create plot
   if (add_lines) {
     .data <- prep_scatter_lines(.data)

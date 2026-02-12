@@ -42,8 +42,8 @@ mod_graph_ui <- function(id, varlist) {
           ns("extra_sites"),
           label = HTML(
             paste(
-              h2("Select Sites"),
-              "Select up to three sites"
+              h2("Select Sites")#,
+              # "Select up to three sites"
             )
           ),
           choices = varlist$site_id,
