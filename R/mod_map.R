@@ -85,15 +85,6 @@ mod_map_server <- function(
       static_tile = "Average"
     )
 
-    # * Active tab ----
-    map_tab <- reactive({
-      if (selected_tab() == "map") {
-        return(TRUE)
-      } else {
-        return(FALSE)
-      }
-    })
-
     # * Most variables ----
     observe({
       req(in_var$param_n())
@@ -129,7 +120,7 @@ mod_map_server <- function(
 
     # * Dataframes ----
     observe({
-      req(map_tab())
+      req(selected_tab() == "map")
       req(in_var$sites_all())
       req(in_var$df_map())
 
@@ -139,7 +130,7 @@ mod_map_server <- function(
         dplyr::filter(.data$Site_ID %in% !!sites)
     }) |>
       bindEvent(
-        map_tab(),
+        selected_tab(),
         in_var$df_map(),
         in_var$sites_all()
       )
@@ -238,7 +229,7 @@ mod_map_server <- function(
       }
 
       # * Add layer toggle ----
-      if (!all(is.na(layer_list))) {
+      if (isTruthy(layer_list)) {
         map <- map |>
           leaflet::addLayersControl(
             overlayGroups = layer_list,

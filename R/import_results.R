@@ -217,7 +217,12 @@ format_results <- function(.data, sites, thresholds) {
   message("Formatting data...")
 
   # Drop extra rows
-  message("\tDropping extra rows")
+  message("\tDropping extra columns, rows")
+  keep_col <- c(
+    "Site_ID", "Activity_Type", "Date", "Depth", "Depth_Unit", "Depth_Category",
+    "Parameter", "Result", "Result_Unit", "Lower_Detection_Limit",
+    "Upper_Detection_Limit", "Detection_Limit_Unit", "Qualifier", "Year"
+  )
   q_under <- c(
     "<2B", "2-5B", "BQL", "BRL", "D>T", "DL", "IDL", "K", "LTGTE", "U"
   )
@@ -225,6 +230,7 @@ format_results <- function(.data, sites, thresholds) {
   keep_qual <- c(NA, q_under, q_over)
 
   dat <- .data |>
+    dplyr::select(dplyr::any_of(keep_col)) |>
     dplyr::filter(.data$Qualifier %in% keep_qual) |>
     dplyr::filter(
       !grepl("quality control", .data$Activity_Type, ignore.case = TRUE)

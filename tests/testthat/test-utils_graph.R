@@ -271,7 +271,7 @@ test_that("val_range works", {
 
   # Test edge case - pH
   df_in <- data.frame(
-    Parameter = 'pH',
+    Parameter = "pH",
     Result = c(6, 7, 8)
   )
   expect_equal(
