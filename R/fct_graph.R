@@ -72,7 +72,7 @@ graph_trends <- function(
     graph_style(
       fig_title = param,
       y_title = unique_na(c(unit, param))[1],
-      y_range = list(y_range)
+      y_range = y_range
     ) |>
     plotly::layout(
       xaxis = list(range = c(min_date, max_date))
@@ -139,7 +139,7 @@ graph_compare <- function(
     graph_style(
       fig_title = fig_title,
       y_title = unique_na(c(unit, param))[1],
-      y_range = list(y_range)
+      y_range = y_range
     )
 }
 
