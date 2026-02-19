@@ -40,10 +40,9 @@ mod_report_ui <- function(id) {
 #' `mod_report_ui()`.
 #' @param in_var Reactive output from `mod_sidebar_server`.
 #' @param df_raw Dataframe. Default report card data.
-#' @param selected_tab Reactive string. Name of selected tab.
 #'
 #' @export
-mod_report_server <- function(id, in_var, df_raw, selected_tab) {
+mod_report_server <- function(id, in_var, df_raw) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -59,20 +58,12 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
       df_static = df_raw
     )
 
-    report_tab <- reactive({
-      if (selected_tab() == "report_card") {
-        return(TRUE)
-      } else {
-        return(FALSE)
-      }
-    })
-
     observe({
-      req(report_tab())
+      req(in_var$df_report())
 
       val$df_static <- in_var$df_report()
     }) |>
-      bindEvent(report_tab(), ignoreInit = TRUE, once = TRUE)
+      bindEvent(in_var$df_report(), ignoreInit = TRUE, once = TRUE)
 
     # Table ----
     output$table <- reactable::renderReactable({
@@ -81,11 +72,8 @@ mod_report_server <- function(id, in_var, df_raw, selected_tab) {
 
     # Update table
     observe({
-      req(report_tab())
-
       reactable::updateReactable("table", data = in_var$df_report())
-    }) |>
-      bindEvent(in_var$df_report(), report_tab())
+    })
 
     # Download PDF ----
     # * Prep site data ----

@@ -53,3 +53,8 @@
         Setting the mode to markers
         Read more about this attribute -> https://plotly.com/r/reference/#scatter-mode
 
+# add_gam works
+
+    Code
+      add_gam(fig_in, df_in)
+

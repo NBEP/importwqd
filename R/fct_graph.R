@@ -4,13 +4,15 @@
 #' and trendlines.
 #'
 #' @param .data Dataframe with raw data.
-#' @param thresholds Dataframe with threshold values.
+#' @param thresholds Dataframe with threshold values. Default `NULL`.
+#' @param col_name String. Name of column used to group data. Default
+#' "Site_Name".
 #' @param trendline Boolean. If `TRUE`, adds trendline. If `FALSE`,
 #' overrides `display$trend` and does not add trendline. Default `TRUE`.
 #' @param display List with three items: lines, trend, thresh
 #' * `lines`: Boolean. If `TRUE`, displays scatter plot as lines +
-#' markers. If `FALSE`, displays scatter plot as markers only.
-#' * `trend`: Boolean. If `TRUE`, adds trendline.
+#' markers. If `FALSE`, displays scatter plot as markers only. Default `FALSE`.
+#' * `trend`: Boolean. If `TRUE`, adds trendline. Default `TRUE`
 #' * `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
 #' acceptable range and a blue bar to indicate excellent values. Default
 #' `FALSE`.
@@ -19,8 +21,8 @@
 #'
 #' @noRd
 graph_trends <- function(
-  .data, thresholds, trendline = TRUE,
-  display = list(lines = FALSE, trend = TRUE, thresh = TRUE)
+  .data, thresholds = NULL, col_name = "Site_Name", trendline = TRUE,
+  display = list(lines = FALSE, trend = TRUE, thresh = FALSE)
 ) {
   if (nrow(.data) == 0) {
     return(NULL)
@@ -58,7 +60,7 @@ graph_trends <- function(
     y_range = y_range,
     visible = display$thresh
   ) |>
-    simple_graph(dat, "Site_Name", add_lines = display$lines)
+    simple_graph(dat, col_name, add_lines = display$lines)
 
   # Add trendlines
   if (trendline && display$trend) {
@@ -112,11 +114,6 @@ graph_compare <- function(
   shapes <- c("circle", "square", "diamond", "triangle-up", "x")
   shapes <- shapes[1:group_len]
 
-  if (group_len > 5) {
-    pal <- viridisLite::viridis(group_len)
-    shapes <- "circle"
-  }
-
   # Create plot
   if (add_lines) {
     .data <- prep_scatter_lines(.data)
@@ -167,7 +164,7 @@ graph_param <- function(.data, fig_title, add_lines = FALSE) {
   # Set variables
   par_list <- unique_na(.data$Parameter)
 
-  # Graph 1 -----
+  # Graph 1
   param <- par_list[1]
   dat <- dplyr::filter(.data, .data$Parameter == !!param)
   unit <- dat$Unit[1]
@@ -189,6 +186,7 @@ graph_param <- function(.data, fig_title, add_lines = FALSE) {
     return(fig1)
   }
 
+  # Graph 2
   param <- par_list[2]
   dat <- dplyr::filter(.data, .data$Parameter == !!param)
   unit <- dat$Unit[1]

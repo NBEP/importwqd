@@ -148,6 +148,12 @@ tst <- list(
       "Site1", "Site1", "Site1", "Site1", "Site1", "Site2", "Site2", "Site2",
       "Site2", "Site2"
     ),
+    Watershed = c(
+      "Narragansett Bay", "Narragansett Bay", "Narragansett Bay",
+      "Narragansett Bay", "Narragansett Bay", "Upper Blackstone River",
+      "Upper Blackstone River", "Upper Blackstone River",
+      "Upper Blackstone River", "Upper Blackstone River"
+    ),
     Date = as.Date(
       c("2021-06-30", "2021-08-05", "2023-05-25", "2023-07-12", "2023-07-12")
     ),

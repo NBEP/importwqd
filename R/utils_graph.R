@@ -98,7 +98,7 @@ prep_scatter_lines <- function(.data) {
 #'
 #' @param .data `plotly` object
 #' @param df Dataframe.
-#' @param col_name description
+#' @param col_name String. Name of column used to group data.
 #' @param color String. Color used for lines, markers. Default `#2daebe`.
 #' @param add_lines Boolean. If `TRUE`, displays data as lines + markers. If
 #' `FALSE`, displays data as markers only. Default `FALSE`.
@@ -253,7 +253,7 @@ plot_thresholds <- function(
         x = c(min_date, max_date, max_date, min_date),
         y = c(thresh_min, thresh_min, min_val, min_val),
         line = list(width = 0),
-        fillcolor = "#f6c0c0",
+        fillcolor = "#fedede",
         visible = visible,
         hoverinfo = "text",
         hovertext = "Does Not Meet Criteria",
@@ -269,7 +269,7 @@ plot_thresholds <- function(
         x = c(min_date, max_date, max_date, min_date),
         y = c(thresh_max, thresh_max, max_val, max_val),
         line = list(width = 0),
-        fillcolor = "#f6c0c0",
+        fillcolor = "#fedede",
         visible = visible,
         hoverinfo = "text",
         hovertext = "Does Not Meet Criteria",
@@ -289,7 +289,7 @@ plot_thresholds <- function(
         x = c(min_date, max_date, max_date, min_date),
         y = c(thresh_excellent, thresh_excellent, min_val, min_val),
         line = list(width = 0),
-        fillcolor = "#dde8fe",
+        fillcolor = "#e6efff",
         visible = visible,
         hoverinfo = "text",
         hovertext = "Excellent",
@@ -447,7 +447,7 @@ thresh_text <- function(thresh) {
 #' @description `val_range()` calculates the minimum and maximum values for the
 #' y-axis of a graph.
 #'
-#' @param .data Dataframe. Must include column "Result"
+#' @param .data Dataframe. Must include columns "Result", "Parameter"
 #'
 #' @return Minimum, maximum values
 #'
@@ -455,11 +455,14 @@ thresh_text <- function(thresh) {
 val_range <- function(.data) {
   min_val <- min(.data$Result)
   max_val <- max(.data$Result)
+  param <- .data$Parameter[1]
 
-  if (min_val > 0) {
-    min_val <- 0
-  } else {
+  if (min_val < 0) {
     min_val <- min_val * 1.2
+  } else if (param == "pH") {
+    min_val <- min_val * 0.8
+  } else {
+    min_val <- 0
   }
 
   if (max_val == min_val) {

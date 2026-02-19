@@ -1,13 +1,13 @@
-#' Graph trends UI
+#' Graph watershed trends UI
 #'
-#' @description `mod_graph_trend_ui()` produces the UI code for a graph and
-#' table showing long term trends for a single site, parameter, and depth.
+#' @description `mod_graph_watershed_ui()` produces the UI code for a graph and
+#' table showing long term trends for a single watershed, parameter, and depth.
 #'
 #' @param id Namespace ID for module. Should match ID used by
-#' `mod_graph_trend_server()`.
+#' `mod_graph_watershed_server()`.
 #'
 #' @noRd
-mod_graph_trend_ui <- function(id) {
+mod_graph_watershed_ui <- function(id) {
   ns <- NS(id)
   tagList(
     # UI ----
@@ -33,9 +33,7 @@ mod_graph_trend_ui <- function(id) {
             htmlOutput(ns("fig_title")),
             reactable::reactableOutput(ns("table"))
           )
-        ),
-        # * Thresholds ----
-        htmlOutput(ns("caption"), inline = TRUE)
+        )
       ),
       # * No data message ----
       tabPanelBody(
@@ -46,26 +44,18 @@ mod_graph_trend_ui <- function(id) {
   )
 }
 
-#' Graph trends server
+#' Graph watershed trends server
 #'
-#' `mod_graph_trend_server()` produces the server code for a graph and
-#' table showing long term trends for a single site, parameter, and depth.
+#' `mod_graph_watershed_server()` produces the server code for a graph and
+#' table showing long term trends for a single watershed, depth, and parameter.
 #'
 #' @param id Namespace ID for module. Should match ID used by
-#' `mod_graph_trend_ui()`.
+#' `mod_graph_watershed_ui()`.
 #' @param df Dataframe. Data to graph.
-#' @param in_var List with three items: style, trend, thresh
-#' * `lines`: Boolean. If `TRUE`, displays scatter plot as lines +
-#' markers. If `FALSE`, displays scatter plot as markers only.
-#' * `trend`: Boolean. If `TRUE`, adds trendline.
-#' * `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
-#' acceptable range and a blue bar to indicate excellent values. Default
-#' `FALSE`. description
+#' @param trendline Boolean. If `TRUE`, adds trendline.
 #'
 #' @noRd
-mod_graph_trend_server <- function(
-  id, df, in_var = list(lines = TRUE, trend = TRUE, tresh = TRUE)
-) {
+mod_graph_watershed_server <- function(id, df, trendline = TRUE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -88,31 +78,6 @@ mod_graph_trend_server <- function(
     }) |>
       bindEvent(hide_graph())
 
-    # Thresholds ----
-    thresh <- reactive({
-      thresh_min <- df()$Min[1]
-      thresh_max <- df()$Max[1]
-      thresh_best <- df()$Best[1]
-
-      chk <- is.na(c(thresh_min, thresh_max, thresh_best))
-      if (all(chk)) {
-        return(NULL)
-      }
-
-      unit <- df()$Unit[1]
-      if (is.na(unit)) {
-        unit <- ""
-      }
-
-      list(
-        thresh_min = thresh_min,
-        thresh_max = thresh_max,
-        thresh_exc = df()$Excellent[1],
-        thresh_best = thresh_best,
-        unit = unit
-      )
-    })
-
     # Trend line ----
     show_fit <- reactive({
       len_years <- length(unique(df()$Year))
@@ -133,25 +98,9 @@ mod_graph_trend_server <- function(
     output$plot <- plotly::renderPlotly({
       graph_trends(
         df(),
-        thresholds = thresh(),
-        trendline = show_fit(),
-        display = in_var()
+        col_name = "Watershed",
+        trendline = trendline()
       )
-    })
-
-    # Caption ----
-    thresh_desc <- reactive({
-      if (is.null(thresh())) {
-        return(NULL)
-      }
-
-      thresh <- thresh_text(thresh())
-      paste("<h3>Thresholds</h3>", thresh)
-    }) |>
-      bindEvent(thresh())
-
-    output$caption <- renderUI({
-      HTML(thresh_desc())
     })
 
     # Table ----

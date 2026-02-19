@@ -15,14 +15,28 @@ mod_graph_ui <- function(id, varlist) {
     bslib::navset_card_tab(
       id = ns("tabset"),
       full_screen = FALSE,
-      # Trends -----
+      # Site trends -----
       bslib::nav_panel(
-        "Long Term Trends",
+        "Site Trends",
         value = "trend",
         mod_graph_trend_ui(ns("graph_trends"))
       ),
+      # Watershed trends -----
+      if (isTruthy(varlist$watershed)) {
+        bslib::nav_panel(
+          "Watershed Trends",
+          value = "watershed",
+          dropdown(
+            ns("select_watershed"),
+            label = h2("Select Watershed"),
+            choices = varlist$watershed,
+            multiple = FALSE
+          ),
+          mod_graph_watershed_ui(ns("graph_watershed"))
+        )
+      },
       # Depth ----
-      if (!is.null(varlist$depth)) {
+      if (isTruthy(varlist$depth)) {
         bslib::nav_panel(
           "Compare Depths",
           value = "depth",
@@ -42,13 +56,13 @@ mod_graph_ui <- function(id, varlist) {
           ns("extra_sites"),
           label = HTML(
             paste(
-              h2("Select Sites")#,
-              # "Select up to three sites"
+              h2("Select Sites"),
+              "Select up to five sites"
             )
           ),
           choices = varlist$site_id,
-          choice_names = varlist$site_name#,
-          # max_options = 3
+          choice_names = varlist$site_name,
+          max_options = 5
         ),
         mod_graph_compare_ui(ns("graph_sites"))
       ),
@@ -74,10 +88,13 @@ mod_graph_ui <- function(id, varlist) {
       bslib::nav_menu(
         title = "Options",
         bslib::nav_item(
-          shinyWidgets::prettySwitch(
-            ns("chk_line"),
-            "Show lines between points",
-            slim = TRUE
+          conditionalPanel(
+            condition = paste0('input["', ns("tabset"), '"] != "watershed"'),
+            shinyWidgets::prettySwitch(
+              ns("chk_line"),
+              "Show lines between points",
+              slim = TRUE
+            )
           ),
           conditionalPanel(
             condition = paste0('input["', ns("tabset"), '"] == "trend"'),
@@ -86,6 +103,11 @@ mod_graph_ui <- function(id, varlist) {
               "Show thresholds",
               value = TRUE,
               slim = TRUE
+            )
+          ),
+          conditionalPanel(
+            condition = paste0(
+              '["trend", "watershed"].includes(input["', ns("tabset"), '"])'
             ),
             shinyWidgets::prettySwitch(
               ns("chk_trend"),
@@ -134,7 +156,7 @@ mod_graph_server <- function(id, in_var) {
     }) |>
       bindEvent(in_var$param_n())
 
-    # Graph: Trends ----
+    # Graph: Site Trends ----
     df_trends <- reactive({
       req(input$tabset == "trend")
       req(in_var$sites_n())
@@ -176,6 +198,47 @@ mod_graph_server <- function(id, in_var) {
       }),
       in_var = reactive({
         trend_style()
+      })
+    )
+
+    # Graph: Watershed Trends ----
+    df_watershed <- reactive({
+      req(input$tabset == "watershed")
+      req(input$select_watershed)
+      req(in_var$param_n())
+
+      watershed <- input$select_watershed
+      param <- in_var$param_n()
+
+      dat <- in_var$df_graph() |>
+        dplyr::filter(
+          .data$Watershed == !!watershed,
+          .data$Parameter == !!param
+        )
+
+      chk <- grepl("depth|height", param)
+      if ("Depth" %in% colnames(dat) & !chk) {
+        depth <- in_var$depth_n()
+        dat <- dplyr::filter(dat, .data$Depth == !!depth)
+      }
+
+      dat
+    })
+
+    watershed_style <- reactive({
+      req(input$tabset == "watershed")
+
+      input$chk_trend
+    }) |>
+      bindEvent(input$chk_trend, input$tabset)
+
+    mod_graph_watershed_server(
+      "graph_watershed",
+      df = reactive({
+        df_watershed()
+      }),
+      trendline = reactive({
+        watershed_style()
       })
     )
 

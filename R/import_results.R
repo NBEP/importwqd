@@ -254,7 +254,7 @@ format_results <- function(.data, sites, thresholds) {
   # Adding threshold data
   message("\tAdding threshold values")
   df_sites <- sites |>
-    dplyr::select("Site_ID", "Site_Name", "State", "Group")
+    dplyr::select("Site_ID", "Site_Name", "Watershed", "State", "Group")
 
   df_temp <- dat |>
     dplyr::select("Site_ID", "Depth_Category", "Parameter") |>
@@ -291,7 +291,7 @@ format_results <- function(.data, sites, thresholds) {
   message("\tDropping extra columns")
 
   field_keep <- c(
-    "Site_ID", "Site_Name", "Date", "Year", "Parameter", "Result",
+    "Site_ID", "Site_Name", "Watershed", "Date", "Year", "Parameter", "Result",
     "Result_Unit", "Depth_Category", "Calculation", "Min", "Max", "Excellent",
     "Good", "Fair", "Best"
   )

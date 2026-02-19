@@ -184,6 +184,23 @@ test_that("plot_thresholds works", {
   )
 })
 
+test_that("add_gam works", {
+  df_in <- data.frame(
+    Date = c(
+      "2001-01-01", "2002-01-01", "2003-01-01", "2004-01-01", "2005-01-01",
+      "2006-01-01", "2007-01-01", "2008-01-01", "2009-01-01", "2010-01-01"
+    ),
+    Result = c(3, 1, 2, 5, 6, 4, 7, 9, 8, 10)
+  )
+  df_in$Date <- as.Date(df_in$Date)
+
+  fig_in <- plotly::plot_ly()
+
+  expect_snapshot(
+    add_gam(fig_in, df_in)
+  )
+})
+
 test_that("thresh_text works", {
   # Test1
   thresh <- list(
@@ -239,7 +256,7 @@ test_that("val_range works", {
     c(0, 10.8)
   )
 
-  # Test edge cases
+  # Test edge cases - result value
   df_in$Result <- 0
   expect_equal(
     val_range(df_in),
@@ -250,5 +267,15 @@ test_that("val_range works", {
   expect_equal(
     val_range(df_in),
     c(-2.4, 0)
+  )
+
+  # Test edge case - pH
+  df_in <- data.frame(
+    Parameter = 'pH',
+    Result = c(6, 7, 8)
+  )
+  expect_equal(
+    val_range(df_in),
+    c(4.8, 9.6)
   )
 })
