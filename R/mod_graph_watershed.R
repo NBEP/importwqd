@@ -83,9 +83,9 @@ mod_graph_watershed_server <- function(id, df, trendline = TRUE) {
       len_years <- length(unique(df()$Year))
 
       if (len_years < 10) {
-        return(FALSE)
+        FALSE
       } else {
-        return(TRUE)
+        TRUE
       }
     })
 
@@ -95,11 +95,19 @@ mod_graph_watershed_server <- function(id, df, trendline = TRUE) {
     outputOptions(output, "hide_error", suspendWhenHidden = FALSE)
 
     # Graph ----
+    show_trend <- reactive({
+      if (show_fit() && trendline()) {
+        TRUE
+      } else {
+        FALSE
+      }
+    })
+
     output$plot <- plotly::renderPlotly({
       graph_trends(
         df(),
         col_name = "Watershed",
-        trendline = trendline()
+        trendline = show_trend()
       )
     })
 

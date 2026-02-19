@@ -249,32 +249,56 @@ plot_thresholds <- function(
 
   if (!is.na(thresh_min) && min_val < thresh_min) {
     fig <- fig |>
-      plotly::add_polygons(
-        x = c(min_date, max_date, max_date, min_date),
-        y = c(thresh_min, thresh_min, min_val, min_val),
-        line = list(width = 0),
-        fillcolor = "#fedede",
-        visible = visible,
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = min_val,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "transparent"),
+        showlegend = FALSE,
+        inherit = FALSE
+      ) |>
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = thresh_min,
+        type = "scatter",
+        mode = "lines",
+        fill = "tonexty",
+        fillcolor = "rgba(160,60,60,0.1)",
+        line = list(color = "rgba(160,60,60,1)"),
+        name = "Does Not Meet\nCriteria",
         hoverinfo = "text",
         hovertext = "Does Not Meet Criteria",
+        hoveron = "points+fills",
         inherit = FALSE,
-        name = "Does Not Meet\nCriteria",
         legendrank = 1003
       )
   }
 
   if (!is.na(thresh_max) && max_val > thresh_max) {
     fig <- fig |>
-      plotly::add_polygons(
-        x = c(min_date, max_date, max_date, min_date),
-        y = c(thresh_max, thresh_max, max_val, max_val),
-        line = list(width = 0),
-        fillcolor = "#fedede",
-        visible = visible,
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = max_val,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "transparent"),
+        showlegend = FALSE,
+        inherit = FALSE
+      ) |>
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = thresh_max,
+        type = "scatter",
+        mode = "lines",
+        fill = "tonexty",
+        fillcolor = "rgba(160,60,60,0.1)",
+        line = list(color = "rgba(160,60,60,1)"),
+        name = "Does Not Meet\nCriteria",
         hoverinfo = "text",
         hovertext = "Does Not Meet Criteria",
+        hoveron = "points+fills",
         inherit = FALSE,
-        name = "Does Not\nMeet Criteria",
         legendrank = 1002
       )
   }
@@ -285,30 +309,54 @@ plot_thresholds <- function(
 
   if (thresh_best == "low" && thresh_excellent > min_val) {
     fig <- fig |>
-      plotly::add_polygons(
-        x = c(min_date, max_date, max_date, min_date),
-        y = c(thresh_excellent, thresh_excellent, min_val, min_val),
-        line = list(width = 0),
-        fillcolor = "#e6efff",
-        visible = visible,
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = min_val,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "transparent"),
+        showlegend = FALSE,
+        inherit = FALSE
+      ) |>
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = thresh_excellent,
+        type = "scatter",
+        mode = "lines",
+        fill = "tonexty",
+        fillcolor = "rgba(100,125,180,0.1)",
+        line = list(color = "rgba(100,125,180,1)"),
+        name = "Excellent",
         hoverinfo = "text",
         hovertext = "Excellent",
+        hoveron = "points+fills",
         inherit = FALSE,
-        name = "Excellent",
         legendrank = 1001
       )
   } else if (thresh_best == "high" && thresh_excellent < max_val) {
     fig <- fig |>
-      plotly::add_polygons(
-        x = c(min_date, max_date, max_date, min_date),
-        y = c(thresh_excellent, thresh_excellent, max_val, max_val),
-        line = list(width = 0),
-        fillcolor = "#dde8fe",
-        visible = visible,
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = max_val,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "rgba(100,125,180,0)"),
+        showlegend = FALSE,
+        inherit = FALSE
+      ) |>
+      plotly::add_trace(
+        x = c(min_date, max_date),
+        y = thresh_excellent,
+        type = "scatter",
+        mode = "lines",
+        fill = "tonexty",
+        fillcolor = "rgba(100,125,180,0.1)",
+        line = list(color = "rgba(100,125,180,1)"),
+        name = "Excellent",
         hoverinfo = "text",
         hovertext = "Excellent",
+        hoveron = "points+fills",
         inherit = FALSE,
-        name = "Excellent",
         legendrank = 1001
       )
   }
