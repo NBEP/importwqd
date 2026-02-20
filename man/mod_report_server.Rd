@@ -4,7 +4,7 @@
 \alias{mod_report_server}
 \title{Report card server}
 \usage{
-mod_report_server(id, in_var, df_raw)
+mod_report_server(id, in_var, df_raw, org_name = "")
 }
 \arguments{
 \item{id}{Namespace ID for module. Should match ID used by
@@ -13,6 +13,8 @@ mod_report_server(id, in_var, df_raw)
 \item{in_var}{Reactive output from `mod_sidebar_server`.}
 
 \item{df_raw}{Dataframe. Default report card data.}
+
+\item{org_name}{String. Organization name.}
 }
 \description{
 `mod_report_server()` produces the report card server for the

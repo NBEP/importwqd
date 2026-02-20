@@ -40,9 +40,10 @@ mod_report_ui <- function(id) {
 #' `mod_report_ui()`.
 #' @param in_var Reactive output from `mod_sidebar_server`.
 #' @param df_raw Dataframe. Default report card data.
+#' @param org_name String. Organization name.
 #'
 #' @export
-mod_report_server <- function(id, in_var, df_raw) {
+mod_report_server <- function(id, in_var, df_raw, org_name = "") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -157,6 +158,7 @@ mod_report_server <- function(id, in_var, df_raw) {
           execute_params = list(
             df_report = dat,
             df_site = site_data(),
+            org_name = org_name,
             year = in_var$year()
           )
         )

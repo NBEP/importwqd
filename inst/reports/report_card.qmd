@@ -3,9 +3,10 @@ format: pdf
 params:
   df_report: NA
   df_site: NA
-  org_name: ""
+  org_name: NA
   year: NA
 title: "`r params$year` Water Quality Report"
+subtitle: "`r params$org_name`"
 ---
 
 ```{r}
