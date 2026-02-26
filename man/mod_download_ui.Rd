@@ -12,5 +12,5 @@ mod_download_ui(id)
 }
 \description{
 `mod_download_ui()` produces the UI code for the `wqdashboard`
-download tab.
+download button.
 }

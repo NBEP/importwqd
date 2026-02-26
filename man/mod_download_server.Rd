@@ -4,7 +4,7 @@
 \alias{mod_download_server}
 \title{Download server}
 \usage{
-mod_download_server(id, sites, results, txt_citation, in_var)
+mod_download_server(id, sites, results, in_var)
 }
 \arguments{
 \item{id}{Namespace ID for module. Should match ID used by
@@ -14,11 +14,9 @@ mod_download_server(id, sites, results, txt_citation, in_var)
 
 \item{results}{Dataframe. Result metadata.}
 
-\item{txt_citation}{String. Text used for citation.}
-
 \item{in_var}{Reactive output from `mod_sidebar_server`.}
 }
 \description{
 `mod_download_server()` produces the server code for the
-`wqdashboard` download tab.
+`wqdashboard` download button.
 }

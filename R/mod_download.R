@@ -1,7 +1,7 @@
 #' Download UI
 #'
 #' @description `mod_download_ui()` produces the UI code for the `wqdashboard`
-#' download tab.
+#' download button.
 #'
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_download_server()`.
@@ -10,14 +10,10 @@
 mod_download_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    bslib::card(
-      h2("Suggested Citation"),
-      textOutput(ns("citation")),
-      downloadButton(
-        ns("dl"),
-        "Download (csv)",
-        style = "width:fit-content"
-      )
+    downloadButton(
+      ns("dl"),
+      "Download Data",
+      style = "width:fit-content"
     )
   )
 }
@@ -25,27 +21,18 @@ mod_download_ui <- function(id) {
 #' Download server
 #'
 #' @description `mod_download_server()` produces the server code for the
-#' `wqdashboard` download tab.
+#' `wqdashboard` download button.
 #'
 #' @param id Namespace ID for module. Should match ID used by
 #' `mod_download_ui()`.
 #' @param sites Dataframe. Site metadata.
 #' @param results Dataframe. Result metadata.
-#' @param txt_citation String. Text used for citation.
 #' @param in_var Reactive output from `mod_sidebar_server`.
 #'
 #' @export
-mod_download_server <- function(
-  id, sites, results, txt_citation, in_var
-) {
+mod_download_server <- function(id, sites, results, in_var) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
-    # Citation ----
-    output$citation <- renderText({
-      cit <- gsub("YEAR", format(Sys.time(), "%Y"), txt_citation)
-      gsub("DATE", format(Sys.time(), "%B %d, %Y"), cit)
-    })
 
     # Download ----
     output$dl <- downloadHandler(

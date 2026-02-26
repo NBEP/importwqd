@@ -29,6 +29,7 @@ Imports:
     reactable,
     readr,
     rlang,
+    rvest,
     shiny,
     shinyjs,
     shinyWidgets,

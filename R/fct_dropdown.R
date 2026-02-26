@@ -15,7 +15,7 @@
 #'
 #' @return A dropdown widget.
 #'
-#' @export
+#' @noRd
 dropdown <- function(
   id, label, choices, choice_names = NULL, sorted = TRUE,
   decreasing = FALSE, multiple = TRUE, max_options = NULL
