@@ -208,7 +208,6 @@ mod_map_server <- function(
             # Label
             label = ~Label,
             labelOptions = leaflet::labelOptions(textsize = "15px"),
-            popup = ~Popup,
             # Stroke
             color = "#6B8091",
             weight = 2,
