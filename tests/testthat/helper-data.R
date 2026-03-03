@@ -165,15 +165,13 @@ tst <- list(
     Result = c(0.05, 3, 0.05, 4, 8, 6, 8, 7, 9, 9.2),
     Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "m"),
     Depth = c("Surface", "Surface", "Surface", "Midwater", NA),
-    Calculation = c(
-      "min", "min", "min", "min", "mean", "mean", "mean", "mean", "mean", "mean"
-    ),
-    Min = c(5, 5, 5, 5, NA, NA, NA, NA, NA, NA),
+    Calculation = c("min", "min", "min", "min", "mean"),
+    Min = c(5, 5, 5, 5, NA),
     Max = NA_integer_,
-    Excellent = c(8, 8, 8, 8, NA, NA, NA, NA, NA, NA),
-    Good = c(6.5, 6.5, 6.5, 6.5, NA, NA, NA, NA, NA, NA),
-    Fair = c(5, 5, 5, 5, NA, NA, NA, NA, NA, NA),
-    Best = c("high", "high", "high", "high", NA, NA, NA, NA, NA, NA),
+    Excellent = c(8, 8, 8, 8, NA, 5, 5, 5, 5, NA),
+    Good = c(6.5, 6.5, 6.5, 6.5, NA, 5, 5, 5, 5, NA),
+    Fair = c(5, 5, 5, 5, NA, 3, 3, 3, 3, NA),
+    Best = c("high", "high", "high", "high", NA),
     Month = c("June", "August", "May", "July", "July"),
     Description = c(
       "<b>Site1</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen: 0.05 mg/L",
@@ -222,16 +220,12 @@ tst <- list(
       "Dissolved oxygen"
     ),
     Unit = c("m", NA, "mg/L", "mg/L", "mg/L", NA),
-    score_typ = c(
-      "Average", NA, "Minimum", "Minimum", "Minimum", NA, "Average", NA,
-      "Average", "Average", "Average", NA
-    ),
-    score_num = c(8, NA, 0.05, 4, 0.05, NA, 9.2, NA, 7, 9, 7, NA),
+    score_typ = c("Average", NA, "Minimum", "Minimum", "Minimum", NA),
+    score_num = c(8, NA, 0.05, 4, 0.05, NA, 9.2, NA, 6, 9, 7, NA),
     score_str = c(
       "No Threshold Established", "No Data Available", "Poor", "Poor", "Poor",
       "No Data Available", "No Threshold Established", "No Data Available",
-      "No Threshold Established", "No Threshold Established",
-      "No Threshold Established", "No Data Available"
+      "Excellent", "Excellent", "Excellent", "No Data Available"
     ),
     Latitude = c(
       41.83, 41.83, 41.83, 41.83, 41.83, 41.83, 42.28, 42.28, 42.28, 42.28,
@@ -264,15 +258,16 @@ tst <- list(
       "<br><i>No data</i>",
       "<br>Average: 9.2 m",
       "<br><i>No data</i>",
-      "<br>Average: 7 mg/L",
-      "<br>Average: 9 mg/L",
-      "<br>Average: 7 mg/L",
+      "<br>Minimum: 6 mg/L<br>Score: Excellent",
+      "<br>Minimum: 9 mg/L<br>Score: Excellent",
+      "<br>Minimum: 7 mg/L<br>Score: Excellent",
       "<br><i>No data</i>"
     ),
     alt = c(
       "Site1, 8 m", "Site1, No data", "Site1, Poor", "Site1, Poor",
       "Site1, Poor", "Site1, No data", "Site2, 9.2 m", "Site2, No data",
-      "Site2, 7 mg/L", "Site2, 9 mg/L", "Site2, 7 mg/L", "Site2, No data"
+      "Site2, Excellent", "Site2, Excellent", "Site2, Excellent",
+      "Site2, No data"
     )
   ),
   # Categorical data ----

@@ -156,17 +156,27 @@ test_that("qaqc_cat_results error messages", {
 test_that("format_results works", {
   expect_equal(
     suppressMessages(
-      format_results(tst$data_qaqc, tst$sites_qaqc, tst$threshold_final)
+      format_results(tst$data_qaqc, tst$sites_qaqc)
     ),
     tst$data_final
   )
 
   # Edge case - no matching thresholds
-  df_thresh <- tst$threshold_final[1, ]
+  df_thresh <- data.frame(
+    State = NA,
+    Group = NA,
+    Site = NA,
+    Depth = NA,
+    Parameter = c("Dissolved oxygen", "Depth, Secchi disk depth"),
+    Unit = c("mg/L", "m"),
+    Calculation = "mean"
+  )
+  df_thresh[c("Min", "Max", "Excellent", "Good", "Fair", "Best")] <- NA
 
   df_out <- tst$data_final
   df_out$Calculation <- "mean"
-  df_out[c("Min", "Max", "Excellent", "Good", "Fair", "Best")] <- NA
+  df_out[c("Min", "Max", "Excellent", "Good", "Fair")] <- NA_integer_
+  df_out["Best"] <- NA_character_
 
   expect_equal(
     suppressMessages(
@@ -204,11 +214,9 @@ test_that("score_results works", {
     Group = c("Coldwater", "Coldwater", "Warmwater", "Warmwater"),
     Parameter = "Dissolved oxygen",
     Unit = "mg/L",
-    score_typ = c("Minimum", "Minimum", "Average", "Average"),
-    score_num = c(0.05, 0.05, 7, 8),
-    score_str = c(
-      "Poor", "Poor", "No Threshold Established", "No Threshold Established"
-    ),
+    score_typ = "Minimum",
+    score_num = c(0.05, 0.05, 6, 7),
+    score_str = c("Poor", "Poor", "Excellent", "Excellent"),
     Latitude = c(41.83, 41.83, 42.28, 42.28),
     Longitude = c(-71.41, -71.41, -71.77, -71.77),
     popup_loc = c(
@@ -219,11 +227,12 @@ test_that("score_results works", {
     ),
     popup_score = c(
       "<br>Minimum: 0.05 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor", "<br>Average: 7 mg/L",
-      "<br>Average: 8 mg/L"
+      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
+      "<br>Minimum: 6 mg/L<br>Score: Excellent",
+      "<br>Minimum: 7 mg/L<br>Score: Excellent"
     ),
     alt = c(
-      "Site1, Poor", "Site1, Poor", "Site2, 7 mg/L", "Site2, 8 mg/L"
+      "Site1, Poor", "Site1, Poor", "Site2, Excellent", "Site2, Excellent"
     )
   )
 

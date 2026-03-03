@@ -19,7 +19,7 @@
       [1] "character" "svgURI"   
       
       [[4]]
-      [1] "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20width%3D%2227%22%20height%3D%2227%22%3E%0A%20%20%3Ccircle%20id%3D%22circle%22%20cx%3D%2213.5%22%20cy%3D%2213.5%22%20r%3D%2212%22%20stroke%3D%22%23444444%22%20fill%3D%22%23495D87%22%20stroke-opacity%3D%221%22%20fill-opacity%3D%221%22%20stroke-width%3D%221.5%22%3E%3C%2Fcircle%3E%0A%3C%2Fsvg%3E"
+      [1] "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20width%3D%2227%22%20height%3D%2227%22%3E%0A%20%20%3Ccircle%20id%3D%22circle%22%20cx%3D%2213.5%22%20cy%3D%2213.5%22%20r%3D%2212%22%20stroke%3D%22%23444444%22%20fill%3D%22%2344759A%22%20stroke-opacity%3D%221%22%20fill-opacity%3D%221%22%20stroke-width%3D%221.5%22%3E%3C%2Fcircle%3E%0A%3C%2Fsvg%3E"
       attr(,"class")
       [1] "character" "svgURI"   
       

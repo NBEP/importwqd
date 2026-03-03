@@ -206,14 +206,15 @@ qaqc_cat_results <- function(.data, sites) {
 #' @description `format_results()` formats water quality data for use in
 #' wqdashboard. Must run `qaqc_results()` first.
 #'
-#' @param thresholds Dataframe containing threshold values
+#' @param thresholds Dataframe containing custom threshold values. Default
+#' `NULL`.
 #'
 #' @inheritParams qaqc_results
 #'
 #' @return Updated dataframe
 #'
 #' @export
-format_results <- function(.data, sites, thresholds) {
+format_results <- function(.data, sites, thresholds = NULL) {
   message("Formatting data...")
 
   # Drop extra rows
@@ -267,26 +268,26 @@ format_results <- function(.data, sites, thresholds) {
     unique()
   df_temp <- dplyr::left_join(df_temp, df_sites)
 
-  df_thresh <- update_threshold_units(thresholds, dat)
-
-  if (nrow(df_thresh) > 0) {
-    df_temp <- df_temp |>
-      dplyr::mutate(
-        "thresh_temp" = mapply(
-          function(id, group, state, depth, par) {
-            add_thresholds(df_thresh, id, group, state, depth, par)
-          },
-          .data$Site_ID, .data$Group, .data$State, .data$Depth_Category,
-          .data$Parameter,
-          SIMPLIFY = FALSE
-        )
-      ) |>
-      tidyr::unnest_wider("thresh_temp") |>
-      dplyr::select(!c("State", "Group"))
+  if (is.null(thresholds)) {
+    df_thresh <- update_threshold_units(dat_thresholds, dat)
   } else {
-    df_temp$Calculation <- "mean"
-    df_temp[c("Min", "Max", "Excellent", "Good", "Fair", "Best")] <- NA
+    df_thresh <- dplyr::bind_rows(thresholds, dat_thresholds) |>
+      update_threshold_units(dat)
   }
+
+  df_temp <- df_temp |>
+    dplyr::mutate(
+      "thresh_temp" = mapply(
+        function(id, group, state, depth, par) {
+          add_thresholds(df_thresh, id, group, state, depth, par)
+        },
+        .data$Site_ID, .data$Group, .data$State, .data$Depth_Category,
+        .data$Parameter,
+        SIMPLIFY = FALSE
+      )
+    ) |>
+    tidyr::unnest_wider("thresh_temp") |>
+    dplyr::select(!c("State", "Group"))
 
   dat <- dplyr::left_join(
     dat, df_temp,
