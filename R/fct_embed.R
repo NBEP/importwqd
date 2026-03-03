@@ -8,7 +8,7 @@
 #' @return Simple HTML
 #'
 #' @export
-embed_quarto <- function(path){
+embed_quarto <- function(path) {
   x <- rvest::read_html(path) |>
     rvest::html_element("body") |>
     as.character()
