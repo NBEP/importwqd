@@ -210,7 +210,7 @@ test_that("thresh_text works", {
     thresh_best = "high",
     unit = "mg/L"
   )
-  txt_out <- "<b>Acceptable:</b> &gt; 5 mg/L<br><b>Excellent:</b> &gt; 8 mg/L"
+  txt_out <- "<p><b>Acceptable:</b> &gt; 5 mg/L<br><b>Excellent:</b> &gt; 8 mg/L</p>"
 
   expect_equal(
     thresh_text(thresh),
@@ -225,7 +225,7 @@ test_that("thresh_text works", {
     thresh_best = "low",
     unit = "mg/L"
   )
-  txt_out <- "<b>Acceptable:</b> &lt; 20 mg/L<br><b>Excellent:</b> &lt; 8 mg/L"
+  txt_out <- "<p><b>Acceptable:</b> &lt; 20 mg/L<br><b>Excellent:</b> &lt; 8 mg/L</p>"
 
   expect_equal(
     thresh_text(thresh),

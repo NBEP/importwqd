@@ -436,7 +436,7 @@ add_gam <- function(fig, df) {
 #'
 #' @param thresh List of threshold values
 #'
-#' @return List of threshold values.
+#' @return HTML formatted text describing thresholds
 #'
 #' @noRd
 thresh_text <- function(thresh) {
@@ -487,7 +487,7 @@ thresh_text <- function(thresh) {
     )
   }
 
-  trimws(thresh_text)
+  paste0("<p>", trimws(thresh_text), "</p>")
 }
 
 #' Value range

@@ -60,7 +60,7 @@ mod_graph_trend_ui <- function(id) {
 #' * `trend`: Boolean. If `TRUE`, adds trendline.
 #' * `thresh`: Boolean. If `TRUE`, adds red bar to indicate values outside
 #' acceptable range and a blue bar to indicate excellent values. Default
-#' `FALSE`. description
+#' `FALSE`.
 #'
 #' @noRd
 mod_graph_trend_server <- function(
@@ -146,7 +146,14 @@ mod_graph_trend_server <- function(
       }
 
       thresh <- thresh_text(thresh())
-      paste("<h3>Thresholds</h3>", thresh)
+      paste(
+        "<h3>Thresholds</h3><p>Simplified, site specific thresholds are",
+        "included to provide context for the data. These thresholds may not",
+        "match the latest regulatory standards. For more information on the",
+        "state of the watershed, see <a href='https://mywaterway.epa.gov/'",
+        "target='_blank' rel='noopener noreferrer'>How's My Waterway?</a></p>",
+        thresh
+      )
     }) |>
       bindEvent(thresh())
 
