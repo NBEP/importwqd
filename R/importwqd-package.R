@@ -5,6 +5,7 @@
 #' @importFrom data.table :=
 #' @importFrom rlang .data
 #' @importFrom shiny actionButton
+#' @importFrom shiny bindCache
 #' @importFrom shiny bindEvent
 #' @importFrom shiny checkboxInput
 #' @importFrom shiny conditionalPanel

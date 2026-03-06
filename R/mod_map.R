@@ -60,7 +60,8 @@ mod_map_server <- function(
     # Set title ----
     output$title <- renderText({
       paste0(in_var$param_n(), " (", in_var$year(), ")")
-    })
+    }) |>
+      bindCache(in_var$param_n(), in_var$year())
 
     # Static variables ----
     drop_col <- c(
@@ -176,7 +177,7 @@ mod_map_server <- function(
             data = shp_watershed,
             layerId = shp_watershed,
             # Label
-            label = ~Name,
+            label = ~Label,
             labelOptions = leaflet::labelOptions(textsize = "15px"),
             # Stroke
             color = "#6B8091",
@@ -237,7 +238,8 @@ mod_map_server <- function(
       }
 
       map
-    })
+    }) |>
+      bindCache(map_bounds, shp_river, shp_watershed)
 
     # * Add sites ----
     observe({
