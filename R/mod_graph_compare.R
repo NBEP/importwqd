@@ -126,7 +126,8 @@ mod_graph_compare_server <- function(
     # Table ----
     output$fig_title <- renderUI({
       h2(fig_title()$table_title)
-    })
+    }) |>
+      bindCache(fig_title())
 
     output$table <- reactable::renderReactable({
       graph_table(df(), group)

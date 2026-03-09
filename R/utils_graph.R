@@ -446,6 +446,10 @@ thresh_text <- function(thresh) {
   thresh_excellent <- thresh$thresh_exc
   unit <- thresh$unit
 
+  if (is.null(thresh)) {
+    return("<i>No thresholds found</i>")
+  }
+
   thresh_text <- ""
 
   if (!is.na(thresh_min) && !is.na(thresh_max)) {

@@ -35,7 +35,23 @@ mod_graph_trend_ui <- function(id) {
           )
         ),
         # * Thresholds ----
-        htmlOutput(ns("caption"), inline = TRUE)
+        span(
+          h3("Thresholds"),
+          bslib::popover(
+            bsicons::bs_icon("info-circle", title = "About Thresholds"),
+            HTML(
+              paste(
+                "Simplified, site specific thresholds are shown in order",
+                "to provide context for the data. These thresholds may not",
+                "match the latest regulatory standards. For up to date,",
+                "official information, please visit <a ",
+                "href='https://mywaterway.epa.gov/' target='_blank' ",
+                "rel='noopener noreferrer'>How's My Waterway?</a>"
+              )
+            )
+          )
+        ),
+        htmlOutput(ns("thresh_values"), inline = TRUE)
       ),
       # * No data message ----
       tabPanelBody(
@@ -140,26 +156,10 @@ mod_graph_trend_server <- function(
     })
 
     # Caption ----
-    thresh_desc <- reactive({
-      if (is.null(thresh())) {
-        return(NULL)
-      }
-
-      thresh <- thresh_text(thresh())
-      paste(
-        "<h3>Thresholds</h3><p>Simplified, site specific thresholds are",
-        "included to provide context for the data. These thresholds may not",
-        "match the latest regulatory standards. For more information on the",
-        "state of the watershed, see <a href='https://mywaterway.epa.gov/'",
-        "target='_blank' rel='noopener noreferrer'>How's My Waterway?</a></p>",
-        thresh
-      )
+    output$thresh_values <- renderUI({
+      HTML(thresh_text(thresh()))
     }) |>
-      bindEvent(thresh())
-
-    output$caption <- renderUI({
-      HTML(thresh_desc())
-    })
+      bindCache(thresh())
 
     # Table ----
     fig_header <- reactive({

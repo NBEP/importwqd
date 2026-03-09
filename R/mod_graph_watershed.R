@@ -121,7 +121,8 @@ mod_graph_watershed_server <- function(id, df, trendline = TRUE) {
 
     output$fig_title <- renderUI({
       HTML(fig_header())
-    })
+    }) |>
+      bindCache(fig_header())
 
     output$table <- reactable::renderReactable({
       graph_table(df(), "Site_Name")

@@ -33,6 +33,7 @@
 #' @importFrom shiny req
 #' @importFrom shiny showNotification
 #' @importFrom shiny sliderInput
+#' @importFrom shiny span
 #' @importFrom shiny tabPanel
 #' @importFrom shiny tabPanelBody
 #' @importFrom shiny tabsetPanel

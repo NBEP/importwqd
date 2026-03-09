@@ -238,8 +238,7 @@ mod_map_server <- function(
       }
 
       map
-    }) |>
-      bindCache(map_bounds, shp_river, shp_watershed)
+    })
 
     # * Add sites ----
     observe({

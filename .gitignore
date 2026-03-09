@@ -9,3 +9,4 @@ data-raw/05_add_extra_data.R
 data-raw/00_dev.R
 # {shinytest2}: Ignore new debug snapshots for `$expect_values()`
 *_.new.png
+R/app.R

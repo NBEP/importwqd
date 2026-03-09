@@ -52,7 +52,8 @@ mod_report_server <- function(id, in_var, df_raw, org_name = "") {
       HTML(
         paste0("<h2>Report Card (", in_var$year(), ")</h2>")
       )
-    })
+    }) |>
+      bindCache(in_var$year())
 
     # Define variables -----
     val <- reactiveValues(

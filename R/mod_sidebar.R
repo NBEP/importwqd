@@ -326,10 +326,10 @@ mod_sidebar_server <- function(
         }),
         param_all = reactive({
           input$select_param_download
-        }), # used for download
+        }),
         param_n = reactive({
           input$select_param_n
-        }), # used for map, graph
+        }),
         depth_n = reactive({
           input$select_depth_n
         }),
