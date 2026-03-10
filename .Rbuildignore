@@ -7,3 +7,5 @@
 ^README\.Rmd$
 ^\.github$
 _\.new\.png$
+R/app.R
+app.R

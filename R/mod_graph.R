@@ -300,7 +300,9 @@ mod_graph_server <- function(id, in_var) {
           .data$Parameter == !!param,
         )
 
-      if (!grepl("depth|height", param)) {
+      if (grepl("depth|height", param)) {
+        dat <- dplyr::mutate(dat, "Depth" = "N/A")
+      } else {
         dat <- dplyr::filter(dat, .data$Depth %in% !!depth)
       }
 

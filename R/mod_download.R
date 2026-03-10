@@ -34,6 +34,17 @@ mod_download_server <- function(id, sites, results, in_var) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Toggle button ----
+    shinyjs::disable("dl")
+
+    observe({
+      if (length(in_var$sites_all() > 0)) {
+        shinyjs::enable("dl")
+      } else {
+        shinyjs::disable("dl")
+      }
+    })
+
     # Download ----
     output$dl <- downloadHandler(
       filename = function() {

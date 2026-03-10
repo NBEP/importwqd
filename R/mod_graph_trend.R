@@ -36,17 +36,19 @@ mod_graph_trend_ui <- function(id) {
         ),
         # * Thresholds ----
         span(
-          h3("Thresholds"),
-          bslib::popover(
-            bsicons::bs_icon("info-circle", title = "About Thresholds"),
-            HTML(
-              paste(
-                "Simplified, site specific thresholds are shown in order",
-                "to provide context for the data. These thresholds may not",
-                "match the latest regulatory standards. For up to date,",
-                "official information, please visit <a ",
-                "href='https://mywaterway.epa.gov/' target='_blank' ",
-                "rel='noopener noreferrer'>How's My Waterway?</a>"
+          h3(
+            "Thresholds",
+            bslib::popover(
+              bsicons::bs_icon("info-circle", title = "Thresholds"),
+              HTML(
+                paste(
+                  "Simplified, site specific thresholds are shown in order",
+                  "to provide context for the data. These thresholds may not",
+                  "match the latest regulatory standards. For up to date,",
+                  "official information, please visit <a ",
+                  "href='https://mywaterway.epa.gov/' target='_blank' ",
+                  "rel='noopener noreferrer'>How's My Waterway?</a>"
+                )
               )
             )
           )
