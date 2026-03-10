@@ -1,1 +1,0 @@
-globalVariables("dat_thresholds")

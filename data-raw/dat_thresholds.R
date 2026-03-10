@@ -19,4 +19,4 @@ df_epa <- readr::read_csv(
   format_thresholds()
 
 dat_thresholds <- dplyr::bind_rows(df_state, df_epa)
-usethis::use_data(dat_thresholds, overwrite = TRUE)
+usethis::use_data(dat_thresholds, internal = TRUE, overwrite = TRUE)

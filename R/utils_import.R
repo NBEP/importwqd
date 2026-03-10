@@ -162,8 +162,8 @@ drop_uniform_col <- function(.data, col_name, include_na = TRUE) {
 #' each parameter uses the same units as those used in `result_data`. Helper
 #' function for `format_results()`.
 #'
-#' @param .data Dataframe
-#' @param result_data Dataframe containing result data.
+#' @param .data Dataframe containing thresholds
+#' @param result_data Dataframe containing result data
 #'
 #' @returns Updated dataframe. Unit and threshold values will be updated to
 #' match the units used in `result_data`.
