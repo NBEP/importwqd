@@ -306,7 +306,6 @@ format_results <- function(.data, sites, thresholds = NULL) {
   dat <- dat |>
     dplyr::select(dplyr::any_of(field_keep)) |>
     drop_uniform_col("Depth_Category", include_na = FALSE) |>
-    drop_uniform_col("Group") |>
     dplyr::rename("Unit" = "Result_Unit") |>
     dplyr::mutate(
       "Unit" = dplyr::if_else(

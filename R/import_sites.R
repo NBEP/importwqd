@@ -91,23 +91,26 @@ qaqc_sites <- function(.data, state = NA) {
     wqformat::col_to_numeric("Max_Surface_Depth_m", silent = FALSE) |>
     wqformat::col_to_numeric("Max_Midwater_Depth_m", silent = FALSE) |>
     wqformat::col_to_numeric("Max_Depth_m", silent = FALSE) |>
-    dplyr::mutate(
-      "State" = dplyr::if_else(
-        is.na(.data$State),
-        state,
-        .data$State
-      )
-    ) |>
-    wqformat::state_to_abb("State") |>
     dplyr::mutate("Site_Name" = make.unique(.data$Site_Name, sep = " "))
+
+  if (!is.na(state) && !is.null(state)) {
+    dat <- dat |>
+      dplyr::mutate(
+        "State" = dplyr::if_else(
+          is.na(.data$State), !!state, .data$State
+        )
+      )
+  }
+
+  dat <- wqformat::state_to_abb(dat, "State")
 
   # Check - illogical values
   chk <- is.na(dat$Max_Surface_Depth_m) | is.na(dat$Max_Midwater_Depth_m) |
-    dat$Max_Surface_Depth_m < dat$Max_Midwater_Depth_m
+    (dat$Max_Surface_Depth_m < dat$Max_Midwater_Depth_m)
   chk2 <- is.na(dat$Max_Midwater_Depth_m) | is.na(dat$Max_Depth_m) |
-    dat$Max_Midwater_Depth_m < dat$Max_Depth_m
+    (dat$Max_Midwater_Depth_m < dat$Max_Depth_m)
   chk3 <- is.na(dat$Max_Surface_Depth_m) | is.na(dat$Max_Depth_m) |
-    dat$Max_Surface_Depth_m < dat$Max_Depth_m
+    (dat$Max_Surface_Depth_m < dat$Max_Depth_m)
   chk <- chk & chk2 & chk3
   if (any(!chk)) {
     stop(

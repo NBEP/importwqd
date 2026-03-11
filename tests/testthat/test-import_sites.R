@@ -1,4 +1,4 @@
-# Check qaqc_sites ----
+# Check prep_sites ----
 test_that("prep_sites works", {
   df_in <- tst$sites_raw
   colnames(df_in) <- c(
