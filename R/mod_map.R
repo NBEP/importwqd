@@ -57,6 +57,12 @@ mod_map_server <- function(
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Update tab ----
+    observe({
+      updateTabsetPanel(inputId = "tabset", selected = "Map")
+    }) |>
+      bindEvent(selected_tab())
+
     # Set title ----
     output$title <- renderText({
       paste0(in_var$param_n(), " (", in_var$year(), ")")
