@@ -171,7 +171,7 @@ mod_graph_server <- function(id, in_var) {
           .data$Parameter == !!param
         )
 
-      chk <- grepl("depth|height", param)
+      chk <- grepl("depth|height", param, ignore.case = TRUE)
       if ("Depth" %in% colnames(dat) & !chk) {
         depth <- in_var$depth_n()
         dat <- dplyr::filter(dat, .data$Depth == !!depth)
@@ -216,7 +216,7 @@ mod_graph_server <- function(id, in_var) {
           .data$Parameter == !!param
         )
 
-      chk <- grepl("depth|height", param)
+      chk <- grepl("depth|height", param, ignore.case = TRUE)
       if ("Depth" %in% colnames(dat) & !chk) {
         depth <- in_var$depth_n()
         dat <- dplyr::filter(dat, .data$Depth == !!depth)
@@ -257,7 +257,7 @@ mod_graph_server <- function(id, in_var) {
           .data$Parameter == !!param
         )
 
-      chk <- grepl("depth|height", param)
+      chk <- grepl("depth|height", param, ignore.case = TRUE)
       if ("Depth" %in% colnames(dat) & !chk) {
         depth <- in_var$depth_n()
         dat <- dplyr::filter(dat, .data$Depth == !!depth)
@@ -300,7 +300,7 @@ mod_graph_server <- function(id, in_var) {
           .data$Parameter == !!param,
         )
 
-      if (grepl("depth|height", param)) {
+      if (grepl("depth|height", param, ignore.case = TRUE)) {
         dat <- dplyr::mutate(dat, "Depth" = "N/A")
       } else {
         dat <- dplyr::filter(dat, .data$Depth %in% !!depth)
@@ -345,7 +345,8 @@ mod_graph_server <- function(id, in_var) {
         depth <- in_var$depth_n()
         dat <- dat |>
           dplyr::filter(
-            grepl("depth|height", .data$Parameter) | .data$Depth == !!depth
+            grepl("depth|height", .data$Parameter, ignore.case = TRUE) |
+              .data$Depth == !!depth
           )
       }
 
