@@ -77,6 +77,7 @@ qaqc_sites <- function(.data, state = NA) {
 
   # Check - missing values in optional columns?
   field_check <- intersect(field_optional, colnames(.data))
+  field_check <- setdiff(field_check, empty_col)
   for (field in field_check) {
     check_val_missing(.data, field, is_stop = FALSE)
   }
