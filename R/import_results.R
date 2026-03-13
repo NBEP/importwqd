@@ -233,9 +233,18 @@ format_results <- function(.data, sites, thresholds = NULL) {
   dat <- .data |>
     dplyr::select(dplyr::any_of(keep_col)) |>
     dplyr::filter(.data$Qualifier %in% keep_qual) |>
-    dplyr::filter(
-      !grepl("quality control", .data$Activity_Type, ignore.case = TRUE)
-    )
+    dplyr::mutate(
+      "temp_filter" = dplyr::case_when(
+        grepl("field replicate", .data$Activity_Type, ignore.case = TRUE) ~ 1,
+        grepl("quality control", .data$Activity_Type, ignore.case = TRUE) ~ 0,
+        grepl("negative control", .data$Activity_Type, ignore.case = TRUE) ~ 0,
+        grepl("positive control", .data$Activity_Type, ignore.case = TRUE) ~ 0,
+        grepl("lab", .data$Activity_Type, ignore.case = TRUE) ~ 0,
+        TRUE ~ 1
+      )
+    ) |>
+    dplyr::filter(.data$temp_filter == 1) |>
+    dplyr::select(!"temp_filter")
 
   # Update nondetect, overdetect values
   chk <- is.na(dat$Qualifier)
