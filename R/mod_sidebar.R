@@ -244,7 +244,7 @@ mod_sidebar_server <- function(
         dat <- dplyr::filter(dat, !is.na(.data$score_num))
       }
 
-      chk <- isTruthy(depth) & !grepl("depth|height", tolower(param))
+      chk <- isTruthy(depth) & !grepl("depth|height", param, ignore.case = TRUE)
       if (chk) {
         dat <- dplyr::filter(dat, .data$Depth %in% !!depth)
       }

@@ -301,7 +301,7 @@ add_depth_category <- function(.data, df_sites) {
   dplyr::left_join(dat, df_sites, by = "Site_ID", keep = FALSE) |>
     dplyr::mutate(
       "Depth_Category" = dplyr::case_when(
-        grepl("depth|height", tolower(.data$Parameter)) ~ NA,
+        grepl("depth|height", .data$Parameter, ignore.case = TRUE) ~ NA,
         !is.na(.data$Depth_Category) ~ .data$Depth_Category,
         is.na(.data$Depth) | is.na(.data$Depth_Unit) |
           .data$Depth_Unit != "m" ~ NA,

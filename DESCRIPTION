@@ -9,8 +9,8 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Description: importwqd is a helper package for WQdashboard that contains
+  functions and modules used to import and display water quality data. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

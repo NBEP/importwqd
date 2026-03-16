@@ -336,7 +336,8 @@ format_results <- function(.data, sites, thresholds = NULL) {
       dplyr::rename("Depth" = "Depth_Category") |>
       dplyr::mutate(
         "Description" = dplyr::case_when(
-          grepl("depth|height", .data$Parameter) ~ .data$Description,
+          grepl("depth|height", .data$Parameter, ignore.case = TRUE) ~
+            .data$Description,
           is.na(.data$Depth) ~ paste0(.data$Description, "<br>Depth: -"),
           TRUE ~ paste0(.data$Description, "<br>Depth: ", .data$Depth)
         )
@@ -450,18 +451,15 @@ score_results <- function(.data, sites) {
       dplyr::select("Site_ID", "Year", "Parameter", "Depth") |>
       unique()
 
-    depth <- unique(dat$Depth)
-    depth <- depth[!is.na(depth)]
-
     df_all <- expand.grid(
       Site_ID = unique(dat$Site_ID),
       Year = unique(dat$Year),
       Parameter = unique(dat$Parameter),
-      Depth = depth
+      Depth = unique_na(dat$Depth)
     ) |>
       dplyr::mutate(
         "Depth" = dplyr::if_else(
-          grepl("depth|height", tolower(.data$Parameter)),
+          grepl("depth|height", .data$Parameter, ignore.case = TRUE),
           NA,
           .data$Depth
         )
@@ -673,16 +671,16 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
 
   if (!is.null(watershed)) {
     loc_choices <- c(loc_choices, "By Watershed" = "watershed")
-  } else if (is.null(loc_choices)) {
-    loc_choices <- "blank"
-    loc_tab <- "blank"
   }
 
-  if (length(loc_choices) > 1) {
+  if (is.null(loc_choices)) {
+    loc_choices <- "blank"
+    loc_tab <- "blank"
+  } else if (length(loc_choices) > 1) {
     loc_tab <- "toggle"
   }
 
-  # Define paramater variables
+  # Define parameter variables
   param_short <- df_score |>
     dplyr::filter(
       !.data$score_str %in% c("No Data Available", "No Threshold Established")
@@ -697,7 +695,6 @@ sidebar_var <- function(df_sites, df_data, df_score, df_cat = NULL) {
   depth <- NULL
   if ("Depth" %in% colnames(df_data)) {
     depth <- sort_depth(df_data$Depth)
-    depth <- depth[!is.na(depth)]
   }
 
   list(

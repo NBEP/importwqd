@@ -112,6 +112,12 @@ test_that("sort_depth works", {
   # Edge case - weird depth values
   expect_equal(
     sort_depth(c("foo", NA, "Bottom", "Surface", "bar")),
-    c("Surface", "Bottom", "bar", "foo", NA)
+    c("Surface", "Bottom", "bar", "foo")
+  )
+
+  # Edge case - all NA
+  expect_equal(
+    sort_depth(c(NA, NA)),
+    NULL
   )
 })

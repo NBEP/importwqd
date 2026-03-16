@@ -120,13 +120,17 @@ filter_site_list <- function(sites, filter_col, filter_list) {
 #'
 #' @noRd
 sort_depth <- function(depth_list) {
-  depth_list <- unique(depth_list)
+  depth_list <- unique_na(depth_list)
+
+  if (all(is.na(depth_list))) {
+    return(NULL)
+  }
 
   default_depths <- c("Surface", "Midwater", "Near Bottom", "Bottom")
-  default_depths <- default_depths[default_depths %in% depth_list]
+  default_depths <- intersect(default_depths, depth_list)
 
   extra_depths <- setdiff(depth_list, default_depths)
-  extra_depths <- sort(extra_depths, na.last = TRUE)
+  extra_depths <- sort(extra_depths)
 
   c(default_depths, extra_depths)
 }
