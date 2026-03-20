@@ -6,7 +6,7 @@
 \alias{importwqd-package}
 \title{importwqd: Helper package for wqdashboard}
 \description{
-More about what it does (maybe more than one line). Continuation lines should be indented.
+importwqd is a helper package for WQdashboard that contains functions and modules used to import and display water quality data.
 }
 \author{
 \strong{Maintainer}: Mariel Sorlien \email{msorlien@nbep.org}

@@ -1,7 +1,7 @@
 Package: importwqd
 Type: Package
 Title: Helper package for wqdashboard
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
     person(
       "Mariel", "Sorlien",
@@ -21,6 +21,7 @@ Imports:
     dplyr,
     htmltools,
     htmlwidgets,
+    kableExtra,
     leaflegend,
     leaflet,
     lubridate,
