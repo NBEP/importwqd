@@ -1,7 +1,7 @@
 Package: importwqd
 Type: Package
 Title: Helper package for wqdashboard
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: c(
     person(
       "Mariel", "Sorlien",
@@ -32,6 +32,7 @@ Imports:
     readr,
     rlang,
     rvest,
+    sf,
     shiny,
     shinyjs,
     shinyWidgets,
@@ -44,7 +45,8 @@ Remotes:
     massbays-tech/wqformat
 Suggests:
     shinytest2,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    yaml
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
 Depends: 
