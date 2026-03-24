@@ -348,3 +348,32 @@ try_rename <- function(.data, col_name, df_var) {
   .data |>
     wqformat::update_var(col_name, df_var$Custom, df_var$wqdashboard)
 }
+
+#' Calculate geometric mean
+#'
+#' @description `geo_mean()` calculates the geometric mean.
+#'
+#' @param x Numeric list
+#' @param zero_sub Integer. Number to substitute for zero when calculating
+#' geometric mean. Default value 1.
+#'
+#' @return Geometric mean
+#'
+#' @noRd
+geo_mean <- function(x) {
+  chk <- x <= 0
+  if (all(chk)) {
+    return(0)
+  }
+
+  x[x <= 0] <- NA
+
+  zero_sub <- min(x, na.rm = TRUE) / 10
+  if (zero_sub > 1) {
+    zero_sub <- 1
+  }
+
+  x[is.na(x)] <- zero_sub
+
+  exp(mean(log(x)))
+}

@@ -117,7 +117,8 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
   }
 
   calc_list <- c(
-    "min", "minimum", "max", "maximum", "mean", "average", "median"
+    "min", "minimum", "max", "maximum", "mean", "average", "median",
+    "geometric mean"
   )
   wqformat::warn_invalid_var(dat, "Calculation", calc_list)
 

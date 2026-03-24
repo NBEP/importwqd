@@ -270,3 +270,24 @@ test_that("try_rename works", {
     regexp = "\tDid not find Col3"
   )
 })
+
+test_that("geo_mean works", {
+  expect_equal(
+    geo_mean(c(1, 2, 3, 4, 5)),
+    2.605171085
+  )
+
+  # Test with zero, negative values
+  expect_equal(
+    geo_mean(c(0, -1, -2)),
+    0
+  )
+  expect_equal(
+    geo_mean(c(-2, 1, 2)),
+    0.584803548
+  )
+  expect_equal(
+    geo_mean(c(0, 100, 200)),
+    27.1441762
+  )
+})
