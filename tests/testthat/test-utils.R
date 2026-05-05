@@ -7,6 +7,10 @@ test_that("pretty_number works", {
     pretty_number(0.00002342),
     0.000023
   )
+  expect_equal(
+    pretty_number(12345.12345),
+    "12,345.12"
+  )
 })
 
 test_that("pretty_unit works", {
