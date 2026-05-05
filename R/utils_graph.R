@@ -164,18 +164,12 @@ graph_style <- function(.data, fig_title, y_title, y_range) {
   .data |>
     plotly::config(
       displaylogo = FALSE,
+      displayModeBar = TRUE,
       modeBarButtonsToRemove = c(
         "sendDataToCloud",
-        "zoom2d",
-        "pan2d",
         "select2d",
         "lasso2d",
-        "autoScale2d",
-        "resetScale2d",
-        "zoomIn2d",
-        "zoomOut2d",
-        "hoverClosestCartesian",
-        "hoverCompareCartesian"
+        "autoScale2d"
       ),
       toImageButtonOptions = list(height = 400, width = 800)
     ) |>
@@ -184,7 +178,7 @@ graph_style <- function(.data, fig_title, y_title, y_range) {
       yaxis = list(
         title = y_title,
         rangemode = "tozero",
-        fixedrange = TRUE,
+        # fixedrange = TRUE,
         range = y_range,
         titlefont = list(size = 16),
         tickfont = list(size = 16),
@@ -195,7 +189,7 @@ graph_style <- function(.data, fig_title, y_title, y_range) {
       xaxis = list(
         title = "Date",
         rangemode = "tozero",
-        fixedrange = TRUE,
+        # fixedrange = TRUE,
         titlefont = list(size = 16),
         tickfont = list(size = 16),
         linecolor = "black",

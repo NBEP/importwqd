@@ -59,7 +59,7 @@ check_val_duplicate <- function(df, col_list, is_stop = TRUE) {
     if (is_stop == TRUE) {
       stop(msg, call. = FALSE)
     } else {
-      warning("\t", msg, call. = FALSE)
+      warning(msg, call. = FALSE)
     }
   }
 }

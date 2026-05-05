@@ -29,7 +29,7 @@ test_that("check_val_duplicate works", {
   )
   expect_warning(
     check_val_duplicate(df, "Col2", is_stop = FALSE),
-    regexp = "\tDuplicate values found for Col2: check rows 2, 3"
+    regexp = "Duplicate values found for Col2: check rows 2, 3"
   )
 
   # Check - multiple columns

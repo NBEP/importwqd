@@ -10,6 +10,9 @@
 mod_download_ui <- function(id) {
   ns <- NS(id)
   tagList(
+    # Enable javascript ----
+    shinyjs::useShinyjs(),
+    # UI ----
     downloadButton(
       ns("dl"),
       "Download Data",
