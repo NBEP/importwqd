@@ -94,9 +94,37 @@ test_that("qaqc_thresholds error messages", {
     )
   )
 
-  # Warnings
+  # Duplicate rows
+  df_in <- data.frame(
+    State = c("RI", "RI", "MA"),
+    Group = NA,
+    Depth_Category = NA,
+    Parameter = "Enterococcus",
+    Unit = c("cfu/100mL", "cfu/100mL", "MPN/100mL"),
+    Calculation = c("geometric mean", "90th percentile", "geometric mean"),
+    Threshold_Min = NA,
+    Threshold_Max = c(35, 1000, 35),
+    Excellent = NA,
+    Good = NA,
+    Fair = NA
+  )
+
   expect_warning(
-    suppressMessages(qaqc_thresholds(tst$threshold_raw))
+    suppressMessages(qaqc_thresholds(df_in)),
+    regexp = paste(
+      "Multiple thresholds detected for same location/parameter/depth.",
+      "Check rows: 1, 2"
+    )
+  )
+
+  df_in$State <- "RI"
+
+  expect_error(
+    suppressMessages(qaqc_thresholds(df_in)),
+    regexp = paste(
+      "Multiple thresholds detected for same location/parameter/depth.",
+      "Units must match. Check rows: 1, 2, 3"
+    )
   )
 })
 

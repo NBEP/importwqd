@@ -386,6 +386,7 @@ score_results <- function(.data, sites) {
       "score_mean" = mean(.data$Result),
       "score_median" = median(.data$Result),
       "score_geomean" = geo_mean(.data$Result),
+      "score_90p" = stats::quantile(.data$Result, .9),
       "Unit" = dplyr::last(.data$Unit),
       "score_typ" = dplyr::last(.data$Calculation),
       "Min" = dplyr::last(.data$Min),
@@ -407,7 +408,8 @@ score_results <- function(.data, sites) {
         .data$score_typ == "max" ~ .data$score_max,
         .data$score_typ == "min" ~ .data$score_min,
         .data$score_typ == "median" ~ .data$score_median,
-        .data$score_typ == "geometric mean" ~ .data$score_geomean,
+        .data$score_typ == "geomean" ~ .data$score_geomean,
+        .data$score_typ == "90p" ~ .data$score_90p,
         TRUE ~ .data$score_mean
       )
     ) |>
@@ -516,7 +518,8 @@ score_results <- function(.data, sites) {
         .data$score_typ == "max" ~ "Maximum",
         .data$score_typ == "median" ~ "Median",
         .data$score_typ == "mean" ~ "Average",
-        .data$score_typ == "geometric mean" ~ "Geometric Mean",
+        .data$score_typ == "geomean" ~ "Geometric Mean",
+        .data$score_typ == "90p" ~ "90th Percentile",
         TRUE ~ .data$score_typ
       )
     ) |>

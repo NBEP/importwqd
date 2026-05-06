@@ -20,7 +20,7 @@ pretty_number <- function(x) {
     return(x)
   }
 
-  prettyNum(x, big.mark=",", preserve.width="none")
+  prettyNum(x, big.mark = ",", preserve.width = "none")
 }
 
 #' Concatentate paramter, unit

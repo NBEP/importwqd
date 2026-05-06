@@ -91,8 +91,6 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
     )
   }
 
-  check_val_duplicate(dat, c("State", "Group", "Site_ID", "Parameter"))
-
   chk <- is.na(dat$Excellent) | is.na(dat$Good) | is.na(dat$Fair)
   chk <- any(chk) & is.na(dat$Threshold_Min) & is.na(dat$Threshold_Max)
   if (any(chk)) {
@@ -118,16 +116,45 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
 
   calc_list <- c(
     "min", "minimum", "max", "maximum", "mean", "average", "median",
-    "geometric mean"
+    "geomean", "geometric mean", "90p", "90th percentile"
   )
   wqformat::warn_invalid_var(dat, "Calculation", calc_list)
 
-  # Check - missing data (warning)
-  chk <- is.na(.data$State)
-  if (!all(chk)) {
-    check_val_missing(dat, "State", is_stop = FALSE)
+  # Check - duplicate location/parameter/depth combo
+  col_list <- c("State", "Group", "Site_ID", "Parameter", "Depth_Category")
+  chk <- dat |>
+    dplyr::select(dplyr::all_of(col_list)) |>
+    duplicated()
+
+  if (any(chk)) {
+    msg <- "Multiple thresholds detected for same location/parameter/depth."
+
+    dup2 <- dat |>
+      dplyr::select(dplyr::all_of(col_list)) |>
+      duplicated(fromLast = TRUE)
+
+    dup_rws <- c(which(chk), which(dup2)) |>
+      unique() |>
+      sort()
+    dup_rws <- paste(dup_rws, collapse = ", ")
+
+    chk <- dat |>
+      dplyr::group_by(
+        .data$State, .data$Group, .data$Site_ID, .data$Parameter,
+        .data$Depth_Category
+      ) |>
+      dplyr::summarise(
+        n_unit = dplyr::n_distinct(.data$Unit)
+      )
+
+    if (max(chk$n_unit) > 1) {
+      stop(msg, " Units must match. Check rows: ", dup_rws)
+    }
+
+    warning(msg, " Check rows: ", dup_rws)
   }
 
+  # Check - missing data (warning)
   chk <- is.na(.data$Calculation)
   if (!all(chk)) {
     check_val_missing(dat, "Calculation", is_stop = FALSE)
@@ -150,6 +177,7 @@ format_thresholds <- function(.data) {
   message("Formatting thresholds...")
 
   .data |>
+    unique() |>
     dplyr::rename(
       "Site" = "Site_ID",
       "Depth" = "Depth_Category",
@@ -162,6 +190,8 @@ format_thresholds <- function(.data) {
         .data$Calculation %in% c(NA, "average") ~ "mean",
         .data$Calculation == "minimum" ~ "min",
         .data$Calculation == "maximum" ~ "max",
+        .data$Calculation == "geometric mean" ~ "geomean",
+        .data$Calculation == "90th percentile" ~ "90p",
         TRUE ~ .data$Calculation
       )
     ) |>
