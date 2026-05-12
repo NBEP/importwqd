@@ -19,6 +19,6 @@ columns "wqdashboard" and "Custom".}
 Updated dataframe
 }
 \description{
-`prep_trhesholds()` prepares site data for use in `wqdashboard`
+`prep_thresholds()` prepares site data for use in `wqdashboard`
 by updating parameter and unit names.
 }

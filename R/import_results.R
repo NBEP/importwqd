@@ -277,11 +277,16 @@ format_results <- function(.data, sites, thresholds = NULL) {
     unique()
   df_temp <- dplyr::left_join(df_temp, df_sites)
 
-  if (is.null(thresholds)) {
-    df_thresh <- update_threshold_units(dat_thresholds, dat)
-  } else {
-    df_thresh <- dplyr::bind_rows(thresholds, dat_thresholds) |>
-      update_threshold_units(dat)
+  df_thresh <- dat_thresholds |>
+    update_threshold_units(dat) |>
+    combine_thresholds()
+
+  if (!is.null(thresholds)) {
+    thresholds <- thresholds |>
+      update_threshold_units(dat) |>
+      combine_thresholds()
+
+    df_thresh <- dplyr::bind_rows(thresholds, df_thresh)
   }
 
   df_temp <- df_temp |>
@@ -296,7 +301,12 @@ format_results <- function(.data, sites, thresholds = NULL) {
       )
     ) |>
     tidyr::unnest_wider("thresh_temp") |>
-    dplyr::select(!c("State", "Group"))
+    dplyr::select(!c("State", "Group")) |>
+    wqformat::col_to_numeric("Min") |>
+    wqformat::col_to_numeric("Max") |>
+    wqformat::col_to_numeric("Excellent") |>
+    wqformat::col_to_numeric("Good") |>
+    wqformat::col_to_numeric("Fair")
 
   dat <- dplyr::left_join(
     dat, df_temp,
@@ -375,7 +385,7 @@ score_results <- function(.data, sites) {
   message("Formatting data scores...")
 
   message("\tGrouping data")
-  group_col <- c("Site_ID", "Parameter", "Depth", "Year")
+  group_col <- c("Site_ID", "Parameter", "Unit", "Depth", "Year")
   group_col <- intersect(colnames(.data), group_col)
 
   dat <- .data |>
@@ -387,8 +397,7 @@ score_results <- function(.data, sites) {
       "score_median" = median(.data$Result),
       "score_geomean" = geo_mean(.data$Result),
       "score_90p" = stats::quantile(.data$Result, .9),
-      "Unit" = dplyr::last(.data$Unit),
-      "score_typ" = dplyr::last(.data$Calculation),
+      "Calculation" = dplyr::last(.data$Calculation),
       "Min" = dplyr::last(.data$Min),
       "Max" = dplyr::last(.data$Max),
       "Excellent" = dplyr::last(.data$Excellent),
@@ -396,48 +405,28 @@ score_results <- function(.data, sites) {
       "Fair" = dplyr::last(.data$Fair),
       "Best" = dplyr::last(.data$Best),
       .groups = "drop"
-    ) |>
-    data.frame() # fix test error
+    )
 
-  message("\tCalculating score")
+  message("\tCalculating scores")
   dat <- dat |>
     dplyr::mutate(
-      "score_num" = dplyr::case_when(
-        is.na(.data$score_typ) | .data$score_typ == "mean" ~
-          .data$score_mean,
-        .data$score_typ == "max" ~ .data$score_max,
-        .data$score_typ == "min" ~ .data$score_min,
-        .data$score_typ == "median" ~ .data$score_median,
-        .data$score_typ == "geomean" ~ .data$score_geomean,
-        .data$score_typ == "90p" ~ .data$score_90p,
-        TRUE ~ .data$score_mean
+      "score_temp" = mapply(
+        function(score_max, score_min, score_mean, score_median, score_geomean,
+                 score_90p, calculation, thresh_min, thresh_max,
+                 thresh_excellent, thresh_good, thresh_fair, thresh_best) {
+          calculate_score(
+            score_max, score_min, score_mean, score_median, score_geomean,
+            score_90p, calculation, thresh_min, thresh_max, thresh_excellent,
+            thresh_good, thresh_fair, thresh_best
+          )
+        },
+        .data$score_max, .data$score_min, .data$score_mean, .data$score_median,
+        .data$score_geomean, .data$score_90p, .data$Calculation, .data$Min,
+        .data$Max, .data$Excellent, .data$Good, .data$Fair, .data$Best,
+        SIMPLIFY = FALSE
       )
     ) |>
-    dplyr::mutate(
-      "score_str" = dplyr::case_when(
-        is.na(.data$Best) ~ NA,
-        .data$Best == "high" & .data$score_num >= .data$Excellent ~ "Excellent",
-        .data$Best == "high" & .data$score_num >= .data$Good ~ "Good",
-        .data$Best == "high" & .data$score_num >= .data$Fair ~ "Fair",
-        .data$Best == "high" ~ "Poor",
-        .data$Best == "low" & .data$score_num <= .data$Excellent ~ "Excellent",
-        .data$Best == "low" & .data$score_num <= .data$Good ~ "Good",
-        .data$Best == "low" & .data$score_num <= .data$Fair ~ "Fair",
-        .data$Best == "low" ~ "Poor",
-        TRUE ~ NA
-      )
-    ) |>
-    dplyr::mutate(
-      "score_str" = dplyr::case_when(
-        !is.na(.data$score_str) ~ .data$score_str,
-        is.na(.data$Min) & is.na(.data$Max) ~ NA,
-        !is.na(.data$Min) & .data$score_num < .data$Min ~
-          "Does Not Meet Criteria",
-        !is.na(.data$Max) & .data$score_num > .data$Max ~
-          "Does Not Meet Criteria",
-        TRUE ~ "Meets Criteria"
-      )
-    ) |>
+    tidyr::unnest_wider("score_temp") |>
     dplyr::select(
       dplyr::any_of(
         c(
@@ -445,7 +434,8 @@ score_results <- function(.data, sites) {
           "score_num", "score_str"
         )
       )
-    )
+    ) |>
+    data.frame() # Fix failing check
 
   message("\tFormatting data")
 
@@ -511,18 +501,6 @@ score_results <- function(.data, sites) {
 
   dat <- dat |>
     dplyr::select(dplyr::any_of(col_order)) |>
-    dplyr::mutate("score_num" = pretty_number(.data$score_num)) |>
-    dplyr::mutate(
-      "score_typ" = dplyr::case_when(
-        .data$score_typ == "min" ~ "Minimum",
-        .data$score_typ == "max" ~ "Maximum",
-        .data$score_typ == "median" ~ "Median",
-        .data$score_typ == "mean" ~ "Average",
-        .data$score_typ == "geomean" ~ "Geometric Mean",
-        .data$score_typ == "90p" ~ "90th Percentile",
-        TRUE ~ .data$score_typ
-      )
-    ) |>
     dplyr::mutate(
       "score_str" = dplyr::case_when(
         !is.na(.data$score_str) ~ .data$score_str,
@@ -530,11 +508,6 @@ score_results <- function(.data, sites) {
         TRUE ~ "No Data Available"
       )
     ) |>
-    # dplyr::mutate(
-    #   "Parameter" = dplyr::if_else(
-    #     is.na(.data$Parameter), "-", .data$Parameter
-    #   )
-    # ) |>
     dplyr::arrange(.data$Site_Name, .data$Parameter) |>
     dplyr::mutate("popup_loc" = paste0("<b>", .data$Site_Name, "</b>"))
 

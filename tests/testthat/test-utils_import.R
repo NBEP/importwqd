@@ -207,6 +207,47 @@ test_that("update_threshold_units error messages", {
   )
 })
 
+# Resume solo tests ----
+
+test_that("combine_thresholds works", {
+  df_out <- data.frame(
+    State = c("MA", "RI", "RI", "RI", "RI", NA),
+    Group = c("Saltwater", "Coldwater", "Saltwater", "Warmwater", NA, NA),
+    Site = NA,
+    Depth = c(NA, NA, "Surface", NA, NA, NA),
+    Parameter = c(
+      "pH", "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
+      "Enterococcus", "Nitrate"
+    ),
+    Unit = c("None", "mg/L", "mg/L", "mg/L", "cfu/100mL", "mg/L"),
+    Calculation = c("mean", "min", "min", "min", "geomean, max", "max"),
+    Min = c(6.5, 5, 4.8, 5, "NA, NA", NA),
+    Max = c(8.5, NA, NA, NA, "54, 61", 10),
+    Excellent = c(NA, 8, NA, NA, "NA, NA", NA),
+    Good = c(NA, 6.5, NA, NA, "NA, NA", NA),
+    Fair = c(NA, 5, NA, NA, "NA, NA", NA),
+    Best = c(NA, "high", NA, NA, "NA, NA", NA)
+  )
+
+  expect_equal(
+    combine_thresholds(tst$threshold_final),
+    df_out
+  )
+
+  # When no duplicates
+  df_out <- tst$threshold_final[1:5, ]
+  df_out$Min <- as.character(df_out$Min)
+  df_out$Max <- as.character(df_out$Max)
+  df_out$Excellent <- as.character(df_out$Excellent)
+  df_out$Good <- as.character(df_out$Good)
+  df_out$Fair <- as.character(df_out$Fair)
+
+  expect_equal(
+    combine_thresholds(tst$threshold_final[1:5, ]),
+    df_out
+  )
+})
+
 test_that("add_depth_category works", {
   df_in <- tst$data_raw
   df_in$Depth <- c(50, 1, 11, 12, 5)
@@ -289,5 +330,53 @@ test_that("geo_mean works", {
   expect_equal(
     geo_mean(c(0, 100, 200)),
     27.1441762
+  )
+})
+
+test_that("calculate_score works", {
+  # Simple
+  expect_equal(
+    calculate_score(
+      score_max = 1100, score_min = 1, score_mean = 35, score_median = 90,
+      score_geomean = 20, score_90p = 100, calculation = "geomean",
+      thresh_min = NA, thresh_max = 54, thresh_excellent = 35, thresh_good = 54,
+      thresh_fair = 54, thresh_best = "low"
+    ),
+    list(
+      score_typ = "Geometric Mean",
+      score_num = 20,
+      score_str = "Excellent"
+    )
+  )
+
+  # Complex
+  expect_equal(
+    calculate_score(
+      score_max = 1100, score_min = 1, score_mean = 35, score_median = 90,
+      score_geomean = 20, score_90p = 100, calculation = "geomean, 90p",
+      thresh_min = "NA, NA", thresh_max = "54, 1000",
+      thresh_excellent = "35, NA", thresh_good = "54, NA",
+      thresh_fair = "54, NA", thresh_best = "low, NA"
+    ),
+    list(
+      score_typ = "Geometric Mean, 90th Percentile",
+      score_num = "20, 100",
+      score_str = "Meets Criteria"
+    )
+  )
+
+  # No data
+  expect_equal(
+    calculate_score(
+      score_max = NA, score_min = NA, score_mean = NA, score_median = NA,
+      score_geomean = NA, score_90p = NA, calculation = "geomean",
+      thresh_min = NA, thresh_max = 54, thresh_excellent = 35, thresh_good = 54,
+      thresh_fair = 54, thresh_best = "low"
+    ),
+    list(
+      score_typ = "Geometric Mean",
+      score_num = NA_integer_,
+      score_str = NA_character_
+    )
   )
 })

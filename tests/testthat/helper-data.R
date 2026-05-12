@@ -39,56 +39,60 @@ tst <- list(
   ),
   # Thresholds ----
   threshold_raw = data.frame(
-    State = c("RI", "RI", "RI", "MA", NA),
-    Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA),
-    Depth_Category = c(NA, "Surface", NA, NA, NA),
+    State = c("RI", "RI", "RI", "MA", NA, "RI", "RI"),
+    Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA, NA, NA),
+    Depth_Category = c(NA, "Surface", NA, NA, NA, NA, NA),
     Parameter = c(
       "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
-      "pH", "Nitrate"
+      "pH", "Nitrate", "Enterococcus", "Enterococcus"
     ),
-    Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L"),
-    Calculation = c("minimum", "minimum", "minimum", "mean", "max"),
-    Threshold_Min = c(5, 4.8, 5, 6.5, NA),
-    Threshold_Max = c(NA, NA, NA, 8.5, 10),
-    Excellent = c(8, NA, NA, NA, NA),
-    Good = c(6.5, NA, NA, NA, NA),
-    Fair = c(5, NA, NA, NA, NA),
+    Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L", "cfu/100mL", "cfu/100mL"),
+    Calculation = c(
+      "minimum", "minimum", "min", "mean", "maximum", "geometric mean", "max"
+    ),
+    Threshold_Min = c(5, 4.8, 5, 6.5, NA, NA, NA),
+    Threshold_Max = c(NA, NA, NA, 8.5, 10, 54, 61),
+    Excellent = c(8, NA, NA, NA, NA, NA, NA),
+    Good = c(6.5, NA, NA, NA, NA, NA, NA),
+    Fair = c(5, NA, NA, NA, NA, NA, NA),
     Red_Herring = "foo"
   ),
   threshold_qaqc = data.frame(
-    State = c("RI", "RI", "RI", "MA", NA),
-    Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA),
+    State = c("RI", "RI", "RI", "MA", NA, "RI", "RI"),
+    Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA, NA, NA),
     Site_ID = NA,
-    Depth_Category = c(NA, "Surface", NA, NA, NA),
+    Depth_Category = c(NA, "Surface", NA, NA, NA, NA, NA),
     Parameter = c(
       "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
-      "pH", "Nitrate"
+      "pH", "Nitrate", "Enterococcus", "Enterococcus"
     ),
-    Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L"),
-    Calculation = c("minimum", "minimum", "minimum", "mean", "max"),
-    Threshold_Min = c(5, 4.8, 5, 6.5, NA),
-    Threshold_Max = c(NA, NA, NA, 8.5, 10),
-    Excellent = c(8, NA, NA, NA, NA),
-    Good = c(6.5, NA, NA, NA, NA),
-    Fair = c(5, NA, NA, NA, NA)
+    Unit = c("mg/L", "mg/L", "mg/L", "None", "mg/L", "cfu/100mL", "cfu/100mL"),
+    Calculation = c(
+      "minimum", "minimum", "min", "mean", "maximum", "geometric mean", "max"
+    ),
+    Threshold_Min = c(5, 4.8, 5, 6.5, NA, NA, NA),
+    Threshold_Max = c(NA, NA, NA, 8.5, 10, 54, 61),
+    Excellent = c(8, NA, NA, NA, NA, NA, NA),
+    Good = c(6.5, NA, NA, NA, NA, NA, NA),
+    Fair = c(5, NA, NA, NA, NA, NA, NA)
   ),
   threshold_final = data.frame(
-    State = c("MA", "RI", "RI", "RI", NA),
-    Group = c("Saltwater", "Coldwater", "Saltwater", "Warmwater", NA),
+    State = c("MA", "RI", "RI", "RI", "RI", "RI", NA),
+    Group = c("Saltwater", "Coldwater", "Saltwater", "Warmwater", NA, NA, NA),
     Site = NA,
-    Depth = c(NA, NA, "Surface", NA, NA),
+    Depth = c(NA, NA, "Surface", NA, NA, NA, NA),
     Parameter = c(
-      "pH", "Dissolved oxygen", "Dissolved oxygen",
-      "Dissolved oxygen", "Nitrate"
+      "pH", "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
+      "Enterococcus", "Enterococcus", "Nitrate"
     ),
-    Unit = c("None", "mg/L", "mg/L", "mg/L", "mg/L"),
-    Calculation = c("mean", "min", "min", "min", "max"),
-    Min = c(6.5, 5, 4.8, 5, NA),
-    Max = c(8.5, NA, NA, NA, 10),
-    Excellent = c(NA, 8, NA, NA, NA),
-    Good = c(NA, 6.5, NA, NA, NA),
-    Fair = c(NA, 5, NA, NA, NA),
-    Best = c(NA, "high", NA, NA, NA)
+    Unit = c("None", "mg/L", "mg/L", "mg/L", "cfu/100mL", "cfu/100mL", "mg/L"),
+    Calculation = c("mean", "min", "min", "min", "geomean", "max", "max"),
+    Min = c(6.5, 5, 4.8, 5, NA, NA, NA),
+    Max = c(8.5, NA, NA, NA, 54, 61, 10),
+    Excellent = c(NA, 8, NA, NA, NA, NA, NA),
+    Good = c(NA, 6.5, NA, NA, NA, NA, NA),
+    Fair = c(NA, 5, NA, NA, NA, NA, NA),
+    Best = c(NA, "high", NA, NA, NA, NA, NA)
   ),
   # Data ----
   data_raw = data.frame(
@@ -169,7 +173,7 @@ tst <- list(
     Min = c(5, 5, 5, 5, NA),
     Max = NA_integer_,
     Excellent = c(8, 8, 8, 8, NA, 5, 5, 5, 5, NA),
-    Good = c(6.5, 6.5, 6.5, 6.5, NA, 5, 5, 5, 5, NA),
+    Good = c(5, 5, 5, 5, NA, 5, 5, 5, 5, NA),
     Fair = c(5, 5, 5, 5, NA, 3, 3, 3, 3, NA),
     Best = c("high", "high", "high", "high", NA),
     Month = c("June", "August", "May", "July", "July"),
@@ -269,6 +273,83 @@ tst <- list(
       "Site2, Excellent", "Site2, Excellent", "Site2, Excellent",
       "Site2, No data"
     )
+  ),
+  # Data 2 (multiple thresholds) ----
+  data2_raw = data.frame(
+    Site_ID = "001",
+    Activity_Type = "Field Msr/Obs",
+    Date = as.Date(c("2021-05-25", "2021-06-30", "2022-05-25", "2022-06-30")),
+    Depth = NA,
+    Depth_Unit = NA,
+    Depth_Category = "Surface",
+    Parameter = "Enterococcus",
+    Result = c(1, 100, 50, 50),
+    Result_Unit = "cfu/100mL",
+    Lower_Detection_Limit = NA,
+    Upper_Detection_Limit = NA,
+    Detection_Limit_Unit = NA,
+    Qualifier = NA
+  ),
+  data2_qaqc = data.frame(
+    Site_ID = "001",
+    Activity_Type = "Field Msr/Obs",
+    Date = as.Date(c("2021-05-25", "2021-06-30", "2022-05-25", "2022-06-30")),
+    Depth = NA_integer_,
+    Depth_Unit = "m",
+    Depth_Category = "Surface",
+    Parameter = "Enterococcus",
+    Result = c(1, 100, 50, 50),
+    Result_Unit = "cfu/100mL",
+    Lower_Detection_Limit = NA_integer_,
+    Upper_Detection_Limit = NA_integer_,
+    Detection_Limit_Unit = NA,
+    Qualifier = NA,
+    Year = c(2021, 2021, 2022, 2022)
+  ),
+  data2_final = data.frame(
+    Site_ID = "001",
+    Site_Name = "Site1",
+    Watershed = "Narragansett Bay",
+    Date = as.Date(c("2021-05-25", "2021-06-30", "2022-05-25", "2022-06-30")),
+    Year = c(2021, 2021, 2022, 2022),
+    Parameter = "Enterococcus",
+    Result = c(1, 100, 50, 50),
+    Unit = "cfu/100mL",
+    Calculation = "geomean, max",
+    Min = "NA, NA",
+    Max = "54, 61",
+    Excellent = "33, NA",
+    Good = "54, NA",
+    Fair = "54, NA",
+    Best = "low, NA",
+    Month = c("May", "June"),
+    Description = c(
+      "<b>Site1</b><br>Date: May 25, 2021<br>Enterococcus: 1 cfu/100mL",
+      "<b>Site1</b><br>Date: June 30, 2021<br>Enterococcus: 100 cfu/100mL",
+      "<b>Site1</b><br>Date: May 25, 2022<br>Enterococcus: 50 cfu/100mL",
+      "<b>Site1</b><br>Date: June 30, 2022<br>Enterococcus: 50 cfu/100mL"
+    )
+  ),
+  data2_score = data.frame(
+    Year = c(2021, 2022),
+    Site_Name = "Site1",
+    Site_ID = "001",
+    Town = "Providence, RI",
+    Watershed = "Narragansett Bay",
+    Group = "Coldwater",
+    Parameter = "Enterococcus",
+    Unit = "cfu/100mL",
+    score_typ = "Geometric Mean, Maximum",
+    score_num = c("10, 100", "50, 50"),
+    score_str = c("Does Not Meet Criteria", "Meets Criteria"),
+    Latitude = 41.83,
+    Longitude = -71.41,
+    popup_loc = "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
+    popup_score = c(
+      "<br>Geometric Mean, Maximum: 10, 100 cfu/100mL<br>Score: Does Not Meet Criteria",
+      "<br>Geometric Mean, Maximum: 50, 50 cfu/100mL<br>Score: Meets Criteria"
+    ),
+    alt = c("Site1, Does Not Meet Criteria", "Site1, Meets Criteria")
   ),
   # Categorical data ----
   cat_raw = data.frame(

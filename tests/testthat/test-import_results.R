@@ -69,6 +69,14 @@ test_that("qaqc_results works", {
     ),
     tst$data_qaqc
   )
+
+  # Complex - multiple thresholds
+  expect_equal(
+    suppressMessages(
+      qaqc_results(tst$data2_raw, tst$sites_qaqc)
+    ),
+    tst$data2_qaqc
+  )
 })
 
 test_that("qaqc_results error messages", {
@@ -161,7 +169,48 @@ test_that("format_results works", {
     tst$data_final
   )
 
-  # Edge case - no matching thresholds
+  # Complex - multiple thresholds
+  expect_equal(
+    suppressMessages(
+      format_results(tst$data2_qaqc, tst$sites_qaqc)
+    ),
+    tst$data2_final
+  )
+
+  # Custom thresholds
+  df_thresh <- data.frame(
+    State = NA,
+    Group = NA,
+    Site = NA,
+    Depth = NA,
+    Parameter = "Enterococcus",
+    Unit = "cfu/100mL",
+    Calculation = "geomean",
+    Min = NA,
+    Max = 54,
+    Excellent = 33,
+    Good = 54,
+    Fair = 54,
+    Best = "low"
+  )
+
+  df_out <- tst$data2_final
+  df_out$Calculation <- "geomean"
+  df_out$Min <- NA_integer_
+  df_out$Max <- 54
+  df_out$Excellent <- 33
+  df_out$Good <- 54
+  df_out$Fair <- 54
+  df_out$Best <- "low"
+
+  expect_equal(
+    suppressMessages(
+      format_results(tst$data2_qaqc, tst$sites_qaqc, df_thresh)
+    ),
+    df_out
+  )
+
+  # Blank custom thresholds
   df_thresh <- data.frame(
     State = NA,
     Group = NA,
@@ -193,6 +242,14 @@ test_that("score_results works", {
       score_results(tst$data_final, tst$sites_final)
     ),
     tst$data_score
+  )
+
+  # Complex - multiple thresholds
+  expect_equal(
+    suppressMessages(
+      score_results(tst$data2_final, tst$sites_final)
+    ),
+    tst$data2_score
   )
 
   # Test edge case - no depth, town (only 1 param for my sanity)

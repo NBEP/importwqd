@@ -63,3 +63,28 @@ unique_na <- function(x) {
 
   x
 }
+
+#' Split string
+#'
+#' @description `split_string()` is a wrapper for `stringr::str_split_1()` that
+#' also sets "NA" values to `NA`.
+#'
+#' @param x String to split.
+#' @param delim String. Pattern used to split the string. Default value `,`.
+#' @param as_integer Boolean. If `TRUE`, converts all values to integer. Values
+#' that can not be converted to integers become `NA`. Default `FALSE`.
+#'
+#' @return A character vector.
+#'
+#' @noRd
+split_string <- function(x, delim = ",", as_integer = FALSE) {
+  x <- stringr::str_split_1(x, delim) |>
+    trimws() |>
+    dplyr::na_if("NA")
+
+  if (as_integer) {
+    x <- suppressWarnings(as.integer(x))
+  }
+
+  x
+}
