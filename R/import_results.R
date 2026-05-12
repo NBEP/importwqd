@@ -385,11 +385,15 @@ score_results <- function(.data, sites) {
   message("Formatting data scores...")
 
   message("\tGrouping data")
+
   group_col <- c("Site_ID", "Parameter", "Unit", "Depth", "Year")
-  group_col <- intersect(colnames(.data), group_col)
 
   dat <- .data |>
-    dplyr::group_by_at(group_col) |>
+    dplyr::group_by(
+      dplyr::across(
+        dplyr::any_of(group_col)
+      )
+    )|>
     dplyr::summarise(
       "score_max" = max(.data$Result),
       "score_min" = min(.data$Result),

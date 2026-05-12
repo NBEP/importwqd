@@ -191,7 +191,7 @@ tst <- list(
     )
   ),
   data_score = data.frame(
-    Year = c(2023, 2021, 2021, 2023, 2023, 2021),
+    Year = c(2023, 2021, 2023, 2021, 2023, 2021),
     Site_Name = c(
       "Site1", "Site1", "Site1", "Site1", "Site1", "Site1", "Site2", "Site2",
       "Site2", "Site2", "Site2", "Site2"
@@ -217,7 +217,7 @@ tst <- list(
       "Coldwater", "Warmwater", "Warmwater", "Warmwater", "Warmwater",
       "Warmwater", "Warmwater"
     ),
-    Depth = c(NA, NA, "Surface", "Midwater", "Surface", "Midwater"),
+    Depth = c(NA, NA, "Midwater", "Surface", "Surface", "Midwater"),
     Parameter = c(
       "Depth, Secchi disk depth", "Depth, Secchi disk depth",
       "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
@@ -225,7 +225,7 @@ tst <- list(
     ),
     Unit = c("m", NA, "mg/L", "mg/L", "mg/L", NA),
     score_typ = c("Average", NA, "Minimum", "Minimum", "Minimum", NA),
-    score_num = c(8, NA, 0.05, 4, 0.05, NA, 9.2, NA, 6, 9, 7, NA),
+    score_num = c(8, NA, 4, 0.05, 0.05, NA, 9.2, NA, 9, 6, 7, NA),
     score_str = c(
       "No Threshold Established", "No Data Available", "Poor", "Poor", "Poor",
       "No Data Available", "No Threshold Established", "No Data Available",
@@ -242,28 +242,28 @@ tst <- list(
     popup_loc = c(
       "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
       "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
-      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Surface",
       "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Midwater",
+      "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Surface",
       "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Surface",
       "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater <br>Depth: Midwater",
       "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater",
       "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater",
-      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Surface",
       "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Midwater",
+      "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Surface",
       "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Surface",
       "<b>Site2</b> <br>Town: Worcester, MA <br>Watershed: Upper Blackstone River <br>Category: Warmwater <br>Depth: Midwater"
     ),
     popup_score = c(
       "<br>Average: 8 m",
       "<br><i>No data</i>",
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
       "<br>Minimum: 4 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
       "<br>Minimum: 0.05 mg/L<br>Score: Poor",
       "<br><i>No data</i>",
       "<br>Average: 9.2 m",
       "<br><i>No data</i>",
-      "<br>Minimum: 6 mg/L<br>Score: Excellent",
       "<br>Minimum: 9 mg/L<br>Score: Excellent",
+      "<br>Minimum: 6 mg/L<br>Score: Excellent",
       "<br>Minimum: 7 mg/L<br>Score: Excellent",
       "<br><i>No data</i>"
     ),

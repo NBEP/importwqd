@@ -55,8 +55,8 @@ test_that("prep_download works", {
   colnames(df_out)[1] <- "Site Name"
   colnames(df_out)[7] <- "score str"
   df_out$Depth <- c(
-    "", "", "Surface", "Midwater", "Surface", "Midwater", "", "", "Surface",
-    "Midwater", "Surface", "Midwater"
+    "", "", "Midwater", "Surface", "Surface", "Midwater", "", "", "Midwater",
+    "Surface", "Surface", "Midwater"
   )
 
   expect_equal(
