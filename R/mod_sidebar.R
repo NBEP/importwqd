@@ -13,7 +13,6 @@ mod_sidebar_ui <- function(id, varlist) {
 
   tagList(
     bslib::accordion(
-      multiple = FALSE,
       # Select location ----
       bslib::accordion_panel(
         title = h2("1. Location"),

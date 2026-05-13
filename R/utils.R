@@ -78,13 +78,17 @@ unique_na <- function(x) {
 #'
 #' @noRd
 split_string <- function(x, delim = ",", as_integer = FALSE) {
+  if (!is.character(x) || is.na(x)) {
+    return(x)
+  }
+
   x <- stringr::str_split_1(x, delim) |>
     trimws() |>
     dplyr::na_if("NA")
 
-  if (as_integer) {
-    x <- suppressWarnings(as.integer(x))
+  if (!as_integer) {
+    return(x)
   }
 
-  x
+  suppressWarnings(as.numeric(x))
 }

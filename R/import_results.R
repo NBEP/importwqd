@@ -393,7 +393,7 @@ score_results <- function(.data, sites) {
       dplyr::across(
         dplyr::any_of(group_col)
       )
-    )|>
+    ) |>
     dplyr::summarise(
       "score_max" = max(.data$Result),
       "score_min" = min(.data$Result),
@@ -428,7 +428,8 @@ score_results <- function(.data, sites) {
         .data$score_max, .data$score_min, .data$score_mean, .data$score_median,
         .data$score_geomean, .data$score_90p, .data$Calculation, .data$Min,
         .data$Max, .data$Excellent, .data$Good, .data$Fair, .data$Best,
-        .data$Unit, SIMPLIFY = FALSE
+        .data$Unit,
+        SIMPLIFY = FALSE
       )
     ) |>
     tidyr::unnest_wider("score_temp") |>
