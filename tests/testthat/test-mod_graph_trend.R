@@ -2,10 +2,9 @@ library(shiny)
 library(shinytest2)
 
 testServer(
-  mod_sidebar_location_server,
+  mod_graph_trend_server,
   # Add here your module params
   args = list(
-    df_sites = tst$sites_final
   ),
   {
     ns <- session$ns
@@ -22,10 +21,10 @@ testServer(
 )
 
 test_that("module ui works", {
-  ui <- mod_sidebar_location_ui("test", varlist = tst$s_var)
+  ui <- mod_graph_trend_ui("test")
 
   # Check that formals have not been removed
-  fmls <- formals(mod_sidebar_location_ui)
+  fmls <- formals(mod_graph_trend_ui)
   for (i in c("id")) {
     expect_true(i %in% names(fmls))
   }
