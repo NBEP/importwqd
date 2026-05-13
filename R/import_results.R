@@ -417,17 +417,18 @@ score_results <- function(.data, sites) {
       "score_temp" = mapply(
         function(score_max, score_min, score_mean, score_median, score_geomean,
                  score_90p, calculation, thresh_min, thresh_max,
-                 thresh_excellent, thresh_good, thresh_fair, thresh_best) {
+                 thresh_excellent, thresh_good, thresh_fair, thresh_best,
+                 param_unit) {
           calculate_score(
             score_max, score_min, score_mean, score_median, score_geomean,
             score_90p, calculation, thresh_min, thresh_max, thresh_excellent,
-            thresh_good, thresh_fair, thresh_best
+            thresh_good, thresh_fair, thresh_best, param_unit
           )
         },
         .data$score_max, .data$score_min, .data$score_mean, .data$score_median,
         .data$score_geomean, .data$score_90p, .data$Calculation, .data$Min,
         .data$Max, .data$Excellent, .data$Good, .data$Fair, .data$Best,
-        SIMPLIFY = FALSE
+        .data$Unit, SIMPLIFY = FALSE
       )
     ) |>
     tidyr::unnest_wider("score_temp") |>
@@ -435,7 +436,7 @@ score_results <- function(.data, sites) {
       dplyr::any_of(
         c(
           "Site_ID", "Parameter", "Unit", "Depth", "Year", "score_typ",
-          "score_num", "score_str"
+          "score_num", "score_str", "score_desc"
         )
       )
     ) |>
@@ -500,7 +501,7 @@ score_results <- function(.data, sites) {
   col_order <- c(
     "Year", "Site_Name", "Site_ID", "Town", "State", "Watershed", "Group",
     "Depth", "Parameter", "Unit", "score_typ", "score_num", "score_str",
-    "Latitude", "Longitude"
+    "score_desc", "Latitude", "Longitude"
   )
 
   dat <- dat |>
@@ -571,17 +572,17 @@ score_results <- function(.data, sites) {
 
   dat |>
     dplyr::mutate(
-      "popup_score" = dplyr::case_when(
-        is.na(.data$score_num) ~ "<i>No data</i>",
-        is.na(.data$Unit) ~ paste0(.data$score_typ, ": ", .data$score_num),
-        TRUE ~ paste0(.data$score_typ, ": ", .data$score_num, " ", .data$Unit)
+      "popup_score" = dplyr::if_else(
+        is.na(.data$score_num),
+        "<br><i>No data</i>",
+        paste0("<br>", .data$score_desc)
       )
     ) |>
     dplyr::mutate(
       "popup_score" = dplyr::if_else(
         is.na(.data$score_num) | .data$score_str == "No Threshold Established",
-        paste0("<br>", .data$popup_score),
-        paste0("<br>", .data$popup_score, "<br>Score: ", .data$score_str)
+        .data$popup_score,
+        paste0(.data$popup_score, "<br>Score: ", .data$score_str)
       )
     ) |>
     dplyr::mutate(
@@ -592,7 +593,8 @@ score_results <- function(.data, sites) {
         is.na(.data$Unit) ~ paste0(.data$Site_Name, ", ", .data$score_num),
         TRUE ~ paste0(.data$Site_Name, ", ", .data$score_num, " ", .data$Unit)
       )
-    )
+    ) |>
+    dplyr::select(!"score_desc")
 }
 
 #' Generate dropdown lists for sidebar

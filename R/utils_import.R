@@ -433,17 +433,23 @@ geo_mean <- function(x) {
 #'
 #' @description `calculate_score()` is a helper function for `score_results()`.
 #'
-#' @param x Numeric list
-#' @param zero_sub Integer. Number to substitute for zero when calculating
-#' geometric mean. Default value 1.
+#' @param score_max,score_min,score_mean,score_median,score_geomean,score_90p
+#' Integer. Annual maximum, minimum, mean, median, geometric mean, and
+#' 90th percentile values.
+#' @param calculation String. Which score(s) to use when assessing thresholds.
+#' @param thresh_min,thresh_max,thresh_excellent,thresh_good,thresh_fair,thresh_best
+#' String or integer. Threshold values used to assess scores. Must be the same
+#' order and length as `calculation`.
+#' @param param_unit String. Unit. Default `NA`.
 #'
-#' @return List containing three items: score_typ, score_num, score_str
+#' @return List containing four items: score_typ, score_num, score_str, and
+#' score_desc.
 #'
 #' @noRd
 calculate_score <- function(
   score_max, score_min, score_mean, score_median, score_geomean, score_90p,
-  calculation, thresh_min, thresh_max, thresh_excellent, thresh_good,
-  thresh_fair, thresh_best
+  calculation, thresh_min, thresh_max, thresh_excellent,
+  thresh_good, thresh_fair, thresh_best, param_unit = NA
 ) {
   chk <- grepl(",", calculation)
   if (chk) {
@@ -459,6 +465,7 @@ calculate_score <- function(
   calc_num <- NULL
   calc_str <- NULL
   calc_typ <- NULL
+  calc_desc <- NULL
 
   for (i in seq_along(calculation)) {
     temp_typ <- calculation[i]
@@ -489,6 +496,12 @@ calculate_score <- function(
       TRUE ~ temp_typ
     )
 
+    temp_desc <- dplyr::case_when(
+      is.na(temp_num) ~ NA,
+      is.na(param_unit) ~ paste0(temp_typ, ": ", temp_num),
+      TRUE ~ paste0(temp_typ, ": ", temp_num, " ", param_unit)
+    )
+
     temp_str <- dplyr::case_when(
       is.na(temp_best) | is.na(temp_num) ~ NA,
       temp_best == "high" & temp_num >= temp_excellent ~ "5_Excellent",
@@ -515,16 +528,7 @@ calculate_score <- function(
     calc_num <- c(calc_num, pretty_number(temp_num))
     calc_str <- c(calc_str, temp_str)
     calc_typ <- c(calc_typ, temp_typ)
-  }
-
-  chk <- unique(calc_typ)
-  chk2 <- unique(calc_num)
-  if (length(chk) == 1 && length(chk2) == 1) {
-    calc_typ <- chk
-    calc_num <- chk2
-  } else {
-    calc_typ <- paste(calc_typ, collapse = ", ")
-    calc_num <- paste(calc_num, collapse = ", ")
+    calc_desc <- c(calc_desc, temp_desc)
   }
 
   chk <- is.na(calc_str)
@@ -533,9 +537,18 @@ calculate_score <- function(
     calc_str <- substr(calc_str, 3, nchar(calc_str))
   }
 
+  chk <- is.na(calc_desc)
+  if (all(chk)) {
+    calc_desc <- NA
+  } else {
+    calc_desc <- calc_desc[!is.na(calc_desc)]
+    calc_desc <- paste(unique(calc_desc), collapse = "<br>")
+  }
+
   list(
-    score_typ = calc_typ,
-    score_num = calc_num,
-    score_str = calc_str
+    score_typ = calc_typ[1],
+    score_num = calc_num[1],
+    score_str = calc_str,
+    score_desc = calc_desc
   )
 }

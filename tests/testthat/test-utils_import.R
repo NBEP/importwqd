@@ -345,7 +345,8 @@ test_that("calculate_score works", {
     list(
       score_typ = "Geometric Mean",
       score_num = 20,
-      score_str = "Excellent"
+      score_str = "Excellent",
+      score_desc = "Geometric Mean: 20"
     )
   )
 
@@ -354,14 +355,16 @@ test_that("calculate_score works", {
     calculate_score(
       score_max = 1100, score_min = 1, score_mean = 35, score_median = 90,
       score_geomean = 20, score_90p = 100, calculation = "geomean, 90p",
-      thresh_min = "NA, NA", thresh_max = "54, 1000",
+      param_unit = "cfu/100mL", thresh_min = "NA, NA", thresh_max = "54, 1000",
       thresh_excellent = "35, NA", thresh_good = "54, NA",
       thresh_fair = "54, NA", thresh_best = "low, NA"
     ),
     list(
-      score_typ = "Geometric Mean, 90th Percentile",
-      score_num = "20, 100",
-      score_str = "Meets Criteria"
+      score_typ = "Geometric Mean",
+      score_num = 20,
+      score_str = "Meets Criteria",
+      score_desc =
+        "Geometric Mean: 20 cfu/100mL<br>90th Percentile: 100 cfu/100mL"
     )
   )
 
@@ -376,7 +379,8 @@ test_that("calculate_score works", {
     list(
       score_typ = "Geometric Mean",
       score_num = NA_integer_,
-      score_str = NA_character_
+      score_str = NA_character_,
+      score_desc = NA
     )
   )
 })

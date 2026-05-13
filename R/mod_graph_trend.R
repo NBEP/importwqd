@@ -112,9 +112,9 @@ mod_graph_trend_server <- function(
       thresh_max <- df()$Max[1]
       thresh_best <- df()$Best[1]
 
-      thresh_min <- string_split(thresh_min, as_integer = TRUE)[1]
-      thresh_max <- string_split(thresh_max, as_integer = TRUE)[1]
-      thresh_best <- string_split(thresh_best, as_integer = TRUE)[1]
+      thresh_min <- split_string(thresh_min, as_integer = TRUE)[1]
+      thresh_max <- split_string(thresh_max, as_integer = TRUE)[1]
+      thresh_best <- split_string(thresh_best, as_integer = TRUE)[1]
 
       chk <- is.na(c(thresh_min, thresh_max, thresh_best))
       if (all(chk)) {
@@ -127,7 +127,7 @@ mod_graph_trend_server <- function(
       }
 
       thresh_exc <- df()$Excellent[1]
-      thresh_exc <- string_split(thresh_exc, as_integer = TRUE)[1]
+      thresh_exc <- split_string(thresh_exc, as_integer = TRUE)[1]
 
       list(
         thresh_min = thresh_min,

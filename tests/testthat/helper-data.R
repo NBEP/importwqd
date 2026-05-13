@@ -339,15 +339,15 @@ tst <- list(
     Group = "Coldwater",
     Parameter = "Enterococcus",
     Unit = "cfu/100mL",
-    score_typ = "Geometric Mean, Maximum",
-    score_num = c("10, 100", "50, 50"),
+    score_typ = "Geometric Mean",
+    score_num = c(10, 50),
     score_str = c("Does Not Meet Criteria", "Meets Criteria"),
     Latitude = 41.83,
     Longitude = -71.41,
     popup_loc = "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
     popup_score = c(
-      "<br>Geometric Mean, Maximum: 10, 100 cfu/100mL<br>Score: Does Not Meet Criteria",
-      "<br>Geometric Mean, Maximum: 50, 50 cfu/100mL<br>Score: Meets Criteria"
+      "<br>Geometric Mean: 10 cfu/100mL<br>Maximum: 100 cfu/100mL<br>Score: Does Not Meet Criteria",
+      "<br>Geometric Mean: 50 cfu/100mL<br>Maximum: 50 cfu/100mL<br>Score: Meets Criteria"
     ),
     alt = c("Site1, Does Not Meet Criteria", "Site1, Meets Criteria")
   ),
