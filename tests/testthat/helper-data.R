@@ -169,13 +169,19 @@ tst <- list(
     Result = c(0.05, 3, 0.05, 4, 8, 6, 8, 7, 9, 9.2),
     Unit = c("mg/L", "mg/L", "mg/L", "mg/L", "m"),
     Depth = c("Surface", "Surface", "Surface", "Midwater", NA),
-    Calculation = c("min", "min", "min", "min", "mean"),
-    Min = c(5, 5, 5, 5, NA),
-    Max = NA_integer_,
-    Excellent = c(8, 8, 8, 8, NA, 5, 5, 5, 5, NA),
-    Good = c(5, 5, 5, 5, NA, 5, 5, 5, 5, NA),
-    Fair = c(5, 5, 5, 5, NA, 3, 3, 3, 3, NA),
-    Best = c("high", "high", "high", "high", NA),
+    Calculation = c(
+      "min, mean", "min, mean", "min, mean", "min, mean", "mean", "min", "min",
+      "min", "min", "mean"
+    ),
+    Min = c("5, 6.5", "5, 6.5", "5, 6.5", "5, 6.5", NA, 5, 5, 5, 5, NA),
+    Max = c("NA, NA", "NA, NA", "NA, NA", "NA, NA", NA, NA, NA, NA, NA, NA),
+    Excellent = c("8, 9.5", "8, 9.5", "8, 9.5", "8, 9.5", NA, 5, 5, 5, 5, NA),
+    Good = c("5, 6.5", "5, 6.5", "5, 6.5", "5, 6.5", NA, 5, 5, 5, 5, NA),
+    Fair = c("5, 6.5", "5, 6.5", "5, 6.5", "5, 6.5", NA, 3, 3, 3, 3, NA),
+    Best = c(
+      "high, high", "high, high", "high, high", "high, high", NA, "high",
+      "high", "high", "high", NA
+    ),
     Month = c("June", "August", "May", "July", "July"),
     Description = c(
       "<b>Site1</b><br>Date: June 30, 2021<br>Depth: Surface<br>Dissolved oxygen: 0.05 mg/L",
@@ -256,9 +262,9 @@ tst <- list(
     popup_score = c(
       "<br>Average: 8 m",
       "<br><i>No data</i>",
-      "<br>Minimum: 4 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
+      "<br>Minimum: 4 mg/L<br>Average: 4 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 1.525 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 0.05 mg/L<br>Score: Poor",
       "<br><i>No data</i>",
       "<br>Average: 9.2 m",
       "<br><i>No data</i>",
@@ -273,83 +279,6 @@ tst <- list(
       "Site2, Excellent", "Site2, Excellent", "Site2, Excellent",
       "Site2, No data"
     )
-  ),
-  # Data 2 (multiple thresholds) ----
-  data2_raw = data.frame(
-    Site_ID = "001",
-    Activity_Type = "Field Msr/Obs",
-    Date = as.Date(c("2021-05-25", "2021-06-30", "2022-05-25", "2022-06-30")),
-    Depth = NA,
-    Depth_Unit = NA,
-    Depth_Category = "Surface",
-    Parameter = "Enterococcus",
-    Result = c(1, 100, 50, 50),
-    Result_Unit = "cfu/100mL",
-    Lower_Detection_Limit = NA,
-    Upper_Detection_Limit = NA,
-    Detection_Limit_Unit = NA,
-    Qualifier = NA
-  ),
-  data2_qaqc = data.frame(
-    Site_ID = "001",
-    Activity_Type = "Field Msr/Obs",
-    Date = as.Date(c("2021-05-25", "2021-06-30", "2022-05-25", "2022-06-30")),
-    Depth = NA_integer_,
-    Depth_Unit = "m",
-    Depth_Category = "Surface",
-    Parameter = "Enterococcus",
-    Result = c(1, 100, 50, 50),
-    Result_Unit = "cfu/100mL",
-    Lower_Detection_Limit = NA_integer_,
-    Upper_Detection_Limit = NA_integer_,
-    Detection_Limit_Unit = NA,
-    Qualifier = NA,
-    Year = c(2021, 2021, 2022, 2022)
-  ),
-  data2_final = data.frame(
-    Site_ID = "001",
-    Site_Name = "Site1",
-    Watershed = "Narragansett Bay",
-    Date = as.Date(c("2021-05-25", "2021-06-30", "2022-05-25", "2022-06-30")),
-    Year = c(2021, 2021, 2022, 2022),
-    Parameter = "Enterococcus",
-    Result = c(1, 100, 50, 50),
-    Unit = "cfu/100mL",
-    Calculation = "geomean, max",
-    Min = "NA, NA",
-    Max = "54, 61",
-    Excellent = "33, NA",
-    Good = "54, NA",
-    Fair = "54, NA",
-    Best = "low, NA",
-    Month = c("May", "June"),
-    Description = c(
-      "<b>Site1</b><br>Date: May 25, 2021<br>Enterococcus: 1 cfu/100mL",
-      "<b>Site1</b><br>Date: June 30, 2021<br>Enterococcus: 100 cfu/100mL",
-      "<b>Site1</b><br>Date: May 25, 2022<br>Enterococcus: 50 cfu/100mL",
-      "<b>Site1</b><br>Date: June 30, 2022<br>Enterococcus: 50 cfu/100mL"
-    )
-  ),
-  data2_score = data.frame(
-    Year = c(2021, 2022),
-    Site_Name = "Site1",
-    Site_ID = "001",
-    Town = "Providence, RI",
-    Watershed = "Narragansett Bay",
-    Group = "Coldwater",
-    Parameter = "Enterococcus",
-    Unit = "cfu/100mL",
-    score_typ = "Geometric Mean",
-    score_num = c(10, 50),
-    score_str = c("Does Not Meet Criteria", "Meets Criteria"),
-    Latitude = 41.83,
-    Longitude = -71.41,
-    popup_loc = "<b>Site1</b> <br>Town: Providence, RI <br>Watershed: Narragansett Bay <br>Category: Coldwater",
-    popup_score = c(
-      "<br>Geometric Mean: 10 cfu/100mL<br>Maximum: 100 cfu/100mL<br>Score: Does Not Meet Criteria",
-      "<br>Geometric Mean: 50 cfu/100mL<br>Maximum: 50 cfu/100mL<br>Score: Meets Criteria"
-    ),
-    alt = c("Site1, Does Not Meet Criteria", "Site1, Meets Criteria")
   ),
   # Categorical data ----
   cat_raw = data.frame(

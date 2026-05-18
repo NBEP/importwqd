@@ -4,8 +4,7 @@ library(shinytest2)
 testServer(
   mod_graph_server,
   # Add here your module params
-  args = list(
-  ),
+  args = list(),
   {
     ns <- session$ns
     expect_true(

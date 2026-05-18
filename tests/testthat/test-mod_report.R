@@ -8,8 +8,10 @@ testServer(
     df_raw = tst$data_score[0, ] |>
       dplyr::select(
         dplyr::any_of(
-          c("Site_Name", "State", "Town", "Watershed", "Group", "Depth",
-          "Parameter", "score_str")
+          c(
+            "Site_Name", "State", "Town", "Watershed", "Group", "Depth",
+            "Parameter", "score_str"
+          )
         )
       ),
     org_name = "ORG NAME"
