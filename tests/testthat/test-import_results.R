@@ -161,7 +161,40 @@ test_that("format_results works", {
     tst$data_final
   )
 
-  # Edge case - no matching thresholds
+  # Custom thresholds
+  df_thresh <- data.frame(
+    State = NA,
+    Group = NA,
+    Site = NA,
+    Depth = NA,
+    Parameter = "Dissolved oxygen",
+    Unit = "mg/L",
+    Calculation = "minimum",
+    Min = 5,
+    Max = NA,
+    Excellent = 8,
+    Good = 5,
+    Fair = 4,
+    Best = "high"
+  )
+
+  df_out <- tst$data_final[1:4, ]
+  df_out$Calculation <- "minimum"
+  df_out$Min <- 5
+  df_out$Max <- NA_integer_
+  df_out$Excellent <- 8
+  df_out$Good <- 5
+  df_out$Fair <- 4
+  df_out$Best <- "high"
+
+  expect_equal(
+    suppressMessages(
+      format_results(tst$data_qaqc[1:4, ], tst$sites_qaqc, df_thresh)
+    ),
+    df_out
+  )
+
+  # Blank custom thresholds
   df_thresh <- data.frame(
     State = NA,
     Group = NA,
@@ -220,14 +253,26 @@ test_that("score_results works", {
     Latitude = c(41.83, 41.83, 42.28, 42.28),
     Longitude = c(-71.41, -71.41, -71.77, -71.77),
     popup_loc = c(
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Category: Coldwater",
-      "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay <br>Category: Coldwater",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Category: Warmwater",
-      "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone River <br>Category: Warmwater"
+      paste(
+        "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay",
+        "<br>Category: Coldwater"
+      ),
+      paste(
+        "<b>Site1</b> <br>State: Rhode Island <br>Watershed: Narragansett Bay",
+        "<br>Category: Coldwater"
+      ),
+      paste(
+        "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone",
+        "River <br>Category: Warmwater"
+      ),
+      paste(
+        "<b>Site2</b> <br>State: Massachusetts <br>Watershed: Upper Blackstone",
+        "River <br>Category: Warmwater"
+      )
     ),
     popup_score = c(
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 1.525 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 2.025 mg/L<br>Score: Poor",
       "<br>Minimum: 6 mg/L<br>Score: Excellent",
       "<br>Minimum: 7 mg/L<br>Score: Excellent"
     ),

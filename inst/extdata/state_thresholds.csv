@@ -1,41 +1,68 @@
 State,Group,Depth_Category,Parameter,Unit,Calculation,Threshold_Min,Threshold_Max,Excellent,Good,Fair
 CT,Saltwater,,Ammonia,ug/L,mean,,35,,,
-CT,Saltwater,,Dissolved oxygen,mg/L,minimum,3,,4.8,4.8,3
+CT,Saltwater,,Ammonia,ug/L,maximum,,233,,,
+CT,Saltwater,,Dissolved oxygen,mg/L,minimum,3,,,,
+CT,Saltwater,,Dissolved oxygen,mg/L,mean,4.8,,,,
 CT,,,Dissolved oxygen,mg/L,minimum,5,,,,
 CT,Saltwater,,Enterococcus,cfu/100mL,geometric mean,,35,,,
+CT,Saltwater,,Enterococcus,cfu/100mL,maximum,,500,104,500,500
 CT,,,Escherichia coli,cfu/100mL,geometric mean,,126,,,
+CT,,,Escherichia coli,cfu/100mL,maximum,,410,235,410,576
 CT,Saltwater,,Fecal Coliform,cfu/100mL,geometric mean,,88,14,88,88
+CT,Saltwater,,Fecal Coliform,cfu/100mL,90th percentile,,260,31,260,260
 CT,Saltwater,,pH,None,mean,6.8,8.5,,,
-CT,,,pH,None,mean,6.5,8,,,
+CT,Saltwater,,pH,None,minimum,6.8,8.5,,,
+CT,Saltwater,,pH,None,maximum,6.8,8.5,,,
+CT,,,pH,None,mean,6.8,8.5,,,
+CT,,,pH,None,minimum,6.8,8.5,,,
+CT,,,pH,None,maximum,6.8,8.5,,,
 CT,,,Sodium,mg/L,max,,20,,,
 CT,Saltwater,,"Temperature, water",deg F,max,,83,,,
 CT,,,"Temperature, water",deg F,max,,85,,,
 CT,,,Total Coliform,cfu/100mL,mean,,100,,,
-MA,Coldwater,,Dissolved oxygen,mg/L,min,6,,6,6,3
-MA,Saltwater,,Dissolved oxygen,mg/L,min,5,,6,5,4
-MA,Warmwater,,Dissolved oxygen,mg/L,min,5,,5,5,3
+CT,,,Total Coliform,cfu/100mL,maximum,,500,,,
+MA,Coldwater,,Dissolved oxygen,mg/L,minimum,6,,6,6,3
+MA,Saltwater,,Dissolved oxygen,mg/L,minimum,5,,6,5,4
+MA,Warmwater,,Dissolved oxygen,mg/L,minimum,5,,5,5,3
 MA,,,Enterococcus,cfu/100mL,geometric mean,,35,,,
+MA,,,Enterococcus,cfu/100mL,90th percentile,,130,,,
 MA,,,Escherichia coli,cfu/100mL,geometric mean,,126,,,
+MA,,,Escherichia coli,cfu/100mL,90th percentile,,410,,,
 MA,Saltwater,,Fecal Coliform,MPN/100mL,geometric mean,,88,14,88,1000
-MA,,,Fecal Coliform,cfu/100mL,max,,20,20,20,1000
+MA,Saltwater,,Fecal Coliform,MPN/100mL,90th percentile,,260,28,260,2000
+MA,,,Fecal Coliform,cfu/100mL,maximum,,20,,,
 MA,Saltwater,,pH,None,mean,6.5,8.5,,,
+MA,Saltwater,,pH,None,minimum,6.5,8.5,,,
+MA,Saltwater,,pH,None,maximum,6.5,8.5,,,
 MA,,,pH,None,mean,6.5,8.3,,,
-MA,Coldwater,,"Temperature, water",deg F,max,,68,68,68,85
-MA,Saltwater,,"Temperature, water",deg F,max,,85,,,
-MA,Warmwater,,"Temperature, water",deg F,max,,83,83,83,85
-MA,,,Total Coliform,cfu/100mL,max,,100,,,
-RI,Coldwater,,Dissolved oxygen,mg/L,minimum,5,,8,6.5,5
+MA,,,pH,None,minimum,6.5,8.3,,,
+MA,,,pH,None,maximum,6.5,8.3,,,
+MA,Coldwater,,"Temperature, water",deg F,maximum,,68,68,68,85
+MA,Saltwater,,"Temperature, water",deg F,maximum,,85,80,80,85
+MA,Warmwater,,"Temperature, water",deg F,maximum,,83,83,83,85
+MA,,,Total Coliform,cfu/100mL,90th percentile,,100,,,
+RI,Coldwater,,Dissolved oxygen,mg/L,minimum,5,,8,5,5
+RI,Coldwater,,Dissolved oxygen,mg/L,mean,6.5,,9.5,6.5,6.5
 RI,Saltwater,Surface,Dissolved oxygen,mg/L,minimum,4.8,,,,
 RI,Warmwater,,Dissolved oxygen,mg/L,minimum,5,,,,
-RI,Coldwater,,Dissolved oxygen saturation,%,mean,75,,,,
-RI,Warmwater,,Dissolved oxygen saturation,%,mean,60,,,,
+RI,Warmwater,,Dissolved oxygen,mg/L,mean,6,,,,
+RI,Coldwater,,Dissolved oxygen saturation,%,minimum,75,,,,
+RI,Warmwater,,Dissolved oxygen saturation,%,minimum,60,,,,
 RI,Saltwater,,Enterococcus,cfu/100mL,geometric mean,,35,,,
+RI,Saltwater,,Enterococcus,cfu/100mL,maximum,,104,,,
 RI,,,Enterococcus,cfu/100mL,geometric mean,,54,33,54,54
+RI,,,Enterococcus,cfu/100mL,maximum,,61,,,
 RI,Saltwater,,Fecal Coliform,cfu/100mL,geometric mean,,50,14,50,50
-RI,,,Fecal Coliform,cfu/100mL,geometric mean,,200,,,
+RI,Saltwater,,Fecal Coliform,cfu/100mL,90th percentile,,400,31,400,400
+RI,,,Fecal Coliform,MPN/100mL,geometric mean,,200,20,200,200
+RI,,,Fecal Coliform,MPN/100mL,90th percentile,,400,200,400,400
 RI,Saltwater,,pH,None,mean,6.5,8.5,,,
+RI,Saltwater,,pH,None,minimum,6.5,8.5,,,
+RI,Saltwater,,pH,None,maximum,6.5,8.5,,,
 RI,,,pH,None,mean,6.5,9,,,
-RI,Coldwater,,"Temperature, water",deg F,max,,68,,,
-RI,Saltwater,,"Temperature, water",deg F,max,,83,,,
-RI,Warmwater,,"Temperature, water",deg F,max,,83,,,
+RI,,,pH,None,minimum,6.5,9,,,
+RI,,,pH,None,maximum,6.5,9,,,
+RI,Coldwater,,"Temperature, water",deg F,maximum,,68,,,
+RI,Saltwater,,"Temperature, water",deg F,maximum,,83,,,
+RI,,,"Temperature, water",deg F,maximum,,83,,,
 RI,,,"Total Phosphorus, mixed forms",mg/L,mean,,0.025,,,

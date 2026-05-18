@@ -2,10 +2,16 @@ library(shiny)
 library(shinytest2)
 
 testServer(
-  mod_sidebar_location_server,
+  mod_map_server,
   # Add here your module params
   args = list(
-    df_sites = tst$sites_final
+    map_bounds = list(
+      lat1 = 41,
+      lat2 = 43,
+      lng1 = -72,
+      lng2 = -71
+    ),
+    df_raw = tst$data_score[0, ]
   ),
   {
     ns <- session$ns
@@ -22,10 +28,10 @@ testServer(
 )
 
 test_that("module ui works", {
-  ui <- mod_sidebar_location_ui("test", varlist = tst$s_var)
+  ui <- mod_map_ui("test")
 
   # Check that formals have not been removed
-  fmls <- formals(mod_sidebar_location_ui)
+  fmls <- formals(mod_map_ui)
   for (i in c("id")) {
     expect_true(i %in% names(fmls))
   }

@@ -34,3 +34,20 @@ test_that("unique_na works", {
     NA
   )
 })
+
+test_that("split_string works", {
+  expect_equal(
+    split_string("foo, bar, NA"),
+    c("foo", "bar", NA)
+  )
+
+  expect_equal(
+    split_string("foo, bar, 42, NA", as_integer = TRUE),
+    c(NA, NA, 42, NA)
+  )
+
+  expect_equal(
+    split_string(42),
+    42
+  )
+})

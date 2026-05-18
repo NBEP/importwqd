@@ -1,6 +1,6 @@
 #' Prepare threshold metadata
 #'
-#' @description `prep_trhesholds()` prepares site data for use in `wqdashboard`
+#' @description `prep_thresholds()` prepares site data for use in `wqdashboard`
 #' by updating parameter and unit names.
 #'
 #' @inheritParams prep_results
@@ -137,19 +137,6 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
       unique() |>
       sort()
     dup_rws <- paste(dup_rws, collapse = ", ")
-
-    chk <- dat |>
-      dplyr::group_by(
-        .data$State, .data$Group, .data$Site_ID, .data$Parameter,
-        .data$Depth_Category
-      ) |>
-      dplyr::summarise(
-        n_unit = dplyr::n_distinct(.data$Unit)
-      )
-
-    if (max(chk$n_unit) > 1) {
-      stop(msg, " Units must match. Check rows: ", dup_rws)
-    }
 
     warning(msg, " Check rows: ", dup_rws)
   }

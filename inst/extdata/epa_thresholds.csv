@@ -1,13 +1,22 @@
-Group,Depth_Category,Parameter,Unit,Calculation,Threshold_Min,Threshold_Max,Excellent,Good,Fair
-,,Alkalinity,mg/L,minimum,20,,,,
-,,Chloride,mg/L,mean,,230,,,
-Coldwater,,Dissolved oxygen,mg/L,minimum,8,,8,5,4
-Warmwater,,Dissolved oxygen,mg/L,minimum,5,,5,5,3
-,,E. coli,cfu/100mL,geometric mean,,126,,,
-,,Enterococcus,cfu/100mL,geometric mean,,33,,,
-Saltwater,,Enterococcus,cfu/100mL,geometric mean,,35,,,
-,,Nitrate,mg/L,max,,10,,,
-,,pH,None,mean,6.5,9,,,
-Saltwater,,pH,None,mean,6.5,8.5,,,
-Saltwater,,Phosphorus,ug/L,maximum,,0.1,,,
-Saltwater,,"Temperature, water",deg F,maximum,,85,,,
+Group,Depth_Category,Parameter,Unit,Calculation,Threshold_Min,Threshold_Max,Excellent,Good,Fair,Source
+,,Alkalinity,mg/L,minimum,20,,,,,EPA Goldbook (1986)
+,,Chloride,mg/L,mean,,230,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+,,Chloride,mg/L,maximum,,860,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+Coldwater,,Dissolved oxygen,mg/L,minimum,4,,8,5,4,EPA Goldbook (1986)
+Coldwater,,Dissolved oxygen,mg/L,mean,6.5,,9.5,6.5,6.5,EPA Goldbook (1986)
+Warmwater,,Dissolved oxygen,mg/L,minimum,3,,5,5,3,EPA Goldbook (1986)
+Warmwater,,Dissolved oxygen,mg/L,mean,5.5,,6,5.5,5.5,EPA Goldbook (1986)
+,,E. coli,cfu/100mL,geometric mean,,126,,,,EPA Recreational Water Quality Criteria (2012) https://www.epa.gov/sites/default/files/2015-10/documents/rwqc2012.pdf
+,,E. coli,cfu/100mL,90th percentile,,410,,,,EPA Recreational Water Quality Criteria (2012) https://www.epa.gov/sites/default/files/2015-10/documents/rwqc2012.pdf
+,,Enterococcus,cfu/100mL,geometric mean,,35,,,,EPA Recreational Water Quality Criteria (2012) https://www.epa.gov/sites/default/files/2015-10/documents/rwqc2012.pdf
+,,Enterococcus,cfu/100mL,90th percentile,,130,,,,EPA Recreational Water Quality Criteria (2012) https://www.epa.gov/sites/default/files/2015-10/documents/rwqc2012.pdf
+Saltwater,,Fecal Coliform,MPN/100mL,median,,14,,,,EPA Goldbook (1986)
+Saltwater,,Fecal Coliform,MPN/100mL,90th percentile,,43,,,,EPA Goldbook (1986)
+,,Nitrate,mg/L,max,,10,,,,EPA Goldbook (1986)
+,,pH,None,mean,6.5,9,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+,,pH,None,minimum,6.5,9,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+,,pH,None,maximum,6.5,9,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+Saltwater,,pH,None,mean,6.5,8.5,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+Saltwater,,pH,None,minimum,6.5,8.5,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+Saltwater,,pH,None,maximum,6.5,8.5,,,,Aquatic Life Criteria Table https://www.epa.gov/wqc/national-recommended-water-quality-criteria-aquatic-life-criteria-table#table
+Saltwater,,Phosphorus,ug/L,maximum,,0.1,,,,EPA Goldbook (1986)

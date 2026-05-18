@@ -207,6 +207,57 @@ update_threshold_units <- function(.data, result_data) {
   dplyr::select(dat, !"temp_unit")
 }
 
+#' Combine thresholds
+#'
+#' @description `combine_thresholds()` groups thresholds by location, depth,
+#' and parameter. Grouped thresholds are combined on a single row.
+#'
+#' @param .data Dataframe containing thresholds
+#'
+#' @returns Updated dataframe
+#'
+#' @noRd
+combine_thresholds <- function(.data) {
+  chk <- .data |>
+    dplyr::count(
+      .data$State, .data$Group, .data$Site, .data$Parameter, .data$Depth
+    )
+
+  if (max(chk$n) < 2) {
+    dat <- .data |>
+      dplyr::mutate(
+        dplyr::across(
+          "Min":"Fair",
+          ~ as.character(.)
+        )
+      )
+
+    return(dat)
+  }
+
+  .data |>
+    dplyr::group_by(
+      .data$State, .data$Group, .data$Site, .data$Depth, .data$Parameter,
+      .data$Unit
+    ) |>
+    dplyr::summarise(
+      "Calculation" = paste(.data$Calculation, collapse = ", "),
+      "Min" = paste(.data$Min, collapse = ", "),
+      "Max" = paste(.data$Max, collapse = ", "),
+      "Excellent" = paste(.data$Excellent, collapse = ", "),
+      "Good" = paste(.data$Good, collapse = ", "),
+      "Fair" = paste(.data$Fair, collapse = ", "),
+      "Best" = paste(.data$Best, collapse = ", "),
+    ) |>
+    dplyr::mutate(
+      dplyr::across(
+        "Calculation":"Best",
+        ~ dplyr::na_if(., "NA")
+      )
+    ) |>
+    data.frame()
+}
+
 #' Add threshold values
 #'
 #' @description
@@ -376,4 +427,128 @@ geo_mean <- function(x) {
   x[is.na(x)] <- zero_sub
 
   exp(mean(log(x)))
+}
+
+#' Calculate score
+#'
+#' @description `calculate_score()` is a helper function for `score_results()`.
+#'
+#' @param score_max,score_min,score_mean,score_median,score_geomean,score_90p
+#' Integer. Annual maximum, minimum, mean, median, geometric mean, and
+#' 90th percentile values.
+#' @param calculation String. Which score(s) to use when assessing thresholds.
+#' @param thresh_min,thresh_max,thresh_excellent,thresh_good,thresh_fair,thresh_best
+#' String or integer. Threshold values used to assess scores. Must be the same
+#' order and length as `calculation`.
+#' @param param_unit String. Unit. Default `NA`.
+#'
+#' @return List containing four items: score_typ, score_num, score_str, and
+#' score_desc.
+#'
+#' @noRd
+calculate_score <- function(
+  score_max, score_min, score_mean, score_median, score_geomean, score_90p,
+  calculation, thresh_min, thresh_max, thresh_excellent,
+  thresh_good, thresh_fair, thresh_best, param_unit = NA
+) {
+  chk <- grepl(",", calculation)
+  if (chk) {
+    calculation <- split_string(calculation)
+    thresh_min <- split_string(thresh_min, as_integer = TRUE)
+    thresh_max <- split_string(thresh_max, as_integer = TRUE)
+    thresh_excellent <- split_string(thresh_excellent, as_integer = TRUE)
+    thresh_good <- split_string(thresh_good, as_integer = TRUE)
+    thresh_fair <- split_string(thresh_fair, as_integer = TRUE)
+    thresh_best <- split_string(thresh_best)
+  }
+
+  calc_num <- NULL
+  calc_str <- NULL
+  calc_typ <- NULL
+  calc_desc <- NULL
+
+  for (i in seq_along(calculation)) {
+    temp_typ <- calculation[i]
+    temp_min <- thresh_min[i]
+    temp_max <- thresh_max[i]
+    temp_excellent <- thresh_excellent[i]
+    temp_good <- thresh_good[i]
+    temp_fair <- thresh_fair[i]
+    temp_best <- thresh_best[i]
+
+    temp_num <- dplyr::case_when(
+      is.na(temp_typ) ~ score_mean,
+      temp_typ == "max" ~ score_max,
+      temp_typ == "min" ~ score_min,
+      temp_typ == "median" ~ score_median,
+      temp_typ == "geomean" ~ score_geomean,
+      temp_typ == "90p" ~ score_90p,
+      TRUE ~ score_mean
+    )
+
+    temp_typ <- dplyr::case_when(
+      temp_typ == "min" ~ "Minimum",
+      temp_typ == "max" ~ "Maximum",
+      temp_typ == "median" ~ "Median",
+      temp_typ == "mean" ~ "Average",
+      temp_typ == "geomean" ~ "Geometric Mean",
+      temp_typ == "90p" ~ "90th Percentile",
+      TRUE ~ temp_typ
+    )
+
+    temp_desc <- dplyr::case_when(
+      is.na(temp_num) ~ NA,
+      is.na(param_unit) ~ paste0(temp_typ, ": ", temp_num),
+      TRUE ~ paste0(temp_typ, ": ", temp_num, " ", param_unit)
+    )
+
+    temp_str <- dplyr::case_when(
+      is.na(temp_best) | is.na(temp_num) ~ NA,
+      temp_best == "high" & temp_num >= temp_excellent ~ "5_Excellent",
+      temp_best == "high" & temp_num >= temp_good ~ "4_Good",
+      temp_best == "high" & temp_num >= temp_fair ~ "3_Fair",
+      temp_best == "high" ~ "1_Poor",
+      temp_best == "low" & temp_num <= temp_excellent ~ "5_Excellent",
+      temp_best == "low" & temp_num <= temp_good ~ "4_Good",
+      temp_best == "low" & temp_num <= temp_fair ~ "3_Fair",
+      temp_best == "low" ~ "1_Poor",
+      TRUE ~ NA
+    )
+
+    temp_str <- dplyr::case_when(
+      !is.na(temp_str) | is.na(temp_num) ~ temp_str,
+      is.na(temp_min) & is.na(temp_max) ~ NA,
+      !is.na(temp_min) & temp_num < temp_min ~
+        "0_Does Not Meet Criteria",
+      !is.na(temp_max) & temp_num > temp_max ~
+        "0_Does Not Meet Criteria",
+      TRUE ~ "2_Meets Criteria"
+    )
+
+    calc_num <- c(calc_num, pretty_number(temp_num))
+    calc_str <- c(calc_str, temp_str)
+    calc_typ <- c(calc_typ, temp_typ)
+    calc_desc <- c(calc_desc, temp_desc)
+  }
+
+  chk <- is.na(calc_str)
+  if (any(!chk)) {
+    calc_str <- min(calc_str, na.rm = TRUE)
+    calc_str <- substr(calc_str, 3, nchar(calc_str))
+  }
+
+  chk <- is.na(calc_desc)
+  if (all(chk)) {
+    calc_desc <- NA
+  } else {
+    calc_desc <- calc_desc[!is.na(calc_desc)]
+    calc_desc <- paste(unique(calc_desc), collapse = "<br>")
+  }
+
+  list(
+    score_typ = calc_typ[1],
+    score_num = calc_num[1],
+    score_str = calc_str,
+    score_desc = calc_desc
+  )
 }
