@@ -270,9 +270,9 @@ mod_map_server <- function(
             labelOptions = leaflet::labelOptions(textsize = "15px"),
             # Popup
             popup = ~ paste0(
-              popup_loc,
-              "<br><br><b>", in_var$param_n(), "</b>",
-              popup_score, "<br>",
+              "<p>", popup_loc,
+              "</p><p><b>", in_var$param_n(), "</b>",
+              popup_score, "</p><p>",
               actionLink(
                 ns("graph_link"),
                 label = "View Trends",
@@ -280,7 +280,8 @@ mod_map_server <- function(
                   'Shiny.setInputValue("', ns("graph_link"),
                   '", (Math.random() * 1000) + 1);'
                 )
-              )
+              ),
+              "</p>"
             ),
             # Accessibility
             options = leaflet::markerOptions(
@@ -307,9 +308,9 @@ mod_map_server <- function(
             labelOptions = leaflet::labelOptions(textsize = "15px"),
             # Popup
             popup = ~ paste0(
-              popup_loc,
-              "<br><br><b>", in_var$param_n(), "</b>",
-              popup_score, "<br>",
+              "<p>", popup_loc,
+              "</p><p><b>", in_var$param_n(), "</b>",
+              popup_score, "</p><p>",
               actionLink(
                 ns("graph_link2"),
                 label = "View Trends",
@@ -317,7 +318,8 @@ mod_map_server <- function(
                   'Shiny.setInputValue("', ns("graph_link"),
                   '", (Math.random() * 1000) + 1);'
                 )
-              )
+              ),
+              "</p>"
             ),
             # Accessibility
             options = leaflet::markerOptions(
