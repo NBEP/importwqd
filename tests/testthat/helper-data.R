@@ -263,7 +263,7 @@ tst <- list(
       "<br>Average: 8 m",
       "<br><i>No data</i>",
       "<br>Minimum: 4 mg/L<br>Average: 4 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Average: 1.525 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 1.52 mg/L<br>Score: Poor",
       "<br>Minimum: 0.05 mg/L<br>Average: 0.05 mg/L<br>Score: Poor",
       "<br><i>No data</i>",
       "<br>Average: 9.2 m",

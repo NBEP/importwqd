@@ -498,8 +498,8 @@ calculate_score <- function(
 
     temp_desc <- dplyr::case_when(
       is.na(temp_num) ~ NA,
-      is.na(param_unit) ~ paste0(temp_typ, ": ", temp_num),
-      TRUE ~ paste0(temp_typ, ": ", temp_num, " ", param_unit)
+      is.na(param_unit) ~ paste0(temp_typ, ": ", pretty_number(temp_num)),
+      TRUE ~ paste0(temp_typ, ": ", pretty_number(temp_num), " ", param_unit)
     )
 
     temp_str <- dplyr::case_when(
@@ -525,7 +525,8 @@ calculate_score <- function(
       TRUE ~ "2_Meets Criteria"
     )
 
-    calc_num <- c(calc_num, pretty_number(temp_num))
+    temp_num <- pretty_number(temp_num, add_comma = FALSE)
+    calc_num <- c(calc_num, temp_num)
     calc_str <- c(calc_str, temp_str)
     calc_typ <- c(calc_typ, temp_typ)
     calc_desc <- c(calc_desc, temp_desc)

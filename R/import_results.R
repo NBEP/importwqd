@@ -400,7 +400,7 @@ score_results <- function(.data, sites) {
       "score_mean" = mean(.data$Result),
       "score_median" = median(.data$Result),
       "score_geomean" = geo_mean(.data$Result),
-      "score_90p" = stats::quantile(.data$Result, .9),
+      "score_90p" = stats::quantile(.data$Result, .9, names = FALSE),
       "Calculation" = dplyr::last(.data$Calculation),
       "Min" = dplyr::last(.data$Min),
       "Max" = dplyr::last(.data$Max),

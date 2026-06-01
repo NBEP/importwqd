@@ -271,8 +271,8 @@ test_that("score_results works", {
       )
     ),
     popup_score = c(
-      "<br>Minimum: 0.05 mg/L<br>Average: 1.525 mg/L<br>Score: Poor",
-      "<br>Minimum: 0.05 mg/L<br>Average: 2.025 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 1.52 mg/L<br>Score: Poor",
+      "<br>Minimum: 0.05 mg/L<br>Average: 2.02 mg/L<br>Score: Poor",
       "<br>Minimum: 6 mg/L<br>Score: Excellent",
       "<br>Minimum: 7 mg/L<br>Score: Excellent"
     ),

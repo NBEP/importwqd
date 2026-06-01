@@ -4,11 +4,13 @@
 #' number is between -1 and 1, it is instead rounded to two significant digits.
 #'
 #' @param x Integer. Number to round.
+#' @param add_comma Boolean. If `TRUE`, adds comma to large numbers. Default
+#' `TRUE`.
 #'
 #' @return Rounded number
 #'
 #' @noRd
-pretty_number <- function(x) {
+pretty_number <- function(x, add_comma = TRUE) {
   x <- dplyr::if_else(
     abs(x) < 1,
     signif(x, 2),
@@ -16,7 +18,7 @@ pretty_number <- function(x) {
   )
 
   chk <- is.na(x) | x < 1000
-  if (all(chk)) {
+  if (!add_comma | all(chk)) {
     return(x)
   }
 
