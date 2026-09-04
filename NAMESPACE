@@ -26,42 +26,47 @@ export(score_results)
 export(sidebar_var)
 importFrom(data.table,":=")
 importFrom(rlang,.data)
-importFrom(shiny,HTML)
-importFrom(shiny,NS)
-importFrom(shiny,actionButton)
-importFrom(shiny,bindCache)
-importFrom(shiny,bindEvent)
-importFrom(shiny,checkboxInput)
-importFrom(shiny,conditionalPanel)
-importFrom(shiny,div)
-importFrom(shiny,downloadButton)
-importFrom(shiny,downloadHandler)
-importFrom(shiny,getDefaultReactiveDomain)
-importFrom(shiny,h2)
-importFrom(shiny,h3)
-importFrom(shiny,h4)
-importFrom(shiny,htmlOutput)
-importFrom(shiny,includeScript)
-importFrom(shiny,isTruthy)
-importFrom(shiny,moduleServer)
-importFrom(shiny,observe)
-importFrom(shiny,outputOptions)
-importFrom(shiny,radioButtons)
-importFrom(shiny,reactive)
-importFrom(shiny,reactiveValues)
-importFrom(shiny,removeNotification)
-importFrom(shiny,renderText)
-importFrom(shiny,renderUI)
-importFrom(shiny,req)
-importFrom(shiny,showNotification)
-importFrom(shiny,sliderInput)
-importFrom(shiny,span)
-importFrom(shiny,tabPanel)
-importFrom(shiny,tabPanelBody)
-importFrom(shiny,tabsetPanel)
-importFrom(shiny,tagList)
-importFrom(shiny,textOutput)
-importFrom(shiny,updateActionButton)
-importFrom(shiny,updateTabsetPanel)
-importFrom(stats,median)
-importFrom(stats,setNames)
+importFrom(shiny,
+  HTML,
+  NS,
+  actionButton,
+  bindCache,
+  bindEvent,
+  checkboxInput,
+  conditionalPanel,
+  div,
+  downloadButton,
+  downloadHandler,
+  getDefaultReactiveDomain,
+  h2,
+  h3,
+  h4,
+  htmlOutput,
+  includeScript,
+  isTruthy,
+  moduleServer,
+  observe,
+  outputOptions,
+  radioButtons,
+  reactive,
+  reactiveValues,
+  removeNotification,
+  renderText,
+  renderUI,
+  req,
+  showNotification,
+  sliderInput,
+  span,
+  tabPanel,
+  tabPanelBody,
+  tabsetPanel,
+  tagList,
+  textOutput,
+  updateActionButton,
+  updateTabsetPanel,
+  useBusyIndicators
+)
+importFrom(stats,
+  median,
+  setNames
+)

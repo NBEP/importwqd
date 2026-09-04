@@ -18,7 +18,7 @@ pretty_number <- function(x, add_comma = TRUE) {
   )
 
   chk <- is.na(x) | x < 1000
-  if (!add_comma | all(chk)) {
+  if (!add_comma || all(chk)) {
     return(x)
   }
 

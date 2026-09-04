@@ -41,6 +41,7 @@
 #' @importFrom shiny textOutput
 #' @importFrom shiny updateActionButton
 #' @importFrom shiny updateTabsetPanel
+#' @importFrom shiny useBusyIndicators
 #' @importFrom stats median
 #' @importFrom stats setNames
 ## usethis namespace: end

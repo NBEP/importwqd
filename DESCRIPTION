@@ -48,6 +48,6 @@ Suggests:
     testthat (>= 3.0.0),
     yaml
 Config/testthat/edition: 3
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 3.5)
+Config/roxygen2/version: 8.1.0

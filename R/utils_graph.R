@@ -434,10 +434,10 @@ add_gam <- function(fig, df) {
 #'
 #' @noRd
 thresh_text <- function(thresh) {
-  thresh_min <- thresh$thresh_min
-  thresh_max <- thresh$thresh_max
-  thresh_best <- thresh$thresh_best
-  thresh_excellent <- thresh$thresh_exc
+  thresh_min <- split_string(thresh$thresh_min, as_integer = TRUE)[1]
+  thresh_max <- split_string(thresh$thresh_max, as_integer = TRUE)[1]
+  thresh_best <- split_string(thresh$thresh_best)[1]
+  thresh_excellent <- split_string(thresh$thresh_exc, as_integer = TRUE)[1]
   unit <- thresh$unit
 
   if (is.null(thresh)) {
