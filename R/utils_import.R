@@ -460,6 +460,13 @@ calculate_score <- function(
     thresh_good <- split_string(thresh_good, as_integer = TRUE)
     thresh_fair <- split_string(thresh_fair, as_integer = TRUE)
     thresh_best <- split_string(thresh_best)
+  } else {
+    # Bug fix - if values are str, causes errors
+    thresh_min <- as.integer(thresh_min)
+    thresh_max <- as.integer(thresh_max)
+    thresh_excellent <- as.integer(thresh_excellent)
+    thresh_good <- as.integer(thresh_good)
+    thresh_fair <- as.integer(thresh_fair)
   }
 
   calc_num <- NULL

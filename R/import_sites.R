@@ -1,7 +1,7 @@
 #' Prepare site metadata
 #'
 #' @description `prep_sites()` prepares site data for use in `wqdashboard` by
-#' updating colum names.
+#' updating column names.
 #'
 #' @inheritParams prep_results
 #'
