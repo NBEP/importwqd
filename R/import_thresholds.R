@@ -176,5 +176,19 @@ format_thresholds <- function(.data) {
         .data$Excellent < .data$Fair ~ "low",
         TRUE ~ NA
       )
+    ) |>
+    dplyr::mutate(
+      "Min" = dplyr::if_else(
+        is.na(.data$Min) & .data$Best == "high",
+        .data$Fair,
+        .data$Min
+      )
+    ) |>
+    dplyr::mutate(
+      "Max" = dplyr::if_else(
+        is.na(.data$Max) & .data$Best == "low",
+        .data$Fair,
+        .data$Max
+      )
     )
 }
