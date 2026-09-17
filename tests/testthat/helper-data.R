@@ -60,7 +60,7 @@ tst <- list(
   threshold_qaqc = data.frame(
     State = c("RI", "RI", "RI", "MA", NA, "RI", "RI"),
     Group = c("Coldwater", "Saltwater", "Warmwater", "Saltwater", NA, NA, NA),
-    Site_ID = NA,
+    Site_ID = NA_character_,
     Depth_Category = c(NA, "Surface", NA, NA, NA, NA, NA),
     Parameter = c(
       "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",
@@ -79,7 +79,7 @@ tst <- list(
   threshold_final = data.frame(
     State = c("MA", "RI", "RI", "RI", "RI", "RI", NA),
     Group = c("Saltwater", "Coldwater", "Saltwater", "Warmwater", NA, NA, NA),
-    Site = NA,
+    Site = NA_character_,
     Depth = c(NA, NA, "Surface", NA, NA, NA, NA),
     Parameter = c(
       "pH", "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",

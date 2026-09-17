@@ -69,6 +69,8 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
     wqformat::col_to_numeric("Excellent", silent = FALSE) |>
     wqformat::col_to_numeric("Good", silent = FALSE) |>
     wqformat::col_to_numeric("Fair", silent = FALSE) |>
+    # Set blank columns to character, not logical
+    dplyr::mutate(dplyr::across(dplyr::where(is.logical), as.character)) |>
     dplyr::mutate("Calculation" = tolower(.data$Calculation)) |>
     dplyr::select(dplyr::all_of(field_all))
 
@@ -125,21 +127,6 @@ qaqc_thresholds <- function(.data, in_format = "wqdashboard") {
   chk <- dat |>
     dplyr::select(dplyr::all_of(col_list)) |>
     duplicated()
-
-  if (any(chk)) {
-    msg <- "Multiple thresholds detected for same location/parameter/depth."
-
-    dup2 <- dat |>
-      dplyr::select(dplyr::all_of(col_list)) |>
-      duplicated(fromLast = TRUE)
-
-    dup_rws <- c(which(chk), which(dup2)) |>
-      unique() |>
-      sort()
-    dup_rws <- paste(dup_rws, collapse = ", ")
-
-    warning(msg, " Check rows: ", dup_rws)
-  }
 
   # Check - missing data (warning)
   chk <- is.na(.data$Calculation)

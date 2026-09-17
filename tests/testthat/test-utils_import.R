@@ -213,7 +213,7 @@ test_that("combine_thresholds works", {
   df_out <- data.frame(
     State = c("MA", "RI", "RI", "RI", "RI", NA),
     Group = c("Saltwater", "Coldwater", "Saltwater", "Warmwater", NA, NA),
-    Site = NA,
+    Site = NA_character_,
     Depth = c(NA, NA, "Surface", NA, NA, NA),
     Parameter = c(
       "pH", "Dissolved oxygen", "Dissolved oxygen", "Dissolved oxygen",

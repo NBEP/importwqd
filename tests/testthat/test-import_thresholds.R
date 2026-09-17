@@ -37,14 +37,6 @@ test_that("qaqc_thresholds works", {
     suppressWarnings(suppressMessages(qaqc_thresholds(tst$threshold_raw))),
     tst$threshold_qaqc
   )
-
-  expect_warning(
-    suppressMessages(qaqc_thresholds(tst$threshold_raw)),
-    regexp = paste(
-      "Multiple thresholds detected for same location/parameter/depth.",
-      "Check rows: 6, 7"
-    )
-  )
 })
 
 test_that("qaqc_thresholds error messages", {
