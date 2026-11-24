@@ -56,7 +56,7 @@ for (param in param_list) {
     filter(.data$Parameter %in% !!param) |>
     select(!"Parameter")
 
-  bad_score <- which(df_mini$Score %in% c("Poor", "Does Not Meet Criteria"))
+  bad_score <- which(df_mini$Score %in% c("Poor", "Does Not Meet Threshold"))
 
   tab <- df_mini |>
     knitr::kable(

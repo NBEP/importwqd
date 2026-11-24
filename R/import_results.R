@@ -408,6 +408,7 @@ score_results <- function(.data, sites) {
       "Good" = dplyr::last(.data$Good),
       "Fair" = dplyr::last(.data$Fair),
       "Best" = dplyr::last(.data$Best),
+      "Count" = dplyr::n(),
       .groups = "drop"
     )
 
@@ -417,18 +418,18 @@ score_results <- function(.data, sites) {
       "score_temp" = mapply(
         function(score_max, score_min, score_mean, score_median, score_geomean,
                  score_90p, calculation, thresh_min, thresh_max,
-                 thresh_excellent, thresh_good, thresh_fair, thresh_best,
+                 thresh_excellent, thresh_good, thresh_fair, thresh_best, count,
                  param_unit) {
           calculate_score(
             score_max, score_min, score_mean, score_median, score_geomean,
             score_90p, calculation, thresh_min, thresh_max, thresh_excellent,
-            thresh_good, thresh_fair, thresh_best, param_unit
+            thresh_good, thresh_fair, thresh_best, count, param_unit
           )
         },
         .data$score_max, .data$score_min, .data$score_mean, .data$score_median,
         .data$score_geomean, .data$score_90p, .data$Calculation, .data$Min,
         .data$Max, .data$Excellent, .data$Good, .data$Fair, .data$Best,
-        .data$Unit,
+        .data$Count, .data$Unit,
         SIMPLIFY = FALSE
       )
     ) |>

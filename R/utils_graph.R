@@ -209,7 +209,7 @@ graph_style <- function(.data, fig_title, y_title, y_range) {
 #' Plot thresholds
 #'
 #' @description `plot_thresholds` generates a `plotly` object with
-#' colored bars indicating the thresholds for "Does Not Meet Criteria" and
+#' colored bars indicating the thresholds for "Does Not Meet Threshold" and
 #' "Excellent".
 #'
 #' @param .data Dataframe
@@ -260,9 +260,9 @@ plot_thresholds <- function(
         fill = "tonexty",
         fillcolor = "rgba(160,60,60,0.1)",
         line = list(color = "rgba(160,60,60,1)"),
-        name = "Does Not Meet\nCriteria",
+        name = "Does Not Meet\nThreshold",
         hoverinfo = "text",
-        hovertext = "Does Not Meet Criteria",
+        hovertext = "Does Not Meet Threshold",
         hoveron = "points+fills",
         inherit = FALSE,
         legendrank = 1003
@@ -288,9 +288,9 @@ plot_thresholds <- function(
         fill = "tonexty",
         fillcolor = "rgba(160,60,60,0.1)",
         line = list(color = "rgba(160,60,60,1)"),
-        name = "Does Not Meet\nCriteria",
+        name = "Does Not Meet\nThreshold",
         hoverinfo = "text",
-        hovertext = "Does Not Meet Criteria",
+        hovertext = "Does Not Meet Threshold",
         hoveron = "points+fills",
         inherit = FALSE,
         legendrank = 1002

@@ -449,7 +449,7 @@ geo_mean <- function(x) {
 calculate_score <- function(
   score_max, score_min, score_mean, score_median, score_geomean, score_90p,
   calculation, thresh_min, thresh_max, thresh_excellent,
-  thresh_good, thresh_fair, thresh_best, param_unit = NA
+  thresh_good, thresh_fair, thresh_best, count, param_unit = NA
 ) {
   chk <- grepl(",", calculation)
   if (chk) {
@@ -526,10 +526,10 @@ calculate_score <- function(
       !is.na(temp_str) | is.na(temp_num) ~ temp_str,
       is.na(temp_min) & is.na(temp_max) ~ NA,
       !is.na(temp_min) & temp_num < temp_min ~
-        "0_Does Not Meet Criteria",
+        "0_Does Not Meet Threshold",
       !is.na(temp_max) & temp_num > temp_max ~
-        "0_Does Not Meet Criteria",
-      TRUE ~ "2_Meets Criteria"
+        "0_Does Not Meet Threshold",
+      TRUE ~ "2_Meets Threshold"
     )
 
     temp_num <- pretty_number(temp_num, add_comma = FALSE)
@@ -537,6 +537,20 @@ calculate_score <- function(
     calc_str <- c(calc_str, temp_str)
     calc_typ <- c(calc_typ, temp_typ)
     calc_desc <- c(calc_desc, temp_desc)
+  }
+
+  # If score uses geometric mean or 90th percentile, require min 5 samples
+  # If insufficient samples, do NOT assign score
+  chk_n <- count < 5 & any(c("geomean", "90p") %in% calculation)
+  if (chk_n) {
+    return(
+      list(
+        score_typ = calc_typ[1],
+        score_num = calc_num[1],
+        score_str = NA,
+        score_desc = NA
+      )
+    )
   }
 
   chk <- is.na(calc_str)

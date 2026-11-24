@@ -83,7 +83,7 @@ num_symbols <- function(.data, pal_range) {
 #' @noRd
 cat_pal <- function(score_str, is_legend = FALSE) {
   x <- c("Excellent", "Good", "Fair", "Poor")
-  y <- c("Meets Criteria", "Does Not Meet Criteria")
+  y <- c("Meets Threshold", "Does Not Meet Threshold")
 
   icon_color <- "#f4f4f4"
   icon_shape <- "cross"
@@ -133,7 +133,7 @@ cat_pal <- function(score_str, is_legend = FALSE) {
 #' @noRd
 cat_labels <- function(score_str) {
   x <- c("Excellent", "Good", "Fair", "Poor")
-  y <- c("Meets Criteria", "Does Not Meet Criteria")
+  y <- c("Meets Threshold", "Does Not Meet Threshold")
 
   label_list <- "No Data Available"
 
@@ -141,8 +141,8 @@ cat_labels <- function(score_str) {
   chk_y <- any(score_str %in% y)
   if (chk_x && chk_y) {
     label_list <- c(
-      "Excellent", "Good / Meets Criteria", "Fair",
-      "Poor / Does Not Meet Criteria", label_list
+      "Excellent", "Good / Meets Threshold", "Fair",
+      "Poor / Does Not Meet Threshold", label_list
     )
   } else if (chk_x) {
     label_list <- c(x, label_list)

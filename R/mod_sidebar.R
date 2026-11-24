@@ -214,10 +214,23 @@ mod_sidebar_server <- function(
       bindEvent(selected_tab())
 
     # Filter data ----
+    chk <- c("Does Not Meet Criteria", "Meets Criteria") %in% df_score$score_str
+    df_score2 <- if (any(chk)) {
+      df_score |>
+        dplyr::mutate(
+          "score_str" = gsub("Criteria", "Threshold", .data$score_str)
+        ) |>
+        dplyr::mutate(
+          "popup_score" = gsub("Criteria", "Threshold", .data$popup_score)
+        )
+    } else {
+      df_score
+    }
+
     df_score_filter <- reactive({
       req(input$select_year_n)
 
-      dplyr::filter(df_score, .data$Year == input$select_year_n)
+      dplyr::filter(df_score2, .data$Year == input$select_year_n)
     })
 
     val <- reactiveValues(

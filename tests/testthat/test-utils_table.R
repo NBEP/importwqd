@@ -13,12 +13,12 @@ test_that("column_styles works", {
           if (rowInfo.values['score_str'] == 'Excellent') {
             return { backgroundColor: '#afccec' }
           } else if (rowInfo.values['score_str'] == 'Good' |
-              rowInfo.values['score_str'] == 'Meets Criteria') {
+              rowInfo.values['score_str'] == 'Meets Threshold') {
             return { backgroundColor: '#cbe4e7' }
           } else if (rowInfo.values['score_str'] == 'Fair') {
             return { backgroundColor: '#ffffe0' }
           } else if (rowInfo.values['score_str'] == 'Poor' |
-              rowInfo.values['score_str'] == 'Does Not Meet Criteria') {
+              rowInfo.values['score_str'] == 'Does Not Meet Threshold') {
             return { backgroundColor: '#f9cfb4' }
           } else if (rowInfo.values['score_str'] == 'No Data Available' |
               rowInfo.values['score_str'] == 'No Threshold Established') {

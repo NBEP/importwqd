@@ -340,7 +340,7 @@ test_that("calculate_score works", {
       score_max = 1100, score_min = 1, score_mean = 35, score_median = 90,
       score_geomean = 20, score_90p = 100, calculation = "geomean",
       thresh_min = NA, thresh_max = 54, thresh_excellent = 35, thresh_good = 54,
-      thresh_fair = 54, thresh_best = "low"
+      thresh_fair = 54, thresh_best = "low", count = 6
     ),
     list(
       score_typ = "Geometric Mean",
@@ -357,14 +357,30 @@ test_that("calculate_score works", {
       score_geomean = 20, score_90p = 100, calculation = "geomean, 90p",
       param_unit = "cfu/100mL", thresh_min = "NA, NA", thresh_max = "54, 1000",
       thresh_excellent = "35, NA", thresh_good = "54, NA",
-      thresh_fair = "54, NA", thresh_best = "low, NA"
+      thresh_fair = "54, NA", thresh_best = "low, NA", count = 5
     ),
     list(
       score_typ = "Geometric Mean",
       score_num = 20,
-      score_str = "Meets Criteria",
+      score_str = "Meets Threshold",
       score_desc =
         "Geometric Mean: 20 cfu/100mL<br>90th Percentile: 100 cfu/100mL"
+    )
+  )
+
+  # Less than 5 samples
+  expect_equal(
+    calculate_score(
+      score_max = 1100, score_min = 1, score_mean = 35, score_median = 90,
+      score_geomean = 20, score_90p = 100, calculation = "geomean",
+      thresh_min = NA, thresh_max = 54, thresh_excellent = 35, thresh_good = 54,
+      thresh_fair = 54, thresh_best = "low", count = 4
+    ),
+    list(
+      score_typ = "Geometric Mean",
+      score_num = 20,
+      score_str = NA,
+      score_desc = NA
     )
   )
 
@@ -374,7 +390,7 @@ test_that("calculate_score works", {
       score_max = NA, score_min = NA, score_mean = NA, score_median = NA,
       score_geomean = NA, score_90p = NA, calculation = "geomean",
       thresh_min = NA, thresh_max = 54, thresh_excellent = 35, thresh_good = 54,
-      thresh_fair = 54, thresh_best = "low"
+      thresh_fair = 54, thresh_best = "low", count = 6
     ),
     list(
       score_typ = "Geometric Mean",

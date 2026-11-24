@@ -54,10 +54,10 @@ test_that("cat_pal works", {
     cat_pal("Excellent")
   )
   expect_snapshot(
-    cat_pal("Meets Criteria")
+    cat_pal("Meets Threshold")
   )
   expect_snapshot(
-    cat_pal(c("Excellent", "Meets Criteria"))
+    cat_pal(c("Excellent", "Meets Threshold"))
   )
   expect_snapshot(
     cat_pal("No Data Available", TRUE)
@@ -70,14 +70,14 @@ test_that("cat_labels works", {
     c("Excellent", "Good", "Fair", "Poor", "No Data Available")
   )
   expect_equal(
-    cat_labels("Meets Criteria"),
-    c("Meets Criteria", "Does Not Meet Criteria", "No Data Available")
+    cat_labels("Meets Threshold"),
+    c("Meets Threshold", "Does Not Meet Threshold", "No Data Available")
   )
   expect_equal(
-    cat_labels(c("Excellent", "Meets Criteria")),
+    cat_labels(c("Excellent", "Meets Threshold")),
     c(
-      "Excellent", "Good / Meets Criteria", "Fair",
-      "Poor / Does Not Meet Criteria", "No Data Available"
+      "Excellent", "Good / Meets Threshold", "Fair",
+      "Poor / Does Not Meet Threshold", "No Data Available"
     )
   )
   expect_equal(
